@@ -169,6 +169,7 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                   {
                       double tickRefreshRate = Math.Ceiling(1000 / this.RefreshRateHz);
                       Stopwatch stopwatch = Stopwatch.StartNew();
+                      Timers.TimeBeginPeriod(2);
 
                       while (Draw)
                       {
@@ -195,12 +196,12 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                               }
                           }
 
-                          Timers.TimeBeginPeriod(2);
                           int millisToWait = (int)Math.Floor(tickRefreshRate - stopwatch.ElapsedMilliseconds);
                           if (millisToWait > 0)
                               Thread.Sleep(millisToWait);
-                          Timers.TimeEndPeriod(2);
                       }
+
+                      Timers.TimeEndPeriod(2);
 
                   });
                 renderThread.IsBackground = true;

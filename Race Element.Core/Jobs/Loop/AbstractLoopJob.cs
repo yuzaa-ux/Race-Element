@@ -96,7 +96,7 @@ public abstract partial class AbstractLoopJob : IJob
     private void WorkerThread()
     {
         Stopwatch sw = Stopwatch.StartNew();
-        _ = TimeBeginPeriod(1);
+        _ = TimeBeginPeriod(2);
 
         while (IsRunning)
         {
@@ -109,7 +109,7 @@ public abstract partial class AbstractLoopJob : IJob
             else if (waitTime < 0) ExecutionIntervalOverflow(-waitTime);
             sw.Restart();
         }
-        _ = TimeEndPeriod(1);
+        _ = TimeEndPeriod(2);
 
         AfterCancel();
         _workerExitEvent.Set();
