@@ -45,8 +45,11 @@ internal static partial class LocalCarMapper
 
     internal static void AddGraphics(PageFileGraphics pageGraphics, LocalCarData commonData)
     {
-        var coords = pageGraphics.CarCoordinates[pageGraphics.PlayerCarID];
-        commonData.Physics.Location = new Vector3(coords.X * 10f, coords.Y, coords.Z);
+        if (pageGraphics.CarCoordinates.Length >= pageGraphics.PlayerCarID)
+        {
+            var coords = pageGraphics.CarCoordinates[pageGraphics.PlayerCarID];
+            commonData.Physics.Location = new Vector3(coords.X * 10f, coords.Y, coords.Z);
+        }
         WithGraphicsPage(pageGraphics, commonData);
     }
 
