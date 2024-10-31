@@ -4,7 +4,6 @@ using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.Util.SystemExtensions;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
@@ -31,7 +30,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     private RectangleF BarSpace;
 
     private record struct ShiftBarDataModel(int Rpm, int MaxRpm);
-    private ShiftBarDataModel _model;
+    private ShiftBarDataModel _model = new(0, 0);
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
@@ -44,7 +43,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         RefreshRateHz = _config.Render.RefreshRate;
     }
 
-    public override void SetupPreviewData() => _model = new(Random.Shared.Next(8000, 9200), 9250);
+    public override void SetupPreviewData() => _model = new(8500, 9250);
 
     private void UpdateColorDictionary()
     {
@@ -112,9 +111,10 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
-            int lineCount = (int)Math.Floor((_model.MaxRpm - _config.Data.HideRpm) / 1000d);
+            var tempModel = _model;
+            int lineCount = (int)Math.Floor((tempModel.MaxRpm - _config.Data.HideRpm) / 1000d);
 
-            int leftOver = (_model.MaxRpm - _config.Data.HideRpm) % 1000;
+            int leftOver = (tempModel.MaxRpm - _config.Data.HideRpm) % 1000;
             if (leftOver < 70)
                 lineCount--;
 
@@ -122,7 +122,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
             using Pen linePen = new(brush, 1.6f * Scale);
 
-            double thousandPercent = 1000d / (_model.MaxRpm - _config.Data.HideRpm) * lineCount;
+            double thousandPercent = 1000d / (tempModel.MaxRpm - _config.Data.HideRpm) * lineCount;
             double baseX = _config.Size.Width * Scale / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
@@ -158,9 +158,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
-            // Test data, remove for release.
-            _model.Rpm = Random.Shared.Next(5000, 9500);
-            _model.MaxRpm = 9500;
+            if (_model.Rpm < 0) _model.Rpm = 0;
+            if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm;
         }
 
         DrawBar(g);
@@ -198,13 +197,15 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private class MaxRpmDetectionJob(ShiftBarOverlay shiftBarOverlay) : AbstractLoopJob
     {
+        private int _lastMaxRpm = -1;
         public override void RunAction()
         {
             var model = shiftBarOverlay._model;
-            if (SimDataProvider.LocalCar.Engine.MaxRpm != model.MaxRpm)
+            if (_lastMaxRpm != model.MaxRpm)
             {
                 shiftBarOverlay?._cachedRpmLines.Render();
                 shiftBarOverlay?.UpdateColorDictionary();
+                _lastMaxRpm = model.MaxRpm;
             }
         }
     }
