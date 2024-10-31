@@ -143,7 +143,7 @@ public static class GraphicsExtensions
     /// <param name="radiusBottomLeft">Size of the bottom-left radius.</param>
     public static GraphicsPath CreateRoundedRectangle(Rectangle bounds, int radiusTopLeft, int radiusTopRight, int radiusBottomRight, int radiusBottomLeft)
     {
-        var size = new Size(radiusTopLeft << 1, radiusTopLeft << 1);
+        var size = new Size(radiusTopLeft, radiusTopLeft);
         var arc = new Rectangle(bounds.Location, size);
         var path = new GraphicsPath();
 
@@ -156,7 +156,7 @@ public static class GraphicsExtensions
         // top right arc
         if (radiusTopRight != radiusTopLeft)
         {
-            size = new Size(radiusTopRight << 1, radiusTopRight << 1);
+            size = new Size(radiusTopRight , radiusTopRight);
             arc.Size = size;
         }
 
@@ -169,7 +169,7 @@ public static class GraphicsExtensions
         // bottom right arc
         if (radiusTopRight != radiusBottomRight)
         {
-            size = new Size(radiusBottomRight << 1, radiusBottomRight << 1);
+            size = new Size(radiusBottomRight, radiusBottomRight);
             arc.X = bounds.Right - size.Width;
             arc.Size = size;
         }
@@ -183,7 +183,7 @@ public static class GraphicsExtensions
         // bottom left arc
         if (radiusBottomRight != radiusBottomLeft)
         {
-            arc.Size = new Size(radiusBottomLeft << 1, radiusBottomLeft << 1);
+            arc.Size = new Size(radiusBottomLeft, radiusBottomLeft);
             arc.Y = bounds.Bottom - arc.Height;
         }
 
