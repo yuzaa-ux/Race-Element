@@ -27,7 +27,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     private CachedBitmap _cachedbackground;
     private CachedBitmap _cachedBar;
 
-    private readonly RectangleF WorkingSpace = new(0, 0, 300, 20);
+    private readonly RectangleF WorkingSpace = new(0, 0, 400, 20);
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
     {
         Width = (int)WorkingSpace.Width;

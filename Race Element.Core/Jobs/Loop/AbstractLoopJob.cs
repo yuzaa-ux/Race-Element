@@ -53,7 +53,7 @@ public abstract partial class AbstractLoopJob : IJob
 
     /// <summary>Callback used to notify the client that <see cref="RunAction"/> takes longer time than expected.</summary>
     /// <param name="millis">Number of milliseconds exceeded from <see cref="IntervalMillis"/>.</param>
-    protected virtual void ExecutionIntervalOverflow(int millis) { }
+    protected virtual void ExecutionIntervalOverflow(TimeSpan millis) { }
 
     /// <summary>Cancel @ execution of the job if <see cref="IsRunning"/> without waiting for finish confirmation(no synchronization).</summary>
     public void Cancel()
@@ -95,29 +95,24 @@ public abstract partial class AbstractLoopJob : IJob
     /// <summary>Worker thread, loop until "Cancel()" is executed.</summary>
     private void WorkerThread()
     {
-        Stopwatch sw = Stopwatch.StartNew();
-        _ = TimeBeginPeriod(2);
+        var time = TimeProvider.System;
+        TimeSpan interval = TimeSpan.FromMilliseconds(IntervalMillis);
+        TimeSpan waitTime;
 
+        long lastStartTime;
         while (IsRunning)
         {
+            lastStartTime = time.GetTimestamp();
             RunAction();
-            int waitTime = (int)(IntervalMillis - sw.ElapsedMilliseconds);
-            if (waitTime > 0)
-            {
+            waitTime = interval - time.GetElapsedTime(lastStartTime);
+
+            if (waitTime.Ticks > 0)
                 _jobSleepEvent.WaitOne(waitTime);
-            }
-            else if (waitTime < 0) ExecutionIntervalOverflow(-waitTime);
-            sw.Restart();
+            else if (waitTime.Ticks < 0)
+                ExecutionIntervalOverflow(waitTime);
         }
-        _ = TimeEndPeriod(2);
 
         AfterCancel();
         _workerExitEvent.Set();
     }
-
-    [LibraryImport("winmm.dll", EntryPoint = "timeBeginPeriod", SetLastError = true)]
-    private static partial uint TimeBeginPeriod(uint uMilliseconds);
-
-    [LibraryImport("winmm.dll", EntryPoint = "timeEndPeriod", SetLastError = true)]
-    private static partial uint TimeEndPeriod(uint uMilliseconds);
-}
+ }

@@ -168,12 +168,15 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                 Thread renderThread = new(() =>
                   {
                       double tickRefreshRate = Math.Ceiling(1000 / this.RefreshRateHz);
-                      Stopwatch stopwatch = Stopwatch.StartNew();
-                      Timers.TimeBeginPeriod(2);
+
+                      var time = TimeProvider.System;
+                      TimeSpan interval = TimeSpan.FromMilliseconds(tickRefreshRate);
+                      TimeSpan waitTime;
+                      long lastStart;
 
                       while (Draw)
                       {
-                          stopwatch.Restart();
+                          lastStart = time.GetTimestamp();
 
                           if (this._disposed)
                           {
@@ -196,12 +199,10 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                               }
                           }
 
-                          int millisToWait = (int)Math.Floor(tickRefreshRate - stopwatch.ElapsedMilliseconds);
-                          if (millisToWait > 0)
-                              Thread.Sleep(millisToWait);
+                          waitTime = interval - time.GetElapsedTime(lastStart);
+                          if (waitTime.Ticks > 0)
+                              Thread.Sleep(waitTime);
                       }
-
-                      Timers.TimeEndPeriod(2);
 
                   });
                 renderThread.IsBackground = true;
