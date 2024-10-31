@@ -13,18 +13,19 @@ using System.Threading.Tasks;
 
 namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
 
-#if DEBUG
+//#if DEBUG
 [Overlay(
     Name = "Shift Bar",
     Description = "A Fancy Bar"
 )]
-#endif
+//#endif
 internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 {
     private readonly ShiftBarConfiguration _config = new();
 
     private CachedBitmap _cachedbackground;
     private CachedBitmap _cachedBar;
+    private CachedBitmap _cachedRpmLines;
 
     private RectangleF WorkingSpace;
     private RectangleF BarSpace;
@@ -64,9 +65,6 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             using SolidBrush darkBrush = new(Color.FromArgb(90, Color.Black));
             g.FillRoundedRectangle(darkBrush, Rectangle.Round(barArea), 4);
 
-            float lineDistance = barArea.Width / 10;
-            for (int i = 1; i < 10; i++)
-                g.DrawLine(Pens.Black, new PointF(i * lineDistance, verticalPadding * 2), new PointF(i * lineDistance, barArea.Height - verticalPadding));
         });
 
         _cachedBar = new(scaledWorkingWidth, scaledWorkingHeight, g =>
@@ -80,6 +78,27 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 0, 20, 0), Color.Transparent);
             g.FillRoundedRectangle(hatchBrush, Rectangle.Round(BarSpace), 4);
+        });
+
+        _cachedRpmLines = new(scaledWorkingWidth, scaledWorkingHeight, g =>
+        {
+            int lineCount = (int)Math.Floor((_model.MaxRpm - _config.Data.HideRpm) / 1000d);
+
+            int leftOver = (_model.MaxRpm - _config.Data.HideRpm) % 1000;
+            if (leftOver < 70)
+                lineCount--;
+
+            lineCount.ClipMin(0);
+            using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
+            using Pen linePen = new(brush, 1.5f * Scale);
+
+            double thousandPercent = 1000d / (_model.MaxRpm - _config.Data.HideRpm) * lineCount;
+            double baseX = _config.Size.Width * Scale / lineCount * thousandPercent;
+            for (int i = 1; i <= lineCount; i++)
+            {
+                int x = (int)(i * baseX);
+                g.DrawLine(linePen, x, 1, x, _config.Size.Height * Scale - 1);
+            }
         });
     }
     public override bool ShouldRender() => true;
@@ -107,9 +126,10 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         percent.Clip(0, 1);
         percented.Width = (float)(BarSpace.Width * percent);
         g.SetClip(percented);
-        g.CompositingQuality = CompositingQuality.HighQuality;
-        g.SmoothingMode = SmoothingMode.AntiAlias;
+
         _cachedBar.Draw(g, 0, 0, workingSpaceWidth, workingSpaceHeight);
+
+        _cachedRpmLines.Draw(g, 0, 0, workingSpaceWidth, workingSpaceHeight);
     }
 
 }

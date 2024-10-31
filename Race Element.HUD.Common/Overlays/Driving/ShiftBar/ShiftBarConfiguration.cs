@@ -20,16 +20,16 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public RenderGrouping Render { get; init; } = new();
     public sealed class RenderGrouping
     {
-        [IntRange(60, 120, 10)]
-        public int RefreshRate { get; init; } = 120;
+        [IntRange(50, 120, 10)]
+        public int RefreshRate { get; init; } = 80;
     }
 
     [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
     public DataGrouping Data { get; init; } = new();
     public sealed class DataGrouping
     {
-        [ToolTip("Hides an amount of rpm from the ship bar.")]
-        [IntRange(0, 10000, 1000)]
+        [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM.")]
+        [IntRange(0, 9000, 100)]
         public int HideRpm { get; init; } = 3000;
     }
 }
