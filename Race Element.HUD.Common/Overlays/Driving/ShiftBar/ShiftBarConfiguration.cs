@@ -9,10 +9,10 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public SizeGrouping Size { get; init; } = new();
     public sealed class SizeGrouping
     {
-        [IntRange(100, 600, 10)]
+        [IntRange(100, 800, 10)]
         public int Width { get; init; } = 400;
 
-        [IntRange(10, 50, 2)]
+        [IntRange(18, 50, 2)]
         public int Height { get; init; } = 20;
     }
 
