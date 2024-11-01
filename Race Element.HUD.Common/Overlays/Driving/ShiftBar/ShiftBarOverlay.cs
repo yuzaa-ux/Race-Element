@@ -45,7 +45,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     public override void SetupPreviewData() => _model = new(8500, 11050);
 
-    private void UpdateColorDictionary()
+
+    private (float earlyPercentage, float redlinePercentage) GetUpShiftPercentages()
     {
         // configured percentages (0-100%)
         float earlyPercentage = _config.Upshift.Early;
@@ -61,11 +62,17 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 earlyPercentage = upshiftPercentage * 0.96f;
             }
         }
+        return (earlyPercentage, upshiftPercentage);
+    }
+
+    private void UpdateColorDictionary()
+    {
+        var percentages = GetUpShiftPercentages();
 
         _colors.Clear();
         _colors.Add((0.6f, Color.FromArgb(_config.Colors.NormalOpacity, _config.Colors.NormalColor)));
-        _colors.Add((earlyPercentage / 100f, Color.FromArgb(_config.Colors.EarlyOpacity, _config.Colors.EarlyColor)));
-        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
+        _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(_config.Colors.EarlyOpacity, _config.Colors.EarlyColor)));
+        _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
     }
     public override void BeforeStart()
     {
@@ -104,14 +111,20 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
                 g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
 
-                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 10, 10, 10), secondaryColor);
-                g.FillRoundedRectangle(hatchBrush, Rectangle.Round(BarSpace), 5);
+                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 75, 75, 75), secondaryColor);
+                Rectangle hatchRect = Rectangle.Round(BarSpace);
+                int hatchPadding = 2;
+                hatchRect.X = hatchRect.X + hatchPadding;
+                hatchRect.Y = hatchRect.Y + hatchPadding;
+                hatchRect.Width = hatchRect.Width - hatchPadding * 2;
+                hatchRect.Height = hatchRect.Height - hatchPadding * 2;
+                g.FillRoundedRectangle(hatchBrush, hatchRect, 3);
             }));
 
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
             var model = _model;
-            if (model.MaxRpm == 0) return;
+            if (model.MaxRpm <= 0) return;
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
             totalRpm.ClipMin(2000);
@@ -138,7 +151,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             if (_config.Data.RedlineMarker)
             {
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Redline / 100), model.MaxRpm, _config.Data.HideRpm);
+                var upshiftPercentages = GetUpShiftPercentages();
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm);
                 float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(Pens.Red, x, 4, x, _config.Size.Height - 4);
             }
@@ -163,39 +177,39 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     }
     public override bool ShouldRender() => true;
 
-// demo stuff
+    // demo stuff
     private int shiftsDone = 0;
     private bool up = true;
-// demo stuff
+    // demo stuff
 
     public override void Render(Graphics g)
     {
 
         if (!IsPreviewing)
         {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
-            //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
+            _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
             // test data    ------------
-            _model.MaxRpm = 11000;
-            int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
-            if (!up) increment *= -4;
-            _model.Rpm = _model.Rpm + increment;
-            if (up && _model.Rpm > _model.MaxRpm)
-            {
-                _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
-                shiftsDone++;
-            }
-            if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 6f)
-            {
-                _model.Rpm = _model.MaxRpm;
-                shiftsDone++;
-            }
-            if (shiftsDone > 5)
-            {
-                up = !up;
-                shiftsDone = 0;
-            }
+            //_model.MaxRpm = 11000;
+            //int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
+            //if (!up) increment *= -4;
+            //_model.Rpm = _model.Rpm + increment;
+            //if (up && _model.Rpm > _model.MaxRpm)
+            //{
+            //    _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+            //    shiftsDone++;
+            //}
+            //if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 6f)
+            //{
+            //    _model.Rpm = _model.MaxRpm;
+            //    shiftsDone++;
+            //}
+            //if (shiftsDone > 5)
+            //{
+            //    up = !up;
+            //    shiftsDone = 0;
+            //}
 
             // test data    ------------
 
