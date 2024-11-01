@@ -18,8 +18,6 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public int Height { get; init; } = 20;
     }
 
-
-
     [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
     public DataGrouping Data { get; init; } = new();
     public sealed class DataGrouping
@@ -35,7 +33,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public RenderGrouping Render { get; init; } = new();
     public sealed class RenderGrouping
     {
-        [IntRange(50, 120, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        [IntRange(50, 1000, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
         public int RefreshRate { get; init; } = 80;
     }
 

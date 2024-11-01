@@ -105,8 +105,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
                 g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
 
-                Color hatchColor = Color.FromArgb(95, primaryColor);
-                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, hatchColor/* Color.FromArgb(95, 0, 20, 0)*/, secondaryColor);
+                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 10, 10, 10), secondaryColor);
                 g.FillRoundedRectangle(hatchBrush, Rectangle.Round(BarSpace), 5);
             }));
 
@@ -159,7 +158,6 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     public override void Render(Graphics g)
     {
-        _cachedBackground?.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
         if (!IsPreviewing)
         {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
@@ -170,7 +168,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             _model.MaxRpm = 11000;
 
             bool up = Random.Shared.Next(0, 2) == 1;
-            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 20) : -3);
+            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 29) : -7);
             if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm - _model.MaxRpm / 12;
             // test data
 
@@ -180,8 +178,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         }
 
+        _cachedBackground?.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         DrawBar(g);
-
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
     }
 
