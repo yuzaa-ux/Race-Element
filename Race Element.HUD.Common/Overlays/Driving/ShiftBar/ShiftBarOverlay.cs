@@ -149,7 +149,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             if (model.MaxRpm <= 0) return;
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
-            totalRpm.ClipMin(1500);
+            totalRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int lineCount = (int)Math.Floor(totalRpm / 1000d);
 
