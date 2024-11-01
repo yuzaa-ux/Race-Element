@@ -41,6 +41,9 @@ public abstract class CommonAbstractOverlay : FloatingWindow
         catch (Exception) { }
     }
 
+    /// <summary>
+    /// The <see cref="Game"/> when this overlay was initialized
+    /// </summary>
     public Game GameWhenStarted { get; private set; } = Game.Any;
 
     private volatile bool Draw = false;
