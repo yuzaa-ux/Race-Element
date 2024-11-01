@@ -34,7 +34,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public RenderGrouping Render { get; init; } = new();
     public sealed class RenderGrouping
     {
-        [IntRange(50, 500, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        [IntRange(50, 200, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
         public int RefreshRate { get; init; } = 80;
     }
 

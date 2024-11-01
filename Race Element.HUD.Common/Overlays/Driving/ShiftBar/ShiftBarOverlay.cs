@@ -23,6 +23,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private CachedBitmap _cachedBackground;
     private CachedBitmap _cachedRpmLines;
+    private CachedBitmap _cachedFlashBar;
 
     private readonly List<CachedBitmap> _cachedColorBars = [];
     private readonly List<(float percentage, Color color)> _colors = [];
@@ -121,6 +122,28 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 g.FillRoundedRectangle(hatchBrush, hatchRect, 3);
             }));
 
+        _cachedFlashBar = new(WorkingSpace.Width, WorkingSpace.Height, g =>
+        {
+            Rectangle area = Rectangle.Round(WorkingSpace);
+
+            using LinearGradientBrush whiteToDarkGradientVertical = new(area, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(60, 20, 20, 20), -90f);
+            g.FillRoundedRectangle(whiteToDarkGradientVertical, Rectangle.Round(BarSpace), 3);
+
+            Color primaryColor = _config.Colors.FlashColor;
+            Color secondaryColor = Color.FromArgb(170, primaryColor);
+
+            using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
+            g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
+
+            using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 75, 75, 75), secondaryColor);
+            Rectangle hatchRect = Rectangle.Round(BarSpace);
+            int hatchPadding = 2;
+            hatchRect.X = hatchRect.X + hatchPadding;
+            hatchRect.Y = hatchRect.Y + hatchPadding;
+            hatchRect.Width = hatchRect.Width - hatchPadding * 2;
+            hatchRect.Height = hatchRect.Height - hatchPadding * 2;
+            g.FillRoundedRectangle(hatchBrush, hatchRect, 3);
+        });
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
             var model = _model;
@@ -169,6 +192,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     {
         _cachedBackground?.Dispose();
         _cachedRpmLines?.Dispose();
+        _cachedFlashBar?.Dispose();
 
         foreach (var item in _cachedColorBars) item.Dispose();
         _cachedColorBars.Clear();
@@ -187,29 +211,29 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         if (!IsPreviewing)
         {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
-            _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
+            //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
             // test data    ------------
-            //_model.MaxRpm = 11000;
-            //int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
-            //if (!up) increment *= -4;
-            //_model.Rpm = _model.Rpm + increment;
-            //if (up && _model.Rpm > _model.MaxRpm)
-            //{
-            //    _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
-            //    shiftsDone++;
-            //}
-            //if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 6f)
-            //{
-            //    _model.Rpm = _model.MaxRpm;
-            //    shiftsDone++;
-            //}
-            //if (shiftsDone > 5)
-            //{
-            //    up = !up;
-            //    shiftsDone = 0;
-            //}
+            _model.MaxRpm = 11000;
+            int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
+            if (!up) increment *= -4;
+            _model.Rpm = _model.Rpm + increment;
+            if (up && _model.Rpm > _model.MaxRpm)
+            {
+                _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+                shiftsDone++;
+            }
+            if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 9f)
+            {
+                _model.Rpm = _model.MaxRpm;
+                shiftsDone++;
+            }
+            if (shiftsDone > 5)
+            {
+                up = !up;
+                shiftsDone = 0;
+            }
 
             // test data    ------------
 
@@ -239,6 +263,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         return (double)(currentRpm - hideRpm) / (maxRpm - hideRpm);
     }
 
+    private bool _flashFlip;
+    private long _lastFlash;
     private void DrawBar(Graphics g)
     {
         RectangleF percented = new(BarSpace.ToVector4());
@@ -255,7 +281,23 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
         g.SetClip(percented);
-        _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+        if (barIndex < _colors.Count - 1)
+            _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+        else
+        {
+            if (_flashFlip)
+                _cachedFlashBar.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            else
+                _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+
+            TimeSpan flash = TimeSpan.FromMilliseconds(70);
+            if (!_flashFlip) flash = TimeSpan.FromMilliseconds(30);
+            if (TimeProvider.System.GetElapsedTime(_lastFlash) > flash)
+            {
+                _flashFlip = !_flashFlip;
+                _lastFlash = TimeProvider.System.GetTimestamp();
+            }
+        }
         g.ResetClip();
     }
 
