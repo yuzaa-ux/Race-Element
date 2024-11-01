@@ -25,6 +25,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
         [IntRange(100, 10_000, 100)]
         public int HideRpm { get; init; } = 4_500;
+        public readonly int MinVisibleRpm = 1500;
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point")]
         public bool RedlineMarker { get; init; } = true;

@@ -174,7 +174,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             if (_config.Data.RedlineMarker)
             {
                 var upshiftPercentages = GetUpShiftPercentages();
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm);
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
                 float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(Pens.Red, x, 4, x, _config.Size.Height - 4);
             }
@@ -254,10 +254,10 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     /// <param name="hideRpm"></param>
     /// <permission cref="<see cref="Reinier Klarenberg"/>"
     /// <returns></returns>
-    private static double GetAdjustedPercentToHideRpm(int currentRpm, int maxRpm, int hideRpm)
+    private static double GetAdjustedPercentToHideRpm(int currentRpm, int maxRpm, int hideRpm, int minVisibleRpm)
     {
-        if (hideRpm > maxRpm - 1500)
-            hideRpm = maxRpm - 1500;
+        if (hideRpm > maxRpm - minVisibleRpm)
+            hideRpm = maxRpm - minVisibleRpm;
 
         return (double)(currentRpm - hideRpm) / (maxRpm - hideRpm);
     }
@@ -271,7 +271,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         if (_model.Rpm > 0 && _model.MaxRpm > 0)
             rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
 
-        double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm);
+        double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
 
         adjustedPercent.Clip(0.05f, 1);
 
