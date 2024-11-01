@@ -36,6 +36,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
+    private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(70);
+    private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(30);
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
     {
         WorkingSpace = new(0, 0, _config.Size.Width, _config.Size.Height);
@@ -44,7 +46,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         RefreshRateHz = _config.Render.RefreshRate;
     }
 
-    public override void SetupPreviewData() => _model = new(8500, 9250);
+    public sealed override void SetupPreviewData() => _model = new(8500, 9250);
 
     private (float earlyPercentage, float redlinePercentage) GetUpShiftPercentages()
     {
@@ -74,7 +76,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
         _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
     }
-    public override void BeforeStart()
+    public sealed override void BeforeStart()
     {
         UpdateColorDictionary();
 
@@ -187,7 +189,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         }
     }
 
-    public override void BeforeStop()
+    public sealed override void BeforeStop()
     {
         _cachedBackground?.Dispose();
         _cachedRpmLines?.Dispose();
@@ -198,14 +200,14 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         _maxRpmDetectionJob?.CancelJoin();
     }
-    public override bool ShouldRender() => true;
+    public sealed override bool ShouldRender() => true;
 
     // demo stuff
     private int shiftsDone = 0;
     private bool up = true;
     // demo stuff
 
-    public override void Render(Graphics g)
+    public sealed override void Render(Graphics g)
     {
 
         if (!IsPreviewing)
@@ -268,14 +270,10 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     {
         RectangleF percented = new(BarSpace.ToVector4());
         double rpmPercentage = 0;
-        if (_model.Rpm > 0 && _model.MaxRpm > 0)
-            rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
+        if (_model.Rpm > 0 && _model.MaxRpm > 0) rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
 
         double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
-
         adjustedPercent.Clip(0.05f, 1);
-
-        //var barDrawWidth = (int)(_config.Bar.Width * adjustedPercent);
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
@@ -284,14 +282,9 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         else
         {
-            if (_flashFlip)
-                _cachedFlashBar.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
-            else
-                _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            (_flashFlip ? _cachedFlashBar : _cachedColorBars[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
-            TimeSpan flash = TimeSpan.FromMilliseconds(70);
-            if (!_flashFlip) flash = TimeSpan.FromMilliseconds(30);
-            if (TimeProvider.System.GetElapsedTime(_lastFlash) > flash)
+            if (TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
             {
                 _flashFlip = !_flashFlip;
                 _lastFlash = TimeProvider.System.GetTimestamp();
@@ -315,7 +308,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     private sealed class MaxRpmDetectionJob(ShiftBarOverlay shiftBarOverlay) : AbstractLoopJob
     {
         private int _lastMaxRpm = -1;
-        public override void RunAction()
+        public sealed override void RunAction()
         {
             var model = shiftBarOverlay._model;
             if (_lastMaxRpm != model.MaxRpm)
