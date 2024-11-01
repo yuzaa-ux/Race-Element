@@ -23,8 +23,8 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public sealed class DataGrouping
     {
         [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM.")]
-        [IntRange(0, 9000, 100)]
-        public int HideRpm { get; init; } = 3000;
+        [IntRange(100, 9000, 100)]
+        public int HideRpm { get; init; } = 100;
 
         public bool ShowUpshiftLine { get; init; } = true;
     }
@@ -33,7 +33,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public RenderGrouping Render { get; init; } = new();
     public sealed class RenderGrouping
     {
-        [IntRange(50, 1000, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        [IntRange(50, 500, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
         public int RefreshRate { get; init; } = 80;
     }
 

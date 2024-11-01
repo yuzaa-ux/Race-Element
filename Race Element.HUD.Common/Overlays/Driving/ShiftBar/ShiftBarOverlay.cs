@@ -34,7 +34,6 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
-
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
     {
         WorkingSpace = new(0, 0, _config.Size.Width, _config.Size.Height);
@@ -43,7 +42,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         RefreshRateHz = _config.Render.RefreshRate;
     }
 
-    public override void SetupPreviewData() => _model = new(8500, 9250);
+    public override void SetupPreviewData() => _model = new(8500, 11050);
 
     private void UpdateColorDictionary()
     {
@@ -122,19 +121,20 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             lineCount.ClipMin(0);
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
-            using Pen linePen = new(brush, 1.6f );
+            using Pen linePen = new(brush, 1.6f);
 
             double thousandPercent = 1000d / (model.MaxRpm - _config.Data.HideRpm) * lineCount;
-            double baseX = _config.Size.Width  / lineCount * thousandPercent;
+            double baseX = _config.Size.Width / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
                 int x = (int)(i * baseX);
-                g.DrawLine(linePen, x, 1, x, _config.Size.Height  - 1);
+                g.DrawLine(linePen, x, 1, x, _config.Size.Height - 1);
             }
 
             if (_config.Data.ShowUpshiftLine)
             {
-                //g.DrawLine(linePen, x, 1, x, _config.Size.Height  - 1);
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Upshift / 100f), model.MaxRpm, _config.Data.HideRpm);
+                g.DrawLine(Pens.Red, (int)(_config.Size.Width * adjustedPercent), 1, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 1);
             }
         });
 
@@ -164,23 +164,38 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
-            // test data
+            // test data    ------------
             _model.MaxRpm = 11000;
 
             bool up = Random.Shared.Next(0, 2) == 1;
-            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 29) : -7);
-            if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm - _model.MaxRpm / 12;
-            // test data
+            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 27) : -7);
+            if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+            // test data    ------------
 
             if (_model.Rpm < 0) _model.Rpm = 0;
             if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm;
-
-
         }
 
         _cachedBackground?.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         DrawBar(g);
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentRpm"></param>
+    /// <param name="maxRpm"></param>
+    /// <param name="hideRpm"></param>
+    /// <permission cref="<see cref="Reinier Klarenberg"/>"
+    /// <returns></returns>
+    private static double GetAdjustedPercentToHideRpm(int currentRpm, int maxRpm, int hideRpm)
+    {
+        if (hideRpm > maxRpm)
+            hideRpm = maxRpm - maxRpm / 10;
+
+        return (double)(currentRpm - hideRpm) / (maxRpm - hideRpm);
     }
 
     private void DrawBar(Graphics g)
@@ -190,8 +205,12 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         if (_model.Rpm > 0 && _model.MaxRpm > 0)
             rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
 
+        double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm);
+
         rpmPercentage.Clip(0, 1);
-        percented.Width = (float)(BarSpace.Width * rpmPercentage);
+
+        //var barDrawWidth = (int)(_config.Bar.Width * adjustedPercent);
+        percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
         g.SetClip(percented);
