@@ -4,6 +4,7 @@ using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.Util.SystemExtensions;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
@@ -48,7 +49,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     {
         // configured percentages (0-100%)
         float earlyPercentage = _config.Upshift.Early;
-        float upshiftPercentage = _config.Upshift.Upshift;
+        float upshiftPercentage = _config.Upshift.Redline;
 
         if (GameWhenStarted.HasFlag(Game.RaceRoom))
         {
@@ -64,8 +65,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _colors.Clear();
         _colors.Add((0.7f, Color.FromArgb(_config.Colors.NormalOpacity, _config.Colors.NormalColor)));
         _colors.Add((earlyPercentage / 100f, Color.FromArgb(_config.Colors.EarlyOpacity, _config.Colors.EarlyColor)));
-        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.UpshiftOpacity, _config.Colors.UpshiftColor)));
-        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.UpshiftOpacity, _config.Colors.UpshiftColor)));
+        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
+        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
     }
     public override void BeforeStart()
     {
@@ -113,34 +114,34 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             var model = _model;
             if (model.MaxRpm == 0) return;
 
-            int lineCount = (int)Math.Floor((model.MaxRpm - _config.Data.HideRpm) / 1000d);
+            int totalRpm = model.MaxRpm - _config.Data.HideRpm;
+            totalRpm.ClipMin(2000);
 
-            int leftOver = (model.MaxRpm - _config.Data.HideRpm) % 1000;
+            int lineCount = (int)Math.Floor(totalRpm / 1000d);
+
+            int leftOver = totalRpm % 1000;
             if (leftOver < 70)
                 lineCount--;
 
             lineCount.ClipMin(0);
+            if (lineCount == 0) return;
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
             using Pen linePen = new(brush, 1.6f);
 
-            double thousandPercent = 1000d / (model.MaxRpm - _config.Data.HideRpm) * lineCount;
-            double baseX = _config.Size.Width / lineCount * thousandPercent;
+            double thousandPercent = 1000d / totalRpm * lineCount;
+            if (thousandPercent == 0) return;
+            double baseX = BarSpace.Width / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
-                int x = (int)(i * baseX);
-                g.DrawLine(linePen, x, 1, x, _config.Size.Height - 1);
+                float x = (float)(BarSpace.X + (i * baseX));
+                g.DrawLine(linePen, x, 2, x, _config.Size.Height - 2);
             }
 
-            if (_config.Data.ShowEarlyUpshiftLine)
+            if (_config.Data.RedlineMarker)
             {
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Early / 100f), model.MaxRpm, _config.Data.HideRpm);
-                g.DrawLine(Pens.Yellow, (int)(_config.Size.Width * adjustedPercent), 4, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 4);
-            }
-
-            if (_config.Data.ShowUpshiftLine)
-            {
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Upshift / 100f), model.MaxRpm, _config.Data.HideRpm);
-                g.DrawLine(Pens.Red, (int)(_config.Size.Width * adjustedPercent), 4, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 4);
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Redline / 100), model.MaxRpm, _config.Data.HideRpm);
+                float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
+                g.DrawLine(Pens.Red, x, 4, x, _config.Size.Height - 4);
             }
         });
 
@@ -153,14 +154,20 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     public override void BeforeStop()
     {
-        _maxRpmDetectionJob?.CancelJoin();
         _cachedBackground?.Dispose();
         _cachedRpmLines?.Dispose();
-        foreach (var item in _cachedColorBars)
-            item.Dispose();
+
+        foreach (var item in _cachedColorBars) item.Dispose();
         _cachedColorBars.Clear();
+
+        _maxRpmDetectionJob?.CancelJoin();
     }
     public override bool ShouldRender() => true;
+
+// demo stuff
+    private int shiftsDone = 0;
+    private bool up = true;
+// demo stuff
 
     public override void Render(Graphics g)
     {
@@ -172,10 +179,25 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             // test data    ------------
             _model.MaxRpm = 11000;
+            int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
+            if (!up) increment *= -4;
+            _model.Rpm = _model.Rpm + increment;
+            if (up && _model.Rpm > _model.MaxRpm)
+            {
+                _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+                shiftsDone++;
+            }
+            if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 6f)
+            {
+                _model.Rpm = _model.MaxRpm;
+                shiftsDone++;
+            }
+            if (shiftsDone > 5)
+            {
+                up = !up;
+                shiftsDone = 0;
+            }
 
-            bool up = Random.Shared.Next(0, 2) == 1;
-            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 27) : -7);
-            if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
             // test data    ------------
 
             if (_model.Rpm < 0) _model.Rpm = 0;
@@ -213,7 +235,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm);
 
-        rpmPercentage.Clip(0, 1);
+        adjustedPercent.Clip(0.05f, 1);
 
         //var barDrawWidth = (int)(_config.Bar.Width * adjustedPercent);
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
