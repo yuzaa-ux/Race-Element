@@ -57,20 +57,11 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public sealed class ColorsGrouping
     {
         public Color NormalColor { get; init; } = Color.FromArgb(255, 5, 255, 5);
-        [IntRange(75, 255, 1)]
-        public int NormalOpacity { get; init; } = 255;
 
         public Color EarlyColor { get; init; } = Color.FromArgb(255, 255, 255, 0);
-        [IntRange(75, 255, 1)]
-        public int EarlyOpacity { get; init; } = 255;
 
         public Color RedlineColor { get; init; } = Color.FromArgb(255, 255, 4, 4);
-        [IntRange(75, 255, 1)]
-        public int RedlineOpacity { get; init; } = 255;
 
         public Color FlashColor { get; init; } = Color.FromArgb(255, 0, 131, 255);
-        [IntRange(75, 255, 1)]
-        public int FlashOpacity { get; init; } = 255;
     }
 }
-

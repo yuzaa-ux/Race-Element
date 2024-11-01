@@ -46,7 +46,6 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     public override void SetupPreviewData() => _model = new(8500, 11050);
 
-
     private (float earlyPercentage, float redlinePercentage) GetUpShiftPercentages()
     {
         // configured percentages (0-100%)
@@ -71,9 +70,9 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         var percentages = GetUpShiftPercentages();
 
         _colors.Clear();
-        _colors.Add((0.6f, Color.FromArgb(_config.Colors.NormalOpacity, _config.Colors.NormalColor)));
-        _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(_config.Colors.EarlyOpacity, _config.Colors.EarlyColor)));
-        _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
+        _colors.Add((0.6f, Color.FromArgb(255, _config.Colors.NormalColor)));
+        _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
+        _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
     }
     public override void BeforeStart()
     {
