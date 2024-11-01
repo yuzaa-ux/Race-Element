@@ -78,14 +78,16 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         _cachedBackground = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
-            int horizontalPadding = 1;
-            int verticalPadding = 1;
+            int horizontalPadding = 2;
+            int verticalPadding = 2;
             RectangleF barArea = new(horizontalPadding, verticalPadding, WorkingSpace.Width - horizontalPadding * 2, WorkingSpace.Height - verticalPadding * 2);
 
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             using SolidBrush darkBrush = new(Color.FromArgb(90, Color.Black));
-            g.FillRoundedRectangle(darkBrush, Rectangle.Round(barArea), 4);
+            g.FillRoundedRectangle(darkBrush, Rectangle.Round(barArea), 3);
+            using Pen darkPen = new(darkBrush, 1);
+            g.DrawRoundedRectangle(darkPen, Rectangle.Round(barArea), 3);
         });
 
         _cachedColorBars.Clear();
@@ -95,39 +97,45 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 Rectangle area = Rectangle.Round(WorkingSpace);
 
                 using LinearGradientBrush whiteToDarkGradientVertical = new(area, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(60, 20, 20, 20), -90f);
-                g.FillRoundedRectangle(whiteToDarkGradientVertical, Rectangle.Round(BarSpace), 4);
+                g.FillRoundedRectangle(whiteToDarkGradientVertical, Rectangle.Round(BarSpace), 3);
 
-
-                Color primaryColor = _colors.ElementAt(i).Item2;
+                Color primaryColor = _colors.ElementAt(i).color;
                 Color secondaryColor = Color.FromArgb(170, primaryColor);
 
                 using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
-                g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 4);
+                g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
 
                 Color hatchColor = Color.FromArgb(95, primaryColor);
-                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, hatchColor/* Color.FromArgb(95, 0, 20, 0)*/, Color.Transparent);
-                g.FillRoundedRectangle(hatchBrush, Rectangle.Round(BarSpace), 4);
+                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, hatchColor/* Color.FromArgb(95, 0, 20, 0)*/, secondaryColor);
+                g.FillRoundedRectangle(hatchBrush, Rectangle.Round(BarSpace), 5);
             }));
 
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
-            var tempModel = _model;
-            int lineCount = (int)Math.Floor((tempModel.MaxRpm - _config.Data.HideRpm) / 1000d);
+            var model = _model;
+            if (model.MaxRpm == 0) return;
 
-            int leftOver = (tempModel.MaxRpm - _config.Data.HideRpm) % 1000;
+            int lineCount = (int)Math.Floor((model.MaxRpm - _config.Data.HideRpm) / 1000d);
+
+            int leftOver = (model.MaxRpm - _config.Data.HideRpm) % 1000;
             if (leftOver < 70)
                 lineCount--;
 
             lineCount.ClipMin(0);
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
-            using Pen linePen = new(brush, 1.6f * Scale);
+            using Pen linePen = new(brush, 1.6f );
 
-            double thousandPercent = 1000d / (tempModel.MaxRpm - _config.Data.HideRpm) * lineCount;
-            double baseX = _config.Size.Width * Scale / lineCount * thousandPercent;
+            double thousandPercent = 1000d / (model.MaxRpm - _config.Data.HideRpm) * lineCount;
+            double baseX = _config.Size.Width  / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
                 int x = (int)(i * baseX);
-                g.DrawLine(linePen, x, 1, x, _config.Size.Height * Scale - 1);
+                g.DrawLine(linePen, x, 1, x, _config.Size.Height  - 1);
+            }
+
+            if (_config.Data.ShowUpshiftLine)
+            {
+                //g.DrawLine(linePen, x, 1, x, _config.Size.Height  - 1);
             }
         });
 
@@ -154,12 +162,22 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _cachedBackground?.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
         if (!IsPreviewing)
-        {
-            _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
+        {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
+            //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
+
+            // test data
+            _model.MaxRpm = 11000;
+
+            bool up = Random.Shared.Next(0, 2) == 1;
+            _model.Rpm = _model.Rpm + (up ? Random.Shared.Next(0, 20) : -3);
+            if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm - _model.MaxRpm / 12;
+            // test data
 
             if (_model.Rpm < 0) _model.Rpm = 0;
             if (_model.Rpm > _model.MaxRpm) _model.Rpm = _model.MaxRpm;
+
+
         }
 
         DrawBar(g);
@@ -195,7 +213,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         return barIndex;
     }
 
-    private class MaxRpmDetectionJob(ShiftBarOverlay shiftBarOverlay) : AbstractLoopJob
+    private sealed class MaxRpmDetectionJob(ShiftBarOverlay shiftBarOverlay) : AbstractLoopJob
     {
         private int _lastMaxRpm = -1;
         public override void RunAction()

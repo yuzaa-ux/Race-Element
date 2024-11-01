@@ -14,8 +14,21 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [IntRange(100, 800, 10)]
         public int Width { get; init; } = 400;
 
-        [IntRange(18, 50, 2)]
+        [IntRange(12, 50, 2)]
         public int Height { get; init; } = 20;
+    }
+
+
+
+    [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
+    public DataGrouping Data { get; init; } = new();
+    public sealed class DataGrouping
+    {
+        [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM.")]
+        [IntRange(0, 9000, 100)]
+        public int HideRpm { get; init; } = 3000;
+
+        public bool ShowUpshiftLine { get; init; } = true;
     }
 
     [ConfigGrouping("Rendering", "Adjust the size of the shift bar")]
@@ -25,16 +38,6 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [IntRange(50, 120, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
         public int RefreshRate { get; init; } = 80;
     }
-
-    [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
-    public DataGrouping Data { get; init; } = new();
-    public sealed class DataGrouping
-    {
-        [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM.")]
-        [IntRange(0, 9000, 100)]
-        public int HideRpm { get; init; } = 3000;
-    }
-
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" +
         "The displayed early and upshift RPM texts only show in the GUI.\n" +
