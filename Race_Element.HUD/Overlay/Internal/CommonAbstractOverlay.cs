@@ -173,7 +173,6 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                       TimeSpan interval = TimeSpan.FromMilliseconds(tickRefreshRate);
                       TimeSpan waitTime;
                       long lastStart;
-                      Timers.TimeEndPeriod(1);
                       while (Draw)
                       {
                           lastStart = time.GetTimestamp();
@@ -200,10 +199,11 @@ public abstract class CommonAbstractOverlay : FloatingWindow
                           }
 
                           waitTime = interval - time.GetElapsedTime(lastStart);
+                          Timers.TimeBeginPeriod(1);
                           if (waitTime.Ticks > 0)
                               Thread.Sleep(waitTime);
+                          Timers.TimeEndPeriod(1);
                       }
-                      Timers.TimeEndPeriod(1);
                   });
                 renderThread.IsBackground = true;
                 renderThread.SetApartmentState(ApartmentState.MTA);
