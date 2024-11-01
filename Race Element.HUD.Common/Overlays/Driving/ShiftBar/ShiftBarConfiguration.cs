@@ -38,19 +38,17 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public int RefreshRate { get; init; } = 80;
     }
 
-    [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" +
-        "The displayed early and upshift RPM texts only show in the GUI.\n" +
-        "These RPMs will update if you are currently in a lobby, once you adjust any of the settings.")]
+    [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" +"The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
     public UpshiftGrouping Upshift { get; init; } = new UpshiftGrouping();
     public sealed class UpshiftGrouping
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
-        [FloatRange(80.0f, 96.8f, 0.02f, 2)]
+        [FloatRange(69.0f, 96.8f, 0.02f, 2)]
         public float Early { get; init; } = 94.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
-        [FloatRange(97f, 99.98f, 0.02f, 2)]
+        [FloatRange(70f, 99.98f, 0.02f, 2)]
         public float Redline { get; init; } = 97.3f;
     }
 

@@ -63,9 +63,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         }
 
         _colors.Clear();
-        _colors.Add((0.7f, Color.FromArgb(_config.Colors.NormalOpacity, _config.Colors.NormalColor)));
+        _colors.Add((0.6f, Color.FromArgb(_config.Colors.NormalOpacity, _config.Colors.NormalColor)));
         _colors.Add((earlyPercentage / 100f, Color.FromArgb(_config.Colors.EarlyOpacity, _config.Colors.EarlyColor)));
-        _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
         _colors.Add((upshiftPercentage / 100f, Color.FromArgb(_config.Colors.RedlineOpacity, _config.Colors.RedlineColor)));
     }
     public override void BeforeStart()
