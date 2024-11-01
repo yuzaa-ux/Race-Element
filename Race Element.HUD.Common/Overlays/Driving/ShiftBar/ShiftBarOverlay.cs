@@ -137,7 +137,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 75, 75, 75), secondaryColor);
             Rectangle hatchRect = Rectangle.Round(BarSpace);
-            int hatchPadding = 2;
+            int hatchPadding = 1;
             hatchRect.X = hatchRect.X + hatchPadding;
             hatchRect.Y = hatchRect.Y + hatchPadding;
             hatchRect.Width = hatchRect.Width - hatchPadding * 2;
