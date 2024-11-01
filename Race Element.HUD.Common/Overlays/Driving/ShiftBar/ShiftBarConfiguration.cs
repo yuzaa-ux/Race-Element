@@ -23,7 +23,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public sealed class DataGrouping
     {
         [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
-        [IntRange(100, 15_000, 50)]
+        [IntRange(100, 7_000, 100)]
         public int HideRpm { get; init; } = 4_500;
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point")]
