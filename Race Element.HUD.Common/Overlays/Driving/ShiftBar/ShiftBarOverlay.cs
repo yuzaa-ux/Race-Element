@@ -131,10 +131,16 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 g.DrawLine(linePen, x, 1, x, _config.Size.Height - 1);
             }
 
+            if (_config.Data.ShowEarlyUpshiftLine)
+            {
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Early / 100f), model.MaxRpm, _config.Data.HideRpm);
+                g.DrawLine(Pens.Yellow, (int)(_config.Size.Width * adjustedPercent), 4, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 4);
+            }
+
             if (_config.Data.ShowUpshiftLine)
             {
                 double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * _config.Upshift.Upshift / 100f), model.MaxRpm, _config.Data.HideRpm);
-                g.DrawLine(Pens.Red, (int)(_config.Size.Width * adjustedPercent), 1, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 1);
+                g.DrawLine(Pens.Red, (int)(_config.Size.Width * adjustedPercent), 4, (int)(_config.Size.Width * adjustedPercent), _config.Size.Height - 4);
             }
         });
 
