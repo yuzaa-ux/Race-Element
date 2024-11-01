@@ -44,7 +44,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         RefreshRateHz = _config.Render.RefreshRate;
     }
 
-    public override void SetupPreviewData() => _model = new(8500, 11050);
+    public override void SetupPreviewData() => _model = new(8500, 9250);
 
     private (float earlyPercentage, float redlinePercentage) GetUpShiftPercentages()
     {
@@ -149,7 +149,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             if (model.MaxRpm <= 0) return;
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
-            totalRpm.ClipMin(2000);
+            totalRpm.ClipMin(1500);
 
             int lineCount = (int)Math.Floor(totalRpm / 1000d);
 
@@ -256,8 +256,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     /// <returns></returns>
     private static double GetAdjustedPercentToHideRpm(int currentRpm, int maxRpm, int hideRpm)
     {
-        if (hideRpm > maxRpm)
-            hideRpm = maxRpm - maxRpm / 10;
+        if (hideRpm > maxRpm - 1500)
+            hideRpm = maxRpm - 1500;
 
         return (double)(currentRpm - hideRpm) / (maxRpm - hideRpm);
     }
