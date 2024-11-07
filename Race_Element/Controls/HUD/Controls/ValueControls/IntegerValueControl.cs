@@ -136,7 +136,6 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
         value = 0;
         if (string.IsNullOrEmpty(content)) return false;
 
-        Debug.WriteLine(content);
         content = content.Trim();
         if (int.TryParse(content, out int result))
         {
