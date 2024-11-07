@@ -1,6 +1,8 @@
-﻿using RaceElement.Data.Games;
+﻿using MaterialDesignThemes.Wpf;
+using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Configuration;
 using RaceElement.Util.SystemExtensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,8 +14,15 @@ namespace RaceElement.Controls.HUD.Controls.ValueControls;
 internal sealed class IntegerValueControl : IValueControl<int>, IControl
 {
     private readonly Grid _grid;
+
+
+    private readonly Grid _labelSpaceGrid;
     private readonly Label _label;
+    private readonly TextBox _labelTextBox;
+
     private readonly Slider _slider;
+
+    private readonly IntRangeAttribute _intRange;
 
     public FrameworkElement Control => _grid;
     public int Value { get; set; }
@@ -21,6 +30,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
 
     public IntegerValueControl(IntRangeAttribute intRange, ConfigField configField)
     {
+        _intRange = intRange;
         _field = configField;
         _grid = new Grid()
         {
@@ -30,8 +40,14 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             Cursor = Cursors.Hand
         };
         _grid.PreviewMouseLeftButtonUp += (s, e) => Save();
+        _grid.MouseEnter += OnGridMouseEnter;
+        _grid.MouseLeave += OnGridMouseLeave;
         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
+
+        _labelSpaceGrid = new();
+        _grid.Children.Add(_labelSpaceGrid);
+        Grid.SetColumn(_labelSpaceGrid, 0);
 
         _label = new Label()
         {
@@ -39,9 +55,19 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             FontWeight = FontWeights.Bold,
             FontSize = 13,
         };
-        _grid.Children.Add(_label);
+
+
         _label.HorizontalContentAlignment = HorizontalAlignment.Right;
-        Grid.SetColumn(_label, 0);
+        _labelSpaceGrid.Children.Add(_label);
+
+        _labelTextBox = new TextBox()
+        {
+            Visibility = Visibility.Collapsed,
+            Margin = new(0, 0, 0, -1),
+            TextAlignment = TextAlignment.Right,
+            Text = $"{_field.Value}",
+        };
+        _labelSpaceGrid.Children.Add(_labelTextBox);
 
         _slider = new Slider()
         {
@@ -54,7 +80,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
         _slider.ValueChanged += (s, e) =>
         {
             _field.Value = _slider.Value.ToString();
-            _label.Content = _field.Value;
+            UpdateLabels();
         };
         int value = int.Parse(_field.Value.ToString());
         value.Clip(intRange.GetMin(GameManager.CurrentGame), intRange.GetMax(GameManager.CurrentGame));
@@ -74,8 +100,70 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
         };
     }
 
+    private void OnGridMouseEnter(object sender, MouseEventArgs e)
+    {
+        _label.Visibility = Visibility.Collapsed;
+        _labelTextBox.Visibility = Visibility.Visible;
+
+        UpdateLabels();
+    }
+
+    private void OnGridMouseLeave(object sender, MouseEventArgs e)
+    {
+        _label.Visibility = Visibility.Visible;
+        _labelTextBox.Visibility = Visibility.Collapsed;
+
+        if (TryGetTextBoxValue(out int value))
+        {
+            _field.Value = value;
+
+            UpdateLabels();
+
+            _slider.Value = value;
+            Save();
+        }
+    }
+
+    /// <summary>
+    /// Checks whether the textbox value is within the provided Integer range 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    private bool TryGetTextBoxValue(out int value)
+    {
+        string content = _labelTextBox.Text;
+        value = 0;
+        if (string.IsNullOrEmpty(content)) return false;
+
+        Debug.WriteLine(content);
+        content = content.Trim();
+        if (int.TryParse(content, out int result))
+        {
+            // validate if it fits in the integer range;
+            int min = _intRange.GetMin(GameManager.CurrentGame);
+            int max = _intRange.GetMax(GameManager.CurrentGame);
+            int steps = _intRange.Increment;
+            for (int i = min; i <= max; i += steps)
+                if (result == i)
+                {
+                    value = result;
+                    return true;
+                }
+        }
+
+        return false;
+    }
+
+    private void UpdateLabels()
+    {
+        _label.Content = _field.Value;
+        if (_labelTextBox.IsVisible)
+            _labelTextBox.Text = $"{_field.Value}";
+    }
+
     public void Save()
     {
         ConfigurationControls.SaveOverlayConfigField(_field);
     }
+
 }
