@@ -39,13 +39,15 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             Background = new SolidColorBrush(Color.FromArgb(140, 2, 2, 2)),
             Cursor = Cursors.Hand
         };
-        _grid.PreviewMouseLeftButtonUp += (s, e) => Save();
         _grid.MouseEnter += OnGridMouseEnter;
         _grid.MouseLeave += OnGridMouseLeave;
+        _grid.PreviewMouseLeftButtonUp += (s, e) => Save();
+
         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
 
         _labelSpaceGrid = new();
+     
         _grid.Children.Add(_labelSpaceGrid);
         Grid.SetColumn(_labelSpaceGrid, 0);
 
@@ -125,7 +127,8 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
     }
 
     /// <summary>
-    /// Checks whether the textbox value is within the provided Integer range 
+    /// Checks whether the textbox string after successful parsing is within the provided Integer range and tries to match it with the provided <see cref="_intRange"/>.
+    /// if no match was found, 
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
@@ -144,12 +147,20 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             int max = _intRange.GetMax(GameManager.CurrentGame);
             int steps = _intRange.Increment;
 
-            result.Clip(min, max);
-
+            // try to match any of the steps
             for (int i = min; i <= max; i += steps)
                 if (result == i)
                 {
                     value = result;
+                    return true;
+                }
+
+            // clip the result and match it to any of the existing steps
+            result.Clip(min, max);
+            for (int i = min; i <= max; i += steps)
+                if (result < i + steps / 2)
+                {
+                    value = i;
                     return true;
                 }
         }
