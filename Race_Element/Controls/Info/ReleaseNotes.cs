@@ -9,7 +9,8 @@ public static class ReleaseNotes
         {"2.0.0.6", "Multi-Sim:"+
                     "\n- G-Force Trace HUD now allows g forces up to 6G, this to support single seater series."+
                     "\nHUDs:"+
-                    "\n- Can now run up to 500 Hz refresh rate if needed."},
+                    "\n- Can now run up to 500 Hz refresh rate if needed."+
+                    "\n- You can now manually set integer configuration values. Hover an option with a slider to make it appear, Once leave the Option with your mouse to save it."},
         {"2.0.0.4", "Race Element:"+
                     "\n- Minimum height of the app is now smaller at 720p."+
                     "\n- Added New Game selector! It's located at the left-bottom of the app."+
