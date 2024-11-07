@@ -143,6 +143,9 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             int min = _intRange.GetMin(GameManager.CurrentGame);
             int max = _intRange.GetMax(GameManager.CurrentGame);
             int steps = _intRange.Increment;
+
+            result.Clip(min, max);
+
             for (int i = min; i <= max; i += steps)
                 if (result == i)
                 {
