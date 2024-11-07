@@ -3,6 +3,7 @@ using RaceElement.Data.Common;
 using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
+using RaceElement.HUD.Overlay.Util;
 using RaceElement.Util.SystemExtensions;
 using System.Diagnostics;
 using System.Drawing;
@@ -20,6 +21,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
 internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 {
     private readonly ShiftBarConfiguration _config = new();
+    private readonly InfoPanel _upshiftDataPanel;
 
     private CachedBitmap _cachedBackground;
     private CachedBitmap _cachedRpmLines;
@@ -36,23 +38,33 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
-    private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(70);
-    private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(30);
+    private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
+    private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
     {
-        WorkingSpace = new(0, 0, _config.Size.Width, _config.Size.Height);
+        RefreshRateHz = _config.Bar.RefreshRate;
+        WorkingSpace = new(0, 0, _config.Bar.Width, _config.Bar.Height);
         Width = (int)WorkingSpace.Width + 1;
         Height = (int)WorkingSpace.Height + 1;
-        RefreshRateHz = _config.Render.RefreshRate;
+
+        // increase base height and clipmin width to support upshift data panel
+        if (_config.Upshift.DrawUpshiftData)
+        {
+            int panelMinWidth = 300;
+            if (Width < panelMinWidth)
+                Width = panelMinWidth;
+            _upshiftDataPanel = new(11, panelMinWidth) { Y = Height + 1, FirstRowLine = 0 };
+            Height += 3 * _upshiftDataPanel.FontHeight + 1;
+        }
     }
 
-    public sealed override void SetupPreviewData() => _model = new(8500, 9250);
+    public sealed override void SetupPreviewData() => _model = new(_config.Upshift.PreviewRpm, _config.Upshift.MaxPreviewRpm);
 
     private (float earlyPercentage, float redlinePercentage) GetUpShiftPercentages()
     {
         // configured percentages (0-100%)
-        float earlyPercentage = _config.Upshift.Early;
-        float upshiftPercentage = _config.Upshift.Redline;
+        float earlyPercentage = _config.Upshift.EarlyPercentage;
+        float upshiftPercentage = _config.Upshift.RedlinePercentage;
 
         if (GameWhenStarted.HasFlag(Game.RaceRoom))
         {
@@ -170,7 +182,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             for (int i = 1; i <= lineCount; i++)
             {
                 float x = (float)(BarSpace.X + (i * baseX));
-                g.DrawLine(linePen, x, 2, x, _config.Size.Height - 2);
+                g.DrawLine(linePen, x, 2, x, _config.Bar.Height - 2);
             }
 
             if (_config.Data.RedlineMarker)
@@ -178,7 +190,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 var upshiftPercentages = GetUpShiftPercentages();
                 double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
                 float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
-                g.DrawLine(Pens.Red, x, 4, x, _config.Size.Height - 4);
+                g.DrawLine(Pens.Red, x, 4, x, _config.Bar.Height - 4);
             }
         });
 
@@ -199,6 +211,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _cachedColorBars.Clear();
 
         _maxRpmDetectionJob?.CancelJoin();
+        _upshiftDataPanel?.Dispose();
     }
     public sealed override bool ShouldRender() => true;
 
@@ -212,29 +225,30 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         if (!IsPreviewing)
         {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
-            //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
+            _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
             _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
             // test data    ------------
-            _model.MaxRpm = 11000;
-            int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
-            if (!up) increment *= -4;
-            _model.Rpm = _model.Rpm + increment;
-            if (up && _model.Rpm > _model.MaxRpm)
-            {
-                _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
-                shiftsDone++;
-            }
-            if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 9f)
-            {
-                _model.Rpm = _model.MaxRpm;
-                shiftsDone++;
-            }
-            if (shiftsDone > 5)
-            {
-                up = !up;
-                shiftsDone = 0;
-            }
+            //_model.MaxRpm = 11000;
+            //if (_model.Rpm < _model.MaxRpm / 3) _model.Rpm = _model.MaxRpm / 3;
+            //int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
+            //if (!up) increment *= -4;
+            //_model.Rpm = _model.Rpm + increment;
+            //if (up && _model.Rpm > _model.MaxRpm)
+            //{
+            //    _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+            //    shiftsDone++;
+            //}
+            //if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 5f)
+            //{
+            //    _model.Rpm = _model.MaxRpm;
+            //    shiftsDone++;
+            //}
+            //if (shiftsDone > 3)
+            //{
+            //    up = !up;
+            //    shiftsDone = 0;
+            //}
 
             // test data    ------------
 
@@ -245,6 +259,14 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _cachedBackground?.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         DrawBar(g);
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+
+        if (_config.Upshift.DrawUpshiftData)
+        {
+            _upshiftDataPanel.AddLine("Early", $"{_model.MaxRpm * _config.Upshift.EarlyPercentage / 100d:F1}");
+            _upshiftDataPanel.AddLine("Redline", $"{_model.MaxRpm * _config.Upshift.RedlinePercentage / 100d:F1}");
+            _upshiftDataPanel.AddLine("Max", $"{_model.MaxRpm:F1}");
+            _upshiftDataPanel.Draw(g);
+        }
     }
 
 

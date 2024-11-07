@@ -7,15 +7,18 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 {
     public ShiftBarConfiguration() => GenericConfiguration.AllowRescale = false;
 
-    [ConfigGrouping("Dimension", "Adjust the size of the shift bar")]
-    public SizeGrouping Size { get; init; } = new();
+    [ConfigGrouping("Bar", "Adjust the size of the shift bar")]
+    public SizeGrouping Bar { get; init; } = new();
     public sealed class SizeGrouping
     {
         [IntRange(100, 800, 10)]
-        public int Width { get; init; } = 400;
+        public int Width { get; init; } = 500;
 
         [IntRange(12, 50, 2)]
-        public int Height { get; init; } = 20;
+        public int Height { get; init; } = 16;
+
+        [IntRange(50, 200, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        public int RefreshRate { get; init; } = 80;
     }
 
     [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
@@ -24,33 +27,47 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     {
         [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
         [IntRange(100, 10_000, 100)]
-        public int HideRpm { get; init; } = 4_500;
+        public int HideRpm { get; init; } = 3_000;
         public readonly int MinVisibleRpm = 1500;
+
+        [ToolTip("(TODO) Show Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
+        [IntRange(1500, 30_000, 100)]
+        public int ShowRpm { get; init; } = 3_000;
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point")]
         public bool RedlineMarker { get; init; } = true;
     }
 
-    [ConfigGrouping("Rendering", "Adjust the size of the shift bar")]
-    public RenderGrouping Render { get; init; } = new();
-    public sealed class RenderGrouping
-    {
-        [IntRange(50, 200, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
-        public int RefreshRate { get; init; } = 80;
-    }
-
-    [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" +"The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
+    [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
     public UpshiftGrouping Upshift { get; init; } = new UpshiftGrouping();
     public sealed class UpshiftGrouping
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
-        [FloatRange(69.0f, 96.8f, 0.02f, 2)]
-        public float Early { get; init; } = 94.0f;
+        [FloatRange(69.0f, 99.8f, 0.02f, 2)]
+        public float EarlyPercentage { get; init; } = 94.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
         [FloatRange(70f, 99.98f, 0.02f, 2)]
-        public float Redline { get; init; } = 97.3f;
+        public float RedlinePercentage { get; init; } = 97.3f;
+
+        [ToolTip("Only enable this when configuring the Upshift Percentages below." +
+                      "\nDraws the outcome of these percentages when activating this HUD. Including the Max amount of rpm." +
+                      "\n")]
+        public bool DrawUpshiftData { get; init; } = false;
+
+        /// <summary>
+        /// If you know the max rpm you can use this to adjust the Max Rpm in the above Preview Image.
+        /// </summary>
+        [IntRange(10, 17_000, 1)]
+        [ToolTip("Sets the current Rpm in the above preview image.")]
+        public int PreviewRpm { get; init; } = 8500;
+        /// <summary>
+        /// If you know the max rpm you can use this to adjust the Max Rpm in the above Preview Image.
+        /// </summary>
+        [IntRange(10, 17_000, 1)]
+        [ToolTip("Sets the current Max Rpm in the above preview image.")]
+        public int MaxPreviewRpm { get; init; } = 9250;
     }
 
     [ConfigGrouping("Colors", "Adjust the colors used in the shift bar")]
