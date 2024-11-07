@@ -107,6 +107,8 @@ internal sealed class FloatValueControl : IValueControl<float>
     {
         _label.Visibility = Visibility.Collapsed;
         _labelTextBox.Visibility = Visibility.Visible;
+        _labelTextBox.Focus();
+        _labelTextBox.CaretIndex = _labelTextBox.Text.Length;
 
         UpdateLabels(_floatRange.Decimals);
     }

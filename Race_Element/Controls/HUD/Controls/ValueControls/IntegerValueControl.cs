@@ -45,7 +45,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Star) });
 
         _labelSpaceGrid = new();
-     
+
         _grid.Children.Add(_labelSpaceGrid);
         Grid.SetColumn(_labelSpaceGrid, 0);
 
@@ -55,7 +55,6 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             FontWeight = FontWeights.Bold,
             FontSize = 13,
         };
-
 
         _label.HorizontalContentAlignment = HorizontalAlignment.Right;
         _labelSpaceGrid.Children.Add(_label);
@@ -104,7 +103,8 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
     {
         _label.Visibility = Visibility.Collapsed;
         _labelTextBox.Visibility = Visibility.Visible;
-
+        _labelTextBox.Focus();
+        _labelTextBox.CaretIndex = _labelTextBox.Text.Length;
         UpdateLabels();
     }
 
