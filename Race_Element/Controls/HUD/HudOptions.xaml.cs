@@ -259,9 +259,9 @@ public partial class HudOptions : UserControl
     private DateTime _lastOverlayStart = DateTime.MinValue;
     private void HudOptions_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter)
-            if (ToggleViewingOverlay())
-                e.Handled = true;
+        //if (e.Key == Key.Enter)
+        //    if (ToggleViewingOverlay())
+        //        e.Handled = true;
     }
 
     private bool ToggleViewingOverlay()
