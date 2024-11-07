@@ -1,5 +1,4 @@
-﻿using MaterialDesignThemes.Wpf;
-using RaceElement.Data.Games;
+﻿using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Configuration;
 using RaceElement.Util.SystemExtensions;
 using System.Diagnostics;
@@ -14,7 +13,6 @@ namespace RaceElement.Controls.HUD.Controls.ValueControls;
 internal sealed class IntegerValueControl : IValueControl<int>, IControl
 {
     private readonly Grid _grid;
-
 
     private readonly Grid _labelSpaceGrid;
     private readonly Label _label;
