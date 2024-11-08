@@ -18,6 +18,8 @@ internal sealed class LapInfoOverlay : AbstractOverlay
     private readonly LapInfoConfig _config = new();
     private sealed class LapInfoConfig : OverlayConfiguration
     {
+        public LapInfoConfig() => GenericConfiguration.AllowRescale = true;
+
         [ConfigGrouping("Lap Info", "Show or hide inputs or the current gear.")]
         public InfoPanelGrouping InfoPanel { get; init; } = new InfoPanelGrouping();
         public sealed class InfoPanelGrouping
@@ -33,11 +35,6 @@ internal sealed class LapInfoOverlay : AbstractOverlay
 
             [ToolTip("Displays the estimated lap time.")]
             public bool EstimatedTime { get; init; } = true;
-        }
-
-        public LapInfoConfig() : base()
-        {
-            this.GenericConfiguration.AllowRescale = true;
         }
     }
 
