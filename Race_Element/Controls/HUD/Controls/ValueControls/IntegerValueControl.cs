@@ -103,8 +103,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
     {
         _label.Visibility = Visibility.Collapsed;
         _labelTextBox.Visibility = Visibility.Visible;
-        _labelTextBox.Focus();
-        _labelTextBox.CaretIndex = _labelTextBox.Text.Length;
+        _labelTextBox.SelectAll();
         UpdateLabels();
     }
 
