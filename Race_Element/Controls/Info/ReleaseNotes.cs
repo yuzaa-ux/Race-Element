@@ -6,16 +6,21 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.0.0.6", "Multi-Sim:"+
+        {"2.0.1.0", "All HUDs:"+
+                    "\n- Options with sliders now have got an inline editor to type. Hover an option with a slider to make it appear, leave the option with your mouse to save."+
+                    "\n- Can if needed refresh up and beyond 500 Hz."+
+                    "\n\nMulti-Sim:"+
+                    "\n- Added new Shift Bar HUD: refreshes up to 200 Hz."+
                     "\n- G-Force Trace HUD now allows g forces up to 6G, this to support single seater series."+
-                    "\nHUDs:"+
-                    "\n- Can now run up to 500 Hz refresh rate if needed."+
-                    "\n- You can now manually set integer configuration values. Hover an option with a slider to make it appear, Once leave the Option with your mouse to save it."},
+                    "\n\nAssetto Corsa Competizione:"+
+                    "\n- TODO..."
+                    },
         {"2.0.0.4", "Race Element:"+
                     "\n- Minimum height of the app is now smaller at 720p."+
                     "\n- Added New Game selector! It's located at the left-bottom of the app."+
                     "\n\nACC HUDs:"+
-                    "\n- Fixed a crash in track map hud."},
+                    "\n- Fixed a crash in track map hud."
+                    },
         {"2.0.0.2", "Multi-Sim:"+
                     "\n- Improved speed of switching between simulators."+
                     "\n- You might have to select the current simulator after the update."+
