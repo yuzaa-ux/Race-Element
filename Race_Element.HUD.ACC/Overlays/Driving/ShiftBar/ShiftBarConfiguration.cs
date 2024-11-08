@@ -2,7 +2,7 @@
 using RaceElement.HUD.Overlay.Configuration;
 using System.Drawing;
 
-namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
+namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftBar;
 internal sealed class ShiftBarConfiguration : OverlayConfiguration
 {
     public ShiftBarConfiguration() => GenericConfiguration.AllowRescale = false;

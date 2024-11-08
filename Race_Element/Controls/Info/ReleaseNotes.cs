@@ -6,7 +6,7 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.0.1.0", "Race Element:"+
+        {"2.1.0.0", "Race Element:"+
                     "\n- When dragging titlebar when maximized, the app now returns to normal mode."+
                     "\n\nAll HUDs:"+
                     "\n- Options with sliders now have got an inline editor to type. Hover an option with a slider to make it appear, leave the option with your mouse to save."+
@@ -18,7 +18,7 @@ public static class ReleaseNotes
                     "\n\niRacing:"+
                     "\n- Fixed Local Acceleration(G-Force) data mapping."+
                     "\n\nAssetto Corsa Competizione:"+
-                    "\n- TODO..."
+                    "\n- Added new Shift Bar HUD: refreshes up to 200 Hz."
                     },
         {"2.0.0.4", "Race Element:"+
                     "\n- Minimum height of the app is now smaller at 720p."+

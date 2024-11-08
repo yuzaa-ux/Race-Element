@@ -9,6 +9,8 @@ namespace RaceElement.HUD.Overlay.Configuration;
 
 /// <summary>
 /// Provides an abstraction for an overlay configuration.
+/// 
+/// Constructor requires public visibility.
 /// </summary>
 public abstract class OverlayConfiguration
 {
