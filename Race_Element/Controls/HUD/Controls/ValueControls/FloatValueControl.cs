@@ -118,7 +118,7 @@ internal sealed class FloatValueControl : IValueControl<float>
 
         if (TryGetTextBoxValue(out float value))
         {
-            _field.Value = value;
+            _field.Value = value.ToString($"F{_floatRange.Decimals}");
 
             UpdateLabels(_floatRange.Decimals);
 
