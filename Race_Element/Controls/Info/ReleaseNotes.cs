@@ -9,9 +9,12 @@ public static class ReleaseNotes
         {"2.0.1.0", "All HUDs:"+
                     "\n- Options with sliders now have got an inline editor to type. Hover an option with a slider to make it appear, leave the option with your mouse to save."+
                     "\n- Can if needed refresh up and beyond 500 Hz."+
+                    "\n- That have the scaling option can now be scaled to 0.1% instead of 0.2%"+
                     "\n\nMulti-Sim:"+
                     "\n- Added new Shift Bar HUD: refreshes up to 200 Hz."+
                     "\n- G-Force Trace HUD now allows g forces up to 6G, this to support single seater series."+
+                    "\n\niRacing:"+
+                    "\n- Fixed Local Acceleration(G-Force) data mapping."+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- TODO..."
                     },

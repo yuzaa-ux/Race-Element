@@ -17,7 +17,7 @@ public abstract class OverlayConfiguration
         public bool AllowRescale = false;
 
         [ToolTip("Defines the scale of the overlay.")]
-        [FloatRange(0.650f, 3.000f, 0.002f, 3)]
+        [FloatRange(0.650f, 3.000f, 0.001f, 3)]
         public float Scale { get; set; } = 1.00f;
 
         [ToolTip("Sets the transparency of the HUD. This will become noticeable once you active the HUD.")]

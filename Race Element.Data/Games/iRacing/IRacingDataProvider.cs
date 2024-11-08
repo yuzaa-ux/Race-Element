@@ -275,7 +275,7 @@ namespace RaceElement.Data.Games.iRacing
                 // m/s -> km/h
                 localCar.Physics.Velocity = _iRacingSDK.Data.GetFloat(speedDatum) * 3.6f;
                 localCar.Physics.Rotation = Quaternion.CreateFromYawPitchRoll(_iRacingSDK.Data.GetFloat(yawNorthDatum), _iRacingSDK.Data.GetFloat(pitchDatum), _iRacingSDK.Data.GetFloat(rollDatum));
-                localCar.Physics.Acceleration = new(_iRacingSDK.Data.GetFloat(lateralAccelDatum), _iRacingSDK.Data.GetFloat(vertAccelDatum), _iRacingSDK.Data.GetFloat(longitudinalAccelDatum));
+                localCar.Physics.Acceleration = new(_iRacingSDK.Data.GetFloat(lateralAccelDatum) / 9.80665f, _iRacingSDK.Data.GetFloat(vertAccelDatum) / 9.80665f, _iRacingSDK.Data.GetFloat(longitudinalAccelDatum) / 9.80665f);
 
                 localCar.Race.GlobalPosition = _iRacingSDK.Data.GetInt(playerCarPositionDatum);
 
