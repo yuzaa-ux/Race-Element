@@ -179,6 +179,8 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
                     value = i;
                     return true;
                 }
+
+            Debug.WriteLine($"Failed to find value");
         }
 
         return false;

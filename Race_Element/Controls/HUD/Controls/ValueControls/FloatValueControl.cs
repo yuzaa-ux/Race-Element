@@ -1,6 +1,7 @@
 ﻿using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Configuration;
 using RaceElement.Util.SystemExtensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -181,6 +182,8 @@ internal sealed class FloatValueControl : IValueControl<float>
                     value = i;
                     return true;
                 }
+
+            Debug.WriteLine($"Failed to find value");
         }
 
         return false;

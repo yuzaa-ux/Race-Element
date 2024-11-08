@@ -68,7 +68,7 @@ public abstract class OverlayConfiguration
         return configFields;
     }
 
-    internal sealed void SetConfigFields(List<ConfigField> configFields)
+    internal void SetConfigFields(List<ConfigField> configFields)
     {
         if (configFields == null)
             return;
@@ -160,13 +160,13 @@ public abstract class OverlayConfiguration
         }
     }
 
-    public sealed List<PropertyInfo> GetProperties()
+    public List<PropertyInfo> GetProperties()
     {
         List<PropertyInfo> properties = this.GetType().GetRuntimeProperties().ToList();
         return properties;
     }
 
-    private sealed System.Drawing.Color ColorFromToString(string value)
+    private System.Drawing.Color ColorFromToString(string value)
     {
         if (value.Contains("#"))
         {
