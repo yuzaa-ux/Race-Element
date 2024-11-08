@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace RaceElement.HUD.Overlay.Configuration;
 
+/// <summary>
+/// Provides an abstraction for an overlay configuration.
+/// </summary>
 public abstract class OverlayConfiguration
 {
     [ConfigGrouping("HUD", "General settings")]
@@ -65,7 +68,7 @@ public abstract class OverlayConfiguration
         return configFields;
     }
 
-    internal void SetConfigFields(List<ConfigField> configFields)
+    internal sealed void SetConfigFields(List<ConfigField> configFields)
     {
         if (configFields == null)
             return;
@@ -157,13 +160,13 @@ public abstract class OverlayConfiguration
         }
     }
 
-    public List<PropertyInfo> GetProperties()
+    public sealed List<PropertyInfo> GetProperties()
     {
         List<PropertyInfo> properties = this.GetType().GetRuntimeProperties().ToList();
         return properties;
     }
 
-    private System.Drawing.Color ColorFromToString(string value)
+    private sealed System.Drawing.Color ColorFromToString(string value)
     {
         if (value.Contains("#"))
         {
