@@ -65,7 +65,9 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             Margin = new(0, 0, 0, -1),
             TextAlignment = TextAlignment.Right,
             Text = $"{_field.Value}",
+            ContextMenu = null,
         };
+        _labelTextBox.KeyUp += OnLabelTextBoxKeyUp;
         _labelSpaceGrid.Children.Add(_labelTextBox);
 
         _slider = new Slider()
@@ -99,6 +101,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
         };
     }
 
+
     private void OnGridMouseEnter(object sender, MouseEventArgs e)
     {
         _label.Visibility = Visibility.Collapsed;
@@ -111,6 +114,23 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
     {
         _label.Visibility = Visibility.Visible;
         _labelTextBox.Visibility = Visibility.Collapsed;
+
+        if (TryGetTextBoxValue(out int value))
+        {
+            _field.Value = value;
+
+            UpdateLabels();
+
+            _slider.Value = value;
+            Save();
+        }
+    }
+
+
+    private void OnLabelTextBoxKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
 
         if (TryGetTextBoxValue(out int value))
         {

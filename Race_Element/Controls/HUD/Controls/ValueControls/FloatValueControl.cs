@@ -65,7 +65,9 @@ internal sealed class FloatValueControl : IValueControl<float>
             Margin = new(0, 0, 0, -1),
             TextAlignment = TextAlignment.Right,
             Text = $"{_field.Value}",
+            ContextMenu = null,
         };
+        _labelTextBox.KeyUp += OnLabelTextBoxKeyUp;
         _labelSpaceGrid.Children.Add(_labelTextBox);
 
 
@@ -115,6 +117,22 @@ internal sealed class FloatValueControl : IValueControl<float>
     {
         _label.Visibility = Visibility.Visible;
         _labelTextBox.Visibility = Visibility.Collapsed;
+
+        if (TryGetTextBoxValue(out float value))
+        {
+            _field.Value = value.ToString($"F{_floatRange.Decimals}");
+
+            UpdateLabels(_floatRange.Decimals);
+
+            _slider.Value = value;
+            Save();
+        }
+    }
+
+    private void OnLabelTextBoxKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
 
         if (TryGetTextBoxValue(out float value))
         {
