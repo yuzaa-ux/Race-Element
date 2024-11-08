@@ -483,6 +483,13 @@ public partial class MainWindow : Window
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         DecreaseOpacity(0.825, 0.025);
+
+        if (Instance.WindowState == WindowState.Maximized)
+        {
+            Instance.Top = Instance.PointFromScreen(Mouse.GetPosition(this)).Y - titleBar.Height;
+            Instance.WindowState = WindowState.Normal;
+        }
+
         DragMove();
         e.Handled = true;
     }
