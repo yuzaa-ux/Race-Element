@@ -15,7 +15,8 @@ namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
 //#if DEBUG
 [Overlay(
     Name = "Shift Bar",
-    Description = "A Fancy Bar"
+    Description = "A Fancy Bar",
+    Authors = ["Reinier Klarenberg"]
 )]
 //#endif
 internal sealed class ShiftBarOverlay : CommonAbstractOverlay

@@ -6,7 +6,6 @@ using RaceElement.HUD.Overlay.Util;
 using RaceElement.Util.SystemExtensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -17,7 +16,8 @@ namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftBar;
 //#if DEBUG
 [Overlay(
     Name = "Shift Bar",
-    Description = "A Fancy Bar"
+    Description = "A Fancy Bar",
+    Authors = ["Reinier Klarenberg"]
 )]
 //#endif
 internal sealed class ShiftBarOverlay : AbstractOverlay
