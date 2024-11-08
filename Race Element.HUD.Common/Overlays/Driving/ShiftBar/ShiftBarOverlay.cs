@@ -50,7 +50,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         // increase base height and clipmin width to support upshift data panel
         if (_config.Upshift.DrawUpshiftData)
         {
-            int panelMinWidth = 300;
+            int panelMinWidth = 200;
             if (Width < panelMinWidth)
                 Width = panelMinWidth;
             _upshiftDataPanel = new(11, panelMinWidth) { Y = Height + 1, FirstRowLine = 0 };
@@ -225,30 +225,30 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
         if (!IsPreviewing)
         {   // SET MODEL: Before release, uncomment line below and remove everything in-between the test data. it emulates the rpm going up 
-            _model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
-            _model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
+            //_model.Rpm = SimDataProvider.LocalCar.Engine.Rpm;
+            //_model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
             // test data    ------------
-            //_model.MaxRpm = 11000;
-            //if (_model.Rpm < _model.MaxRpm / 3) _model.Rpm = _model.MaxRpm / 3;
-            //int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
-            //if (!up) increment *= -4;
-            //_model.Rpm = _model.Rpm + increment;
-            //if (up && _model.Rpm > _model.MaxRpm)
-            //{
-            //    _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
-            //    shiftsDone++;
-            //}
-            //if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.Early / 100f - _model.MaxRpm / 5f)
-            //{
-            //    _model.Rpm = _model.MaxRpm;
-            //    shiftsDone++;
-            //}
-            //if (shiftsDone > 3)
-            //{
-            //    up = !up;
-            //    shiftsDone = 0;
-            //}
+            _model.MaxRpm = 11000;
+            if (_model.Rpm < _model.MaxRpm / 3) _model.Rpm = _model.MaxRpm / 3;
+            int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
+            if (!up) increment *= -4;
+            _model.Rpm = _model.Rpm + increment;
+            if (up && _model.Rpm > _model.MaxRpm)
+            {
+                _model.Rpm = _model.MaxRpm - _model.MaxRpm / 4;
+                shiftsDone++;
+            }
+            if (!up && _model.Rpm < _model.MaxRpm * _config.Upshift.EarlyPercentage / 100f - _model.MaxRpm / 5f)
+            {
+                _model.Rpm = _model.MaxRpm;
+                shiftsDone++;
+            }
+            if (shiftsDone > 3)
+            {
+                up = !up;
+                shiftsDone = 0;
+            }
 
             // test data    ------------
 

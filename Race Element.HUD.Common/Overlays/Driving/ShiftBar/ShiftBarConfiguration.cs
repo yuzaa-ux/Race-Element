@@ -5,7 +5,7 @@ using System.Drawing;
 namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
 internal sealed class ShiftBarConfiguration : OverlayConfiguration
 {
-    public ShiftBarConfiguration() => GenericConfiguration.AllowRescale = false;
+    internal ShiftBarConfiguration() => GenericConfiguration.AllowRescale = false;
 
     [ConfigGrouping("Bar", "Adjust the size of the shift bar")]
     public SizeGrouping Bar { get; init; } = new();
