@@ -154,7 +154,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             // clip the result and match it to any of the existing steps
             result.Clip(min, max);
             for (int i = min; i <= max; i += steps)
-                if (result < i + steps / 2)
+                if (result > i - steps / 2 && result <= i + steps / 2)
                 {
                     value = i;
                     return true;

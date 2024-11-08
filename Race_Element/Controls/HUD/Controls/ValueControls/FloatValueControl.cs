@@ -149,7 +149,7 @@ internal sealed class FloatValueControl : IValueControl<float>
 
             // try to match any of the steps
             for (float i = min; i <= max; i += steps)
-                if (result == i)
+                if (result > i - steps / 3 && result < i + steps / 3)
                 {
                     value = result;
                     return true;
@@ -157,8 +157,8 @@ internal sealed class FloatValueControl : IValueControl<float>
 
             // clip the result and match it to any of the existing steps
             result.Clip(min, max);
-            for (float i = min; i <= max; i += steps)
-                if (result < i + steps / 2)
+            for (float i = min; i <= max + steps / 3; i += steps)
+                if (result > i - steps / 3 && result < i + steps / 3)
                 {
                     value = i;
                     return true;
