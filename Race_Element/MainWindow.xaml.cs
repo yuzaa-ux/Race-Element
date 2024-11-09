@@ -90,7 +90,7 @@ public partial class MainWindow : Window
             Process.Start(new ProcessStartInfo()
             {
                 FileName = "cmd",
-                Arguments = $"/c start steam://rungameid/{steamID}",
+                Arguments = $"/c start steam://run/{steamID}",
                 WindowStyle = ProcessWindowStyle.Hidden,
             });
         };
@@ -483,6 +483,13 @@ public partial class MainWindow : Window
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         DecreaseOpacity(0.825, 0.025);
+
+        if (Instance.WindowState == WindowState.Maximized)
+        {
+            Instance.Top = Instance.PointFromScreen(Mouse.GetPosition(this)).Y - titleBar.Height;
+            Instance.WindowState = WindowState.Normal;
+        }
+
         DragMove();
         e.Handled = true;
     }
@@ -517,10 +524,15 @@ public partial class MainWindow : Window
                 Thread.Sleep(3);
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
+
+                    if (this.Opacity - steps < target)
+                    {
+                        finalValueReached = true;
+                        return;
+                    }
                     this.Opacity -= steps;
 
-                    if (this.Opacity < target)
-                        finalValueReached = true;
+
                 }));
 
             }

@@ -52,11 +52,11 @@ public sealed class InfoPanel
         _cachedBackground = new CachedBitmap(MaxWidth, Lines.Count * (this.FontHeight + ExtraLineSpacing), g =>
         {
             using SolidBrush backgroundBrush = new(Color.FromArgb(158, 0, 0, 0));
-            g.FillRoundedRectangle(backgroundBrush, new Rectangle(X, Y, this.MaxWidth, Lines.Count * (this.FontHeight + ExtraLineSpacing)), 4);
+            g.FillRoundedRectangle(backgroundBrush, new Rectangle(0, 0, this.MaxWidth, Lines.Count * (this.FontHeight + ExtraLineSpacing)), 4);
 
             if (DrawValueBackground)
             {
-                int y = Y + _font.Height * FirstRowLine;
+                int y = 0 + _font.Height * FirstRowLine;
                 int height = (Lines.Count - FirstRowLine) * (this.FontHeight + ExtraLineSpacing) + (int)_addMonoY - 2;
 
                 int characterWidth = (int)g.MeasureString("M", _font).Width / 2;
@@ -243,6 +243,12 @@ public sealed class InfoPanel
     public void AddDeltaBarWithCenteredText(string centeredText, double min, double max, double value)
     {
         Lines.Add(new CenteredTextedDeltabarLine() { CenteredText = centeredText, Min = min, Max = max, Value = value });
+    }
+
+    public void Dispose()
+    {
+        _cachedBackground?.Dispose();
+        _cachedLine?.Dispose();
     }
 
     private sealed class TextLine : IPanelLine

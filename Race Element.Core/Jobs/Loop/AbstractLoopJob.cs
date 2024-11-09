@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace RaceElement.Core.Jobs.Loop;
 
-public abstract class AbstractLoopJob : IJob
+public abstract partial class AbstractLoopJob : IJob
 {
     /// <summary>Used by the cancel method to wait until job finish.</summary>
     private readonly ManualResetEvent _workerExitEvent = new(false);
@@ -13,7 +12,7 @@ public abstract class AbstractLoopJob : IJob
     private readonly ManualResetEvent _jobSleepEvent = new(false);
 
     /// <summary>Tick interval. At what pace "RunAction" is executed.</summary>
-    private int _intervalMillis = 1;
+    private volatile int _intervalMillis = 1;
 
     /// <summary>Test if the job is running. A job is running when it has been started and has not been canceled yet.</summary>
     /// <returns>true if the job is active, false otherwise</returns>
@@ -22,13 +21,15 @@ public abstract class AbstractLoopJob : IJob
     /// <summary>Set at what interval <see cref="RunAction"/> is executed. If the execution
     /// time is less than the interval it will wait until the next interval,
     /// otherwise it will be executed immediately.
+    /// 
+    /// Throws <see cref="ArgumentOutOfRangeException"/> when set at less than 2.
     /// </summary>
     public int IntervalMillis
     {
         get { return _intervalMillis; }
         set
         {
-            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 2);
             _intervalMillis = value;
         }
     }
@@ -50,7 +51,7 @@ public abstract class AbstractLoopJob : IJob
 
     /// <summary>Callback used to notify the client that <see cref="RunAction"/> takes longer time than expected.</summary>
     /// <param name="millis">Number of milliseconds exceeded from <see cref="IntervalMillis"/>.</param>
-    protected virtual void ExecutionIntervalOverflow(int millis) { }
+    protected virtual void ExecutionIntervalOverflow(TimeSpan millis) { }
 
     /// <summary>Cancel @ execution of the job if <see cref="IsRunning"/> without waiting for finish confirmation(no synchronization).</summary>
     public void Cancel()
@@ -92,19 +93,24 @@ public abstract class AbstractLoopJob : IJob
     /// <summary>Worker thread, loop until "Cancel()" is executed.</summary>
     private void WorkerThread()
     {
-        Stopwatch sw = Stopwatch.StartNew();
+        var time = TimeProvider.System;
+        TimeSpan interval = TimeSpan.FromMilliseconds(IntervalMillis);
+        TimeSpan waitTime;
+
+        long lastStartTime;
         while (IsRunning)
         {
+            lastStartTime = time.GetTimestamp();
             RunAction();
-            int waitTime = (int)(IntervalMillis - sw.ElapsedMilliseconds);
+            waitTime = interval - time.GetElapsedTime(lastStartTime);
 
-            if (waitTime > 0) _jobSleepEvent.WaitOne(waitTime);
-            else if (waitTime < 0) ExecutionIntervalOverflow(-waitTime);
-
-            sw.Restart();
+            if (waitTime.Ticks > 0)
+                _jobSleepEvent.WaitOne(waitTime);
+            else if (waitTime.Ticks < 0)
+                ExecutionIntervalOverflow(waitTime);
         }
 
         AfterCancel();
         _workerExitEvent.Set();
     }
-}
+ }

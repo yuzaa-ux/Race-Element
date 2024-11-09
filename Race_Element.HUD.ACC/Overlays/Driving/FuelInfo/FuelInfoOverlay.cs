@@ -112,6 +112,10 @@ internal sealed class FuelInfoOverlay : AbstractOverlay
         if (!_config.InfoPanel.FuelTime)
             this.Height -= _infoPanel.FontHeight;
     }
+    public override void BeforeStop()
+    {
+        _infoPanel?.Dispose();
+    }
 
     public sealed override bool ShouldRender()
     {

@@ -116,6 +116,11 @@ internal sealed class FuelInfoOverlay : CommonAbstractOverlay
             this.Height -= _infoPanel.FontHeight;
     }
 
+    public override void BeforeStop()
+    {
+        _infoPanel?.Dispose();
+    }
+
     public sealed override bool ShouldRender()
     {
         if (_config.InfoPanel.ShowInSetup && SessionData.Instance.IsSetupMenuVisible)
