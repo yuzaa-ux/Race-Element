@@ -68,6 +68,7 @@ internal sealed class FloatValueControl : IValueControl<float>
             TextAlignment = TextAlignment.Right,
             Text = $"{_field.Value}",
             ContextMenu = null,
+            Background = Brushes.Black,
         };
         _labelTextBox.KeyUp += OnLabelTextBoxKeyUp;
         _labelSpaceGrid.Children.Add(_labelTextBox);
