@@ -10,6 +10,7 @@ public static class ReleaseNotes
                     "\n- When dragging titlebar when maximized, the app now returns to normal mode."+
                     "\n\nAll HUDs:"+
                     "\n- Options with sliders now have got an inline editor to type. Hover an option with a slider to make it appear, leave the option with your mouse to save."+
+                    "\n- Slider options now save when adjusting them with the arrow keys."+
                     "\n- Can if needed refresh up and beyond 500 Hz."+
                     "\n- That have the scaling option can now be scaled to 0.1% instead of 0.2%"+
                     "\n\nMulti-Sim:"+

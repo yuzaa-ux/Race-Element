@@ -2,6 +2,7 @@
 using RaceElement.HUD.Overlay.Configuration;
 using RaceElement.Util.SystemExtensions;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -80,6 +81,7 @@ internal sealed class FloatValueControl : IValueControl<float>
             IsSnapToTickEnabled = true,
             Width = 220
         };
+        _slider.PreviewKeyDown += OnSliderKeyUp;
         _slider.ValueChanged += (s, e) =>
         {
             _field.Value = _slider.Value.ToString($"F{floatRange.Decimals}");
@@ -127,6 +129,32 @@ internal sealed class FloatValueControl : IValueControl<float>
 
             _slider.Value = value;
             Save();
+        }
+    }
+
+    private void OnSliderKeyUp(object sender, KeyEventArgs e)
+    {
+
+        switch (e.Key)
+        {
+            case Key.Down:
+            case Key.Left:
+                {
+                    _slider.Value -= _floatRange.Increment;
+                    e.Handled = true;
+                    Save();
+                    UpdateLabels(_floatRange.Decimals);
+                    break;
+                }
+            case Key.Up:
+            case Key.Right:
+                {
+                    _slider.Value += _floatRange.Increment;
+                    e.Handled = true;
+                    Save();
+                    UpdateLabels(_floatRange.Decimals);
+                    break;
+                }
         }
     }
 

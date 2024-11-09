@@ -66,6 +66,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             TextAlignment = TextAlignment.Right,
             Text = $"{_field.Value}",
             ContextMenu = null,
+            Background = Brushes.Black,
         };
         _labelTextBox.KeyUp += OnLabelTextBoxKeyUp;
         _labelSpaceGrid.Children.Add(_labelTextBox);
@@ -78,6 +79,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             IsSnapToTickEnabled = true,
             Width = 220,
         };
+        _slider.PreviewKeyDown += OnSliderKeyUp;
         _slider.ValueChanged += (s, e) =>
         {
             _field.Value = _slider.Value.ToString();
@@ -100,6 +102,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             Save();
         };
     }
+
 
 
     private void OnGridMouseEnter(object sender, MouseEventArgs e)
@@ -125,7 +128,31 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
             Save();
         }
     }
+    private void OnSliderKeyUp(object sender, KeyEventArgs e)
+    {
 
+        switch (e.Key)
+        {
+            case Key.Down:
+            case Key.Left:
+                {
+                    _slider.Value -= _intRange.Increment;
+                    e.Handled = true;
+                    Save();
+                    UpdateLabels();
+                    break;
+                }
+            case Key.Up:
+            case Key.Right:
+                {
+                    _slider.Value += _intRange.Increment;
+                    e.Handled = true;
+                    Save();
+                    UpdateLabels();
+                    break;
+                }
+        }
+    }
 
     private void OnLabelTextBoxKeyUp(object sender, KeyEventArgs e)
     {
@@ -140,6 +167,7 @@ internal sealed class IntegerValueControl : IValueControl<int>, IControl
 
             _slider.Value = value;
             Save();
+            e.Handled = true;
         }
     }
 
