@@ -162,7 +162,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         {
             var model = _model;
             if (model.MaxRpm <= 0) return;
-            _config.Data.HideRpm = model.MaxRpm - _config.Data.ShowRpm;
+            _config.Data.HideRpm = model.MaxRpm - _config.Data.VisibleRpmAmount;
             _config.Data.HideRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
@@ -174,7 +174,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             if (leftOver < 70 && leftOver != 0)
                 lineCount--;
 
-            Debug.WriteLine($"leftover: {leftOver}, LC: {lineCount}, visible RPM: {totalRpm}");
+            //Debug.WriteLine($"leftover: {leftOver}, LC: {lineCount}, visible RPM: {totalRpm}");
             lineCount.ClipMin(0);
             if (lineCount == 0) return;
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
