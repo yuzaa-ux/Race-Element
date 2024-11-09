@@ -25,9 +25,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public DataGrouping Data { get; init; } = new();
     public sealed class DataGrouping
     {
-        [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
-        [IntRange(100, 10_000, 100)]
-        public int HideRpm { get; init; } = 3_000;
+        public int HideRpm  = 3_000;
         public readonly int MinVisibleRpm = 1500;
 
         [ToolTip("(TODO) Show Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]

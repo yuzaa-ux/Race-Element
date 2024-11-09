@@ -162,27 +162,29 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         {
             var model = _model;
             if (model.MaxRpm <= 0) return;
+            _config.Data.HideRpm = model.MaxRpm - _config.Data.ShowRpm;
+            _config.Data.HideRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
             totalRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int lineCount = (int)Math.Floor(totalRpm / 1000d);
 
-            int leftOver = totalRpm % 1000;
-            if (leftOver < 70)
+            int leftOver = model.MaxRpm % 1000;
+            if (leftOver < 70 && leftOver != 0)
                 lineCount--;
 
+            Debug.WriteLine($"leftover: {leftOver}, LC: {lineCount}, visible RPM: {totalRpm}");
             lineCount.ClipMin(0);
             if (lineCount == 0) return;
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
             using Pen linePen = new(brush, 1.6f);
 
-            double thousandPercent = 1000d / totalRpm * lineCount;
-            if (thousandPercent == 0) return;
-            double baseX = BarSpace.Width / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
-                float x = (float)(BarSpace.X + (i * baseX));
+                int targetRpm = model.MaxRpm - (i * 1000) - leftOver;
+                double adjustedPercent = GetAdjustedPercentToHideRpm(targetRpm, model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
+                float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(linePen, x, 2, x, _config.Bar.Height - 2);
             }
 
@@ -230,7 +232,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             //_model.MaxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
 
             // test data    ------------
-            _model.MaxRpm = 11000;
+            _model.MaxRpm = 10000;
             if (_model.Rpm < _model.MaxRpm / 3) _model.Rpm = _model.MaxRpm / 3;
             int increment = Random.Shared.Next(0, 2) == 1 ? Random.Shared.Next(0, 43) : -7;
             if (!up) increment *= -4;
