@@ -31,11 +31,11 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public int HideRpm = 3_000;
         public readonly int MinVisibleRpm = 500;
 
-        [ToolTip("The amount of RPM that the bar displays, 500 at minimum.\n")]
+        [ToolTip("The amount of RPM that the bar displays, 500 at minimum, will always be limited by the max rpm of the car.\n")]
         [IntRange(500, 30_000, 100)]
         public int VisibleRpmAmount { get; init; } = 3_000;
 
-        [ToolTip("Shows a vertical line that indicates the optimal upshift point")]
+        [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
     }
 

@@ -25,16 +25,17 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public DataGrouping Data { get; init; } = new();
     public sealed class DataGrouping
     {
-        [ToolTip("Hide Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
-        [IntRange(100, 10_000, 100)]
-        public int HideRpm { get; init; } = 3_000;
-        public readonly int MinVisibleRpm = 1500;
+        /// <summary>
+        /// Used for showing a certain amount of RPM, <see cref="VisibleRpmAmount"/>
+        /// </summary>
+        public int HideRpm = 3_000;
+        public readonly int MinVisibleRpm = 500;
 
-        [ToolTip("(TODO) Show Rpms in the bar, starting from 0.\nIt will always leave 2000 RPM regardless of your setting.")]
-        [IntRange(1500, 30_000, 100)]
-        public int ShowRpm { get; init; } = 3_000;
+        [ToolTip("The amount of RPM that the bar displays, 500 at minimum, will always be limited by the max rpm of the car.\n")]
+        [IntRange(500, 30_000, 100)]
+        public int VisibleRpmAmount { get; init; } = 3_000;
 
-        [ToolTip("Shows a vertical line that indicates the optimal upshift point")]
+        [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
     }
 
@@ -83,3 +84,4 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public Color FlashColor { get; init; } = Color.FromArgb(255, 0, 131, 255);
     }
 }
+

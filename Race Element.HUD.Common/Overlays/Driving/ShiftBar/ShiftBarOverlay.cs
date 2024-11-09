@@ -15,7 +15,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
 //#if DEBUG
 [Overlay(
     Name = "Shift Bar",
-    Description = "A Fancy Bar",
+    Description = "(Beta) A lightweight RPM Bar. Can render up to 200 Hz for some simulators.",
     Authors = ["Reinier Klarenberg"]
 )]
 //#endif
@@ -216,7 +216,6 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _maxRpmDetectionJob?.CancelJoin();
         _upshiftDataPanel?.Dispose();
     }
-    public sealed override bool ShouldRender() => true;
 
     // demo stuff
     private int shiftsDone = 0;
@@ -293,12 +292,13 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     private long _lastFlash;
     private void DrawBar(Graphics g)
     {
-        RectangleF percented = new(BarSpace.ToVector4());
         double rpmPercentage = 0;
         if (_model.Rpm > 0 && _model.MaxRpm > 0) rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
+        if (rpmPercentage < 0.02f) return;
 
         double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
         adjustedPercent.Clip(0.05f, 1);
+        RectangleF percented = new(BarSpace.ToVector4());
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);

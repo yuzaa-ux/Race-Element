@@ -1,4 +1,5 @@
 ﻿using RaceElement.Core.Jobs.Loop;
+using RaceElement.Data.Common;
 using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
@@ -16,7 +17,7 @@ namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftBar;
 //#if DEBUG
 [Overlay(
     Name = "Shift Bar",
-    Description = "A Fancy Bar",
+    Description = "(Beta) A lightweight RPM Bar. Can render up to 200 Hz.",
     Authors = ["Reinier Klarenberg"]
 )]
 //#endif
@@ -46,8 +47,8 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
     {
         RefreshRateHz = _config.Bar.RefreshRate;
         WorkingSpace = new(0, 0, _config.Bar.Width, _config.Bar.Height);
-        Width = WorkingSpace.Width + 1;
-        Height = WorkingSpace.Height + 1;
+        Width = (int)WorkingSpace.Width + 1;
+        Height = (int)WorkingSpace.Height + 1;
 
         // increase base height and clipmin width to support upshift data panel
         if (_config.Upshift.DrawUpshiftData)
@@ -68,6 +69,16 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         float earlyPercentage = _config.Upshift.EarlyPercentage;
         float upshiftPercentage = _config.Upshift.RedlinePercentage;
 
+        if (GameWhenStarted.HasFlag(Game.RaceRoom))
+        {
+            float maxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
+            float upshiftRpm = SimDataProvider.LocalCar.Engine.ShiftUpRpm;
+            if (maxRpm > 0 && upshiftRpm > 0)
+            {
+                upshiftPercentage = upshiftRpm * 100 / maxRpm;
+                earlyPercentage = upshiftPercentage * 0.96f;
+            }
+        }
         return (earlyPercentage, upshiftPercentage);
     }
 
@@ -153,27 +164,29 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         {
             var model = _model;
             if (model.MaxRpm <= 0) return;
+            _config.Data.HideRpm = model.MaxRpm - _config.Data.VisibleRpmAmount;
+            _config.Data.HideRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int totalRpm = model.MaxRpm - _config.Data.HideRpm;
             totalRpm.ClipMin(_config.Data.MinVisibleRpm);
 
             int lineCount = (int)Math.Floor(totalRpm / 1000d);
 
-            int leftOver = totalRpm % 1000;
-            if (leftOver < 70)
+            int leftOver = model.MaxRpm % 1000;
+            if (leftOver < 70 && leftOver != 0)
                 lineCount--;
 
+            //Debug.WriteLine($"leftover: {leftOver}, LC: {lineCount}, visible RPM: {totalRpm}");
             lineCount.ClipMin(0);
             if (lineCount == 0) return;
             using SolidBrush brush = new(Color.FromArgb(220, Color.Black));
             using Pen linePen = new(brush, 1.6f);
 
-            double thousandPercent = 1000d / totalRpm * lineCount;
-            if (thousandPercent == 0) return;
-            double baseX = BarSpace.Width / lineCount * thousandPercent;
             for (int i = 1; i <= lineCount; i++)
             {
-                float x = (float)(BarSpace.X + i * baseX);
+                int targetRpm = model.MaxRpm - (i * 1000) - leftOver;
+                double adjustedPercent = GetAdjustedPercentToHideRpm(targetRpm, model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
+                float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(linePen, x, 2, x, _config.Bar.Height - 2);
             }
 
@@ -181,7 +194,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
             {
                 var upshiftPercentages = GetUpShiftPercentages();
                 double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
-                float x = (float)(BarSpace.X + BarSpace.Width * adjustedPercent);
+                float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(Pens.Red, x, 4, x, _config.Bar.Height - 4);
             }
         });
@@ -205,7 +218,6 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         _maxRpmDetectionJob?.CancelJoin();
         _upshiftDataPanel?.Dispose();
     }
-    public sealed override bool ShouldRender() => true;
 
     // demo stuff
     private int shiftsDone = 0;
@@ -262,6 +274,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
     }
 
 
+
     /// <summary>
     /// 
     /// </summary>
@@ -282,13 +295,15 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
     private long _lastFlash;
     private void DrawBar(Graphics g)
     {
-        RectangleF percented = new(BarSpace.ToVector4());
         double rpmPercentage = 0;
         if (_model.Rpm > 0 && _model.MaxRpm > 0) rpmPercentage = (double)_model.Rpm / _model.MaxRpm;
+        if (rpmPercentage < 0.02f) return;
 
         double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
-        adjustedPercent.Clip(0.05f, 1);
+        adjustedPercent.Clip(0.02f, 1);
+        RectangleF percented = new(BarSpace.ToVector4());
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
+
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
         g.SetClip(percented);
