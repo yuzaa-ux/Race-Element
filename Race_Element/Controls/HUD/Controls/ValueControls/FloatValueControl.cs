@@ -177,13 +177,11 @@ internal sealed class FloatValueControl : IValueControl<float>
             // clip the result and match it to any of the existing steps
             result.Clip(min, max);
             for (float i = min; i <= max + steps / 3; i += steps)
-                if (result > i - steps / 3f && result < i + steps / 3f)
+                if (result > i - steps / 2f && result < i + steps / 2f)
                 {
                     value = i;
                     return true;
                 }
-
-            Debug.WriteLine($"Failed to find value");
         }
 
         return false;
