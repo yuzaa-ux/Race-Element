@@ -61,7 +61,7 @@ internal sealed class TrackMapOverlay : AbstractOverlay
 
         _miniMapCreationJob = new TrackMapCreationJob()
         {
-            IntervalMillis = 1,
+            IntervalMillis = 2,
         };
 
         _miniMapCreationJob.OnMapPositionsCallback += OnMapPositionsCallback;
@@ -144,7 +144,7 @@ internal sealed class TrackMapOverlay : AbstractOverlay
 
         _miniMapCreationJob = new TrackMapCreationJob()
         {
-            IntervalMillis = 1,
+            IntervalMillis = 2,
         };
 
         _miniMapCreationJob.OnMapPositionsCallback += OnMapPositionsCallback;

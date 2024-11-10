@@ -6,6 +6,7 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.1.0.2", "- Fixed Track Map HUD (ACC)." },
         {"2.1.0.0", "Race Element:"+
                     "\n- When dragging titlebar when maximized, the app now returns to normal mode."+
                     "\n\nAll HUDs:"+
