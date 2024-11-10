@@ -36,6 +36,13 @@ internal sealed class LapInfoOverlay : AbstractOverlay
             [ToolTip("Displays the estimated lap time.")]
             public bool EstimatedTime { get; init; } = true;
         }
+
+        [ConfigGrouping("Behavior", "Adjust behavorial settings")]
+        public BehaviorGrouping Behavior { get; init; } = new();
+        public sealed class BehaviorGrouping
+        {
+            public bool HideInRace { get; init; } = false;
+        }
     }
 
     private const int _overlayWidth = 205;
@@ -78,7 +85,13 @@ internal sealed class LapInfoOverlay : AbstractOverlay
         if (newLap.Sector1 != -1 && newLap.Sector2 != -1 && newLap.Sector3 != -1)
             _lastLap = newLap;
     }
+    public override bool ShouldRender()
+    {
+        if (_config.Behavior.HideInRace && pageGraphics.SessionType == ACCSharedMemory.AcSessionType.AC_RACE)
+            return false;
 
+        return base.ShouldRender();
+    }
     public sealed override void Render(Graphics g)
     {
         g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;

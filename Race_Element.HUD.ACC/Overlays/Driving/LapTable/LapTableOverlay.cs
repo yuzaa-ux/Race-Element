@@ -203,6 +203,14 @@ internal sealed class LapTableOverlay : AbstractOverlay
             _columnBackgroundsValid[i].Dispose();
     }
 
+
+    public override bool ShouldRender()
+    {
+        if (_config.Behavior.HideInRace && pageGraphics.SessionType == ACCSharedMemory.AcSessionType.AC_RACE)
+            return false;
+
+        return base.ShouldRender();
+    }
     public sealed override void Render(Graphics g)
     {
         if (!_dataIsPreview)

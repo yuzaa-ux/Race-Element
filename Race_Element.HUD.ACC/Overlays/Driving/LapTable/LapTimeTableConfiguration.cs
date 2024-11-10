@@ -20,5 +20,12 @@ internal sealed class LapTimeTableConfiguration : OverlayConfiguration
         public int Roundness { get; init; } = 2;
     }
 
+    [ConfigGrouping("Behavior", "Adjust behavorial settings")]
+    public BehaviorGrouping Behavior { get; init; } = new();
+    public sealed class BehaviorGrouping
+    {
+        public bool HideInRace { get; init; } = false;
+    }
+
     public LapTimeTableConfiguration() => GenericConfiguration.AllowRescale = true;
 }

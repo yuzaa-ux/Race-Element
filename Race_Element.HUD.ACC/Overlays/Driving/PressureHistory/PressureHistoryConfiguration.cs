@@ -17,6 +17,9 @@ internal sealed class PressureHistoryConfiguration : OverlayConfiguration
     {
         [ToolTip("Whilst the setup screen is visible, the HUD will also be visible.")]
         public bool ShowInSetupScreen { get; init; } = true;
+
+        [ToolTip("Hides this HUD in race sessions.")]
+        public bool HideInRace { get; init; } = false;
     }
 
     [ConfigGrouping("Table", "Adjust settings for the sector data table")]
