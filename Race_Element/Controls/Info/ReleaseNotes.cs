@@ -11,6 +11,7 @@ public static class ReleaseNotes
                     "\n- Brake Temp History HUD can now be automatically hidden in race sessions."+
                     "\n- Tyre Pressure History HUD can now be automatically hidden in race sessions."+
                     "\n- Lap Table HUD can now be automatically hidden in race sessions."+
+                    "\n- Lap Info HUD can now be automatically hidden in race sessions."+
                     "\n- Fixed Track Map HUD (ACC)." },
         {"2.1.0.0", "Race Element:"+
                     "\n- When dragging titlebar when maximized, the app now returns to normal mode."+
