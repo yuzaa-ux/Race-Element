@@ -28,6 +28,7 @@ internal static partial class LocalCarMapper
     [MapProperty(nameof(PageFilePhysics.TC), nameof(@LocalCarData.Electronics.TractionControlActivation))]
     [MapProperty(nameof(PageFilePhysics.Abs), nameof(@LocalCarData.Electronics.AbsActivation))]
     [MapProperty(nameof(PageFilePhysics.Fuel), nameof(@LocalCarData.Engine.FuelLiters))]
+
     private static partial void WithPhysicsPage(PageFilePhysics pagePhysics, LocalCarData commonData);
 
     internal static void AddPhysics(ref PageFilePhysics pagePhysics, ref LocalCarData commonData)
