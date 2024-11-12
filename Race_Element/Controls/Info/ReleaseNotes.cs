@@ -6,6 +6,7 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.1.1.0", "Updated to .NET 9" },
         {"2.1.0.2", "Assetto Corsa Competizione:"+
                     "\n- Tyre Temp History HUD can now be automatically hidden in race sessions."+
                     "\n- Brake Temp History HUD can now be automatically hidden in race sessions."+
