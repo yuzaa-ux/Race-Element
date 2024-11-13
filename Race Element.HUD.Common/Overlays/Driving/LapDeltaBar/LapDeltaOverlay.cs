@@ -1,5 +1,6 @@
 ﻿using RaceElement.Data.Common;
 using RaceElement.Data.Common.SimulatorData;
+using RaceElement.Data.Games;
 using RaceElement.HUD.Common.Overlays.OverlayLapDeltaBar;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
@@ -18,6 +19,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.LapDeltaBar;
     Version = 1,
     OverlayType = OverlayType.Drive,
     OverlayCategory = OverlayCategory.Lap,
+    Game = Game.RaceRoom | Game.Automobilista2 | Game.RaceRoom,
     Authors = ["Reinier Klarenberg", "Dirk Wolf"])]
 internal sealed class LapDeltaOverlay : CommonAbstractOverlay
 {
@@ -176,7 +178,7 @@ internal sealed class LapDeltaOverlay : CommonAbstractOverlay
         int y = _config.Bar.Height + 2;
 
         // TODO: Refactor, either use local car or spectating car.
-        bool isValidLap = SimDataProvider.LocalCar.Timing.IsLapValid;  
+        bool isValidLap = SimDataProvider.LocalCar.Timing.IsLapValid;
         //See above: || !SessionData.Instance.Cars[SessionData.Instance.PlayerCarIndex].Value.CurrentLap.IsInvalid || SimDataProvider.Instance.IsSpectating(SessionData.Instance.PlayerCarIndex, SessionData.Instance.FocusedCarIndex);
 
 
