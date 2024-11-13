@@ -10,7 +10,7 @@ branches:
 image: Visual Studio 2022
 configuration: Release
 before_build: 
-- choco install dotnet-sdk --version 9.0.0-rc2244735
+- choco install dotnet-sdk --pre
 build_script:
 - cmd: dotnet publish -p:PublishProfile=PublishProfile
 artifacts:
