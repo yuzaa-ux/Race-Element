@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaceElement.Data.Games.rFactor2
+namespace RaceElement.Data.Games.rFactor2;
+
+internal static class SessionDataMapper
 {
-    internal static class SessionDataMapper
-    {
-    }
 }
