@@ -37,6 +37,9 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
+
+        [ToolTip("Displays a pit limiter once activated in-game.")]
+        public bool PitLimiter { get; init; } = true;
     }
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
