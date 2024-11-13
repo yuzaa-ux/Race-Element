@@ -44,11 +44,16 @@ internal sealed class SCS2DataProvider : AbstractSimDataProvider
         SimDataProvider.LocalCar.Engine.MaxRpm = (int)data.TruckValues.ConstantsValues.MotorValues.EngineRpmMax;
         SimDataProvider.LocalCar.Engine.Rpm = (int)data.TruckValues.CurrentValues.DashboardValues.RPM;
 
-        SimDataProvider.LocalCar.Engine.IsRunning = data.TruckValues.CurrentValues.EngineEnabled;
+        SimDataProvider.LocalCar.Engine.IsRunning = data.TruckValues.CurrentValues.EngineEnabled && !data.Paused;
 
-        SimDataProvider.LocalCar.Inputs.Throttle = data.ControlValues.InputValues.Throttle;
-        SimDataProvider.LocalCar.Inputs.Brake = data.ControlValues.InputValues.Brake;
+        SimDataProvider.LocalCar.Inputs.Throttle = data.ControlValues.GameValues.Throttle;
+        SimDataProvider.LocalCar.Inputs.Brake = data.ControlValues.GameValues.Brake;
         SimDataProvider.LocalCar.Inputs.Steering = data.ControlValues.GameValues.Steering;
+
+        var acceleration = data.TruckValues.CurrentValues.AccelerationValues.CabinAngularAcceleration;
+        SimDataProvider.LocalCar.Physics.Acceleration = new(acceleration.X , acceleration.Y , acceleration.Z );
+
+        SimDataProvider.GameData.IsGamePaused = data.Paused;
     }
 
     public override List<string> GetCarClasses() => [];
