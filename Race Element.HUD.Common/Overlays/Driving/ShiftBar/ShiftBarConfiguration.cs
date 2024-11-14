@@ -48,11 +48,11 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public sealed class UpshiftGrouping
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
-        [FloatRange(69.0f, 99.8f, 0.001f, 3)]
+        [FloatRange(39.0f, 99.8f, 0.001f, 3)]
         public float EarlyPercentage { get; init; } = 94.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
-        [FloatRange(70f, 99.98f, 0.001f, 3)]
+        [FloatRange(40f, 99.98f, 0.001f, 3)]
         public float RedlinePercentage { get; init; } = 97.3f;
 
         [ToolTip("Only enable this when configuring the Upshift Percentages below." +

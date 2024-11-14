@@ -86,7 +86,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         var percentages = GetUpShiftPercentages();
 
         _colors.Clear();
-        _colors.Add((0.6f, Color.FromArgb(255, _config.Colors.NormalColor)));
+        _colors.Add((0f, Color.FromArgb(255, _config.Colors.NormalColor)));
         _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
         _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
     }
