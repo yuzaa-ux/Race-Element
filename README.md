@@ -14,8 +14,8 @@
 [Download Latest Release](https://github.com/RiddleTime/Race-Element/releases/latest)
 
 
-## App Requires .NET 8
-https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.0-windows-x64-installer
+## App Requires .NET 9
+https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-9.0.0-windows-x64-installer
 
 ### App
 - WPF
