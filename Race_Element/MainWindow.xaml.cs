@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -286,9 +287,9 @@ public partial class MainWindow : Window
             try
             {
                 string hitCounter = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FRiddleTime%2FRace-Element";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(hitCounter);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                response.Close();
+
+                using HttpClient client = new();
+                client.GetAsync(hitCounter).Wait();
             }
             catch (Exception) { }
     }

@@ -10,7 +10,7 @@ public static class ReleaseNotes
                     "\nnMulti-Sim:"+
                     "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS)."+
                     "\n- Shift Bar: Added option for Pit Limiter."+
-                    "\n\nnAssetto Corsa Competizione:"+
+                    "\n\nAssetto Corsa Competizione:"+
                     "\n- Shift Bar: Added option for Pit Limiter."
                     },
         {"2.1.0.2", "Assetto Corsa Competizione:"+
