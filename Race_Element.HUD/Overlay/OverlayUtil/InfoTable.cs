@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace RaceElement.HUD.Overlay.OverlayUtil;
 
@@ -35,7 +36,7 @@ public sealed class InfoTable
 
     private int previousRowCount = 0;
 
-    private readonly object _lockObj = new();
+    private readonly Lock _lockObj = new();
 
     public InfoTable(float fontSize, int[] columnWidths)
     {

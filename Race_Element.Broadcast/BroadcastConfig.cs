@@ -3,6 +3,7 @@ using RaceElement.Util;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace RaceElement.Broadcast;
 
@@ -18,7 +19,7 @@ public sealed class BroadcastConfig
         public string CommandPassword { get; set; }
     }
 
-    private readonly static object _lock = new();
+    private readonly static Lock _lock = new();
 
     public static Root GetConfiguration()
     {

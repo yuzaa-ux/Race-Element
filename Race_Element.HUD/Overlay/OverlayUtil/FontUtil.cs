@@ -18,8 +18,10 @@ public sealed class FontUtil
     [DllImport("gdi32.dll", ExactSpelling = true)]
     internal static extern bool RemoveFontMemResourceEx(IntPtr fh);
 
+    private static readonly System.Threading.Lock _lockObj = new();
+
     // Some private holders of font information we are loading
-    static private PrivateFontCollection m_pfc = null;
+    private static PrivateFontCollection m_pfc = null;
 
     public static Font FontOrbitron(float size)
     {
@@ -60,7 +62,7 @@ public sealed class FontUtil
         Font font = null;
 
         if (m_pfc != null)
-            lock (m_pfc)
+            lock (_lockObj)
                 if (m_pfc.Families.Length > 0)
                 {
                     // Handy how one of the Font constructors takes a
