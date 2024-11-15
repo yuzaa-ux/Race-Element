@@ -9,6 +9,8 @@ public enum Game : int
     iRacing = (1 << 3),
     RaceRoom = (1 << 4),
     Automobilista2 = (1 << 5),
+    EuroTruckSimulator2 = (1 << 6),
+    AmericanTruckSimulator = (1 << 7),
     //rFactor2,
     // LMU,
 }
@@ -22,6 +24,8 @@ public static class GameExtensions
         public const string IRacing = "iRacing";
         public const string RaceRoom = "RaceRoom Racing Experience";
         public const string Automobilista2 = "Automobilista 2";
+        public const string EuroTruckSimulator2 = "Euro Truck Simulator 2";
+        public const string AmericanTruckSimulator = "American Truck Simulator";
     }
 
     private static class ShortNames
@@ -31,6 +35,8 @@ public static class GameExtensions
         public const string IRacing = "iRacing";
         public const string RaceRoom = "RaceRoom";
         public const string Automobilista2 = "AMS2";
+        public const string EuroTruckSimulator2 = "ETS2";
+        public const string AmericanTruckSimulator = "ATS";
     }
 
     public static string ToFriendlyName(this Game game) => game switch
@@ -40,6 +46,8 @@ public static class GameExtensions
         Game.iRacing => FriendlyNames.IRacing,
         Game.RaceRoom => FriendlyNames.RaceRoom,
         Game.Automobilista2 => FriendlyNames.Automobilista2,
+        Game.EuroTruckSimulator2 => FriendlyNames.EuroTruckSimulator2,
+        Game.AmericanTruckSimulator => FriendlyNames.AmericanTruckSimulator,
         _ => string.Empty
     };
 
@@ -50,6 +58,8 @@ public static class GameExtensions
         Game.iRacing => ShortNames.IRacing,
         Game.RaceRoom => ShortNames.RaceRoom,
         Game.Automobilista2 => ShortNames.Automobilista2,
+        Game.EuroTruckSimulator2 => ShortNames.EuroTruckSimulator2,
+        Game.AmericanTruckSimulator => ShortNames.AmericanTruckSimulator,
         _ => string.Empty
     };
 
@@ -60,6 +70,8 @@ public static class GameExtensions
         FriendlyNames.IRacing => Game.iRacing,
         FriendlyNames.RaceRoom => Game.RaceRoom,
         FriendlyNames.Automobilista2 => Game.Automobilista2,
+        FriendlyNames.EuroTruckSimulator2 => Game.EuroTruckSimulator2,
+        FriendlyNames.AmericanTruckSimulator => Game.AmericanTruckSimulator,
         _ => Game.AssettoCorsaCompetizione,
     };
 
@@ -70,6 +82,8 @@ public static class GameExtensions
         Game.iRacing => 266410,
         Game.RaceRoom => 211500,
         Game.Automobilista2 => 1066890,
+        Game.EuroTruckSimulator2 => 227300,
+        Game.AmericanTruckSimulator => 270880,
         _ => -1
     };
 

@@ -5,9 +5,7 @@ using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.HUD.Overlay.Util;
 using RaceElement.Util.SystemExtensions;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 namespace RaceElement.HUD.Common.Overlays.Driving.ShiftBar;
@@ -27,6 +25,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     private CachedBitmap _cachedBackground;
     private CachedBitmap _cachedRpmLines;
     private CachedBitmap _cachedFlashBar;
+    private CachedBitmap[] _cachedPitLimiter;
 
     private readonly List<CachedBitmap> _cachedColorBars = [];
     private readonly List<(float percentage, Color color)> _colors = [];
@@ -41,6 +40,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
     private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
+
+    private readonly TimeSpan _pimiterLimiterFlipTime = TimeSpan.FromMilliseconds(128);
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
     {
         RefreshRateHz = _config.Bar.RefreshRate;
@@ -85,7 +86,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         var percentages = GetUpShiftPercentages();
 
         _colors.Clear();
-        _colors.Add((0.6f, Color.FromArgb(255, _config.Colors.NormalColor)));
+        _colors.Add((0f, Color.FromArgb(255, _config.Colors.NormalColor)));
         _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
         _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
     }
@@ -97,67 +98,13 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         int verticalBarPadding = 2;
         BarSpace = new(horizontalBarPadding, verticalBarPadding, WorkingSpace.Width - horizontalBarPadding * 2, WorkingSpace.Height - verticalBarPadding * 2);
 
-        _cachedBackground = new(WorkingSpace.Width, WorkingSpace.Height, g =>
-        {
-            int horizontalPadding = 2;
-            int verticalPadding = 2;
-            RectangleF barArea = new(horizontalPadding, verticalPadding, WorkingSpace.Width - horizontalPadding * 2, WorkingSpace.Height - verticalPadding * 2);
-
-            g.CompositingQuality = CompositingQuality.HighQuality;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            using SolidBrush darkBrush = new(Color.FromArgb(90, Color.Black));
-            g.FillRoundedRectangle(darkBrush, Rectangle.Round(barArea), 3);
-            using Pen darkPen = new(darkBrush, 1);
-            g.DrawRoundedRectangle(darkPen, Rectangle.Round(barArea), 3);
-        });
+        _cachedBackground = ShiftBarShapes.CreateBackground(WorkingSpace);
 
         _cachedColorBars.Clear();
         for (int i = 0; i < _colors.Count; i++)
-            _cachedColorBars.Add(new(WorkingSpace.Width, WorkingSpace.Height, g =>
-            {
-                Rectangle area = Rectangle.Round(WorkingSpace);
+            _cachedColorBars.Add(ShiftBarShapes.CreateColoredBar(WorkingSpace, BarSpace, _colors.ElementAt(i).color));
 
-                using LinearGradientBrush whiteToDarkGradientVertical = new(area, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(60, 20, 20, 20), -90f);
-                g.FillRoundedRectangle(whiteToDarkGradientVertical, Rectangle.Round(BarSpace), 3);
-
-                Color primaryColor = _colors.ElementAt(i).color;
-                Color secondaryColor = Color.FromArgb(170, primaryColor);
-
-                using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
-                g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
-
-                using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 75, 75, 75), secondaryColor);
-                Rectangle hatchRect = Rectangle.Round(BarSpace);
-                int hatchPadding = 2;
-                hatchRect.X = hatchRect.X + hatchPadding;
-                hatchRect.Y = hatchRect.Y + hatchPadding;
-                hatchRect.Width = hatchRect.Width - hatchPadding * 2;
-                hatchRect.Height = hatchRect.Height - hatchPadding * 2;
-                g.FillRoundedRectangle(hatchBrush, hatchRect, 3);
-            }));
-
-        _cachedFlashBar = new(WorkingSpace.Width, WorkingSpace.Height, g =>
-        {
-            Rectangle area = Rectangle.Round(WorkingSpace);
-
-            using LinearGradientBrush whiteToDarkGradientVertical = new(area, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(60, 20, 20, 20), -90f);
-            g.FillRoundedRectangle(whiteToDarkGradientVertical, Rectangle.Round(BarSpace), 3);
-
-            Color primaryColor = _config.Colors.FlashColor;
-            Color secondaryColor = Color.FromArgb(170, primaryColor);
-
-            using LinearGradientBrush blackToGreenGradient = new(area, secondaryColor, primaryColor, 0f);
-            g.FillRoundedRectangle(blackToGreenGradient, Rectangle.Round(BarSpace), 3);
-
-            using HatchBrush hatchBrush = new(HatchStyle.LightUpwardDiagonal, Color.FromArgb(95, 75, 75, 75), secondaryColor);
-            Rectangle hatchRect = Rectangle.Round(BarSpace);
-            int hatchPadding = 1;
-            hatchRect.X = hatchRect.X + hatchPadding;
-            hatchRect.Y = hatchRect.Y + hatchPadding;
-            hatchRect.Width = hatchRect.Width - hatchPadding * 2;
-            hatchRect.Height = hatchRect.Height - hatchPadding * 2;
-            g.FillRoundedRectangle(hatchBrush, hatchRect, 3);
-        });
+        _cachedFlashBar = ShiftBarShapes.CreateFlashBar(WorkingSpace, BarSpace, _config);
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
             var model = _model;
@@ -196,6 +143,9 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
                 g.DrawLine(Pens.Red, x, 4, x, _config.Bar.Height - 4);
             }
         });
+
+        if (_config.Data.PitLimiter)
+            _cachedPitLimiter = ShiftBarShapes.CreatePitLimiter(WorkingSpace, BarSpace);
 
         if (!IsPreviewing)
         {
@@ -262,6 +212,10 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         DrawBar(g);
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
+
+        if (_config.Data.PitLimiter && SimDataProvider.LocalCar.Engine.IsPitLimiterOn)
+            DrawPitLimiter(g);
+
         if (_config.Upshift.DrawUpshiftData)
         {
             _upshiftDataPanel.AddLine("Early", $"{_model.MaxRpm * _config.Upshift.EarlyPercentage / 100d:F1}");
@@ -302,12 +256,13 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
+        var cachedColorSpan = CollectionsMarshal.AsSpan(_cachedColorBars);
         g.SetClip(percented);
         if (barIndex < _colors.Count - 1)
-            _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            cachedColorSpan[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         else
         {
-            (_flashFlip ? _cachedFlashBar : _cachedColorBars[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            (_flashFlip ? _cachedFlashBar : cachedColorSpan[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
             if (TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
             {
@@ -328,6 +283,19 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             barIndex = i;
         }
         return barIndex;
+    }
+
+    private bool _pitLimiterFlip;
+    private long _lastPitLimiterFlip;
+    private void DrawPitLimiter(Graphics g)
+    {
+        _cachedPitLimiter.AsSpan()[_pitLimiterFlip ? 0 : 1].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+
+        if (TimeProvider.System.GetElapsedTime(_lastPitLimiterFlip) > _pimiterLimiterFlipTime)
+        {
+            _pitLimiterFlip = !_pitLimiterFlip;
+            _lastPitLimiterFlip = TimeProvider.System.GetTimestamp();
+        }
     }
 
     private sealed class MaxRpmDetectionJob(ShiftBarOverlay shiftBarOverlay) : AbstractLoopJob

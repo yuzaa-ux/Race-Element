@@ -34,7 +34,7 @@ public sealed class InfoPanel
 
     private int previousLineCount = 0;
 
-    private readonly object _lockObj = new();
+    private readonly System.Threading.Lock _lockObj = new();
 
     public InfoPanel(double fontSize, int maxWidth)
     {

@@ -2,48 +2,47 @@
 using System;
 using static RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX.DualSenseXResources;
 
-namespace RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX
+namespace RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX;
+
+internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
 {
-    internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
+    public sealed override void RunAction()
     {
-        public sealed override void RunAction()
+        //if (!overlay.ShouldRender())
+        //    return;
+
+        if (overlay._client == null)
         {
-            //if (!overlay.ShouldRender())
-            //    return;
-
-            if (overlay._client == null)
+            try
             {
-                try
-                {
-                    overlay.CreateEndPoint();
-                    overlay.SetLighting();
-                }
-                catch (Exception)
-                {
-                    // let's not cause an app crash, shall we?
-                }
+                overlay.CreateEndPoint();
+                overlay.SetLighting();
             }
-
-            Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config.ThrottleHaptics);
-            if (tcPacket != null)
+            catch (Exception)
             {
-                overlay.Send(tcPacket);
-                //ServerResponse response = Receive();
-                //HandleResponse(response);
-            }
-
-            Packet absPacket = TriggerHaptics.HandleBraking(overlay._config.BrakeHaptics);
-            if (absPacket != null)
-            {
-                overlay.Send(absPacket);
-                //ServerResponse response = Receive();
-                //HandleResponse(response);
+                // let's not cause an app crash, shall we?
             }
         }
-        public override void AfterCancel()
+
+        Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config.ThrottleHaptics);
+        if (tcPacket != null)
         {
-            overlay?._client?.Close();
-            overlay?._client?.Dispose();
+            overlay.Send(tcPacket);
+            //ServerResponse response = Receive();
+            //HandleResponse(response);
         }
+
+        Packet absPacket = TriggerHaptics.HandleBraking(overlay._config.BrakeHaptics);
+        if (absPacket != null)
+        {
+            overlay.Send(absPacket);
+            //ServerResponse response = Receive();
+            //HandleResponse(response);
+        }
+    }
+    public override void AfterCancel()
+    {
+        overlay?._client?.Close();
+        overlay?._client?.Dispose();
     }
 }

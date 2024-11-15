@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <RootNamespace>RaceElement.Data</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -18,14 +18,19 @@
       <IsTrimmable>False</IsTrimmable>
     </PropertyGroup>
     <ItemGroup>
+      <None Remove="Games\Resources\Icons\ATS.ico" />
+      <None Remove="Games\Resources\Logos\ATS.jpg" />
+      <None Remove="Games\SCS2\scs-telemetry.dll" />
       <None Remove="Games\Resources\Icons\AC.ico" />
       <None Remove="Games\Resources\Icons\ACC.ico" />
       <None Remove="Games\Resources\Icons\AMS2.ico" />
+      <None Remove="Games\Resources\Icons\ETS2.ico" />
       <None Remove="Games\Resources\Icons\iRacing.ico" />
       <None Remove="Games\Resources\Icons\RaceRoom.ico" />
       <None Remove="Games\Resources\Logos\AC.jpg" />
       <None Remove="Games\Resources\Logos\ACC.jpg" />
       <None Remove="Games\Resources\Logos\AMS2.jpg" />
+      <None Remove="Games\Resources\Logos\ETS2.jpg" />
       <None Remove="Games\Resources\Logos\iRacing.jpg" />
       <None Remove="Games\Resources\Logos\RaceRoom.jpg" />
     </ItemGroup>
@@ -44,11 +49,15 @@
       <EmbeddedResource Include="Games\Resources\Icons\AC.ico" />
       <EmbeddedResource Include="Games\Resources\Icons\ACC.ico" />
       <EmbeddedResource Include="Games\Resources\Icons\AMS2.ico" />
+      <EmbeddedResource Include="Games\Resources\Icons\ATS.ico" />
+      <EmbeddedResource Include="Games\Resources\Icons\ETS2.ico" />
       <EmbeddedResource Include="Games\Resources\Icons\iRacing.ico" />
       <EmbeddedResource Include="Games\Resources\Icons\RaceRoom.ico" />
       <EmbeddedResource Include="Games\Resources\Logos\AC.jpg" />
       <EmbeddedResource Include="Games\Resources\Logos\ACC.jpg" />
       <EmbeddedResource Include="Games\Resources\Logos\AMS2.jpg" />
+      <EmbeddedResource Include="Games\Resources\Logos\ATS.jpg" />
+      <EmbeddedResource Include="Games\Resources\Logos\ETS2.jpg" />
       <EmbeddedResource Include="Games\Resources\Logos\iRacing.jpg" />
       <EmbeddedResource Include="Games\Resources\Logos\RaceRoom.jpg" />
     </ItemGroup>

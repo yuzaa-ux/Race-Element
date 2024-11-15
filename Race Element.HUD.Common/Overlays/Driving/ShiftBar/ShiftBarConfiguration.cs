@@ -17,7 +17,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [IntRange(12, 50, 2)]
         public int Height { get; init; } = 16;
 
-        [IntRange(50, 200, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        [IntRange(50, 200, 10, GameMaxs = [150], MaxGames = [Game.iRacing])]
         public int RefreshRate { get; init; } = 80;
     }
 
@@ -37,6 +37,9 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
+
+        [ToolTip("Displays a pit limiter once activated in-game.")]
+        public bool PitLimiter { get; init; } = true;
     }
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
@@ -45,11 +48,11 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public sealed class UpshiftGrouping
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
-        [FloatRange(69.0f, 99.8f, 0.001f, 3)]
+        [FloatRange(39.0f, 99.8f, 0.001f, 3)]
         public float EarlyPercentage { get; init; } = 94.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
-        [FloatRange(70f, 99.98f, 0.001f, 3)]
+        [FloatRange(40f, 99.98f, 0.001f, 3)]
         public float RedlinePercentage { get; init; } = 97.3f;
 
         [ToolTip("Only enable this when configuring the Upshift Percentages below." +

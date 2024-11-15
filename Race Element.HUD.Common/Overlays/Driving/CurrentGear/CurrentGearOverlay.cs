@@ -12,13 +12,18 @@ using Unglide;
 using RaceElement.Data.Common;
 using RaceElement.Data.Common.SimulatorData;
 using RaceElement.Util.SystemExtensions;
+using RaceElement.Data.Games;
 
 namespace RaceElement.HUD.Common.Overlays.OverlayCurrentGear;
 
-[Overlay(Name = "Current Gear", Version = 1.00, OverlayType = OverlayType.Drive,
+[Overlay(
+    Name = "Current Gear",
+    Version = 1.00,
+    OverlayType = OverlayType.Drive,
     OverlayCategory = OverlayCategory.Driving,
-Description = "Shows the selected gear.",
-Authors = ["Reinier Klarenberg, Dirk Wolf"])]
+    Description = "Shows the selected gear.",
+    Authors = ["Reinier Klarenberg, Dirk Wolf"],
+    Game = Game.iRacing | Game.Automobilista2 | Game.AssettoCorsa1 | Game.RaceRoom)]
 internal sealed class CurrentGearOverlay : CommonAbstractOverlay
 {
     private readonly CurrentGearConfiguration _config = new();

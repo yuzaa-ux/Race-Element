@@ -6,7 +6,7 @@ using System.Windows.Input;
 namespace RaceElement.HUD.Common;
 public static class CommonHuds
 {
-    private static readonly object _lock = new();
+    private static readonly Lock _lock = new();
 
     public static readonly SortedDictionary<string, Type> AbstractOverlays = [];
     public static readonly List<CommonAbstractOverlay> ActiveOverlays = [];

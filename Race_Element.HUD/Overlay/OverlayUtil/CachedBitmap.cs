@@ -8,8 +8,7 @@ namespace RaceElement.HUD.Overlay.OverlayUtil;
 
 public sealed class CachedBitmap : IDisposable
 {
-    private readonly object _lockObject = new();
-
+    private readonly System.Threading.Lock _lockObj = new();
     public int Width { get; init; }
     public int Height { get; init; }
     public float Opacity { get; set; }
@@ -44,7 +43,7 @@ public sealed class CachedBitmap : IDisposable
     /// <param name="render">Default true, calls the renderer delegate</param>
     public void SetRenderer(Renderer renderer, bool render = true)
     {
-        lock (_lockObject)
+        lock (_lockObj)
         {
             if (_renderer == renderer)
                 return;
@@ -58,7 +57,7 @@ public sealed class CachedBitmap : IDisposable
 
     public void Render()
     {
-        lock (_lockObject)
+        lock (_lockObj)
         {
             _bitmap ??= new Bitmap(Width, Height, PixelFormat.Format32bppPArgb);
             _internalCachedBitmap?.Dispose();
@@ -97,7 +96,7 @@ public sealed class CachedBitmap : IDisposable
         if (g == null || _bitmap == null)
             return;
 
-        lock (_lockObject)
+        lock (_lockObj)
         {
             if (Opacity < 1f)
             {
@@ -118,7 +117,7 @@ public sealed class CachedBitmap : IDisposable
 
     public void Dispose()
     {
-        lock (_lockObject)
+        lock (_lockObj)
         {
             _bitmap?.Dispose();
             _internalCachedBitmap?.Dispose();

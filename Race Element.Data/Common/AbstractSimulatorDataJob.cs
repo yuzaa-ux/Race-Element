@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaceElement.Data.Common
-{
-    internal abstract class AbstractSimulatorDataJob : AbstractLoopJob
-    {
+namespace RaceElement.Data.Common;
 
-    }
+internal abstract class AbstractSimulatorDataJob : AbstractLoopJob
+{
+
 }

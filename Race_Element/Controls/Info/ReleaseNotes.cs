@@ -6,6 +6,13 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.1.1.0", "Updated to .NET 9"+
+                    "\nnMulti-Sim:"+
+                    "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS)."+
+                    "\n- Shift Bar: Added option for Pit Limiter."+
+                    "\n\nnAssetto Corsa Competizione:"+
+                    "\n- Shift Bar: Added option for Pit Limiter."
+                    },
         {"2.1.0.2", "Assetto Corsa Competizione:"+
                     "\n- Tyre Temp History HUD can now be automatically hidden in race sessions."+
                     "\n- Brake Temp History HUD can now be automatically hidden in race sessions."+

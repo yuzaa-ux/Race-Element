@@ -34,7 +34,7 @@
                 </StackPanel>
             </ControlTemplate>
             <ControlTemplate x:Key="DropDownTemplate">
-                <materialDesign:Card>
+                <materialDesign:Card Margin="-1">
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{Binding FriendlyName}" FontWeight="Bold" TextAlignment="Center"></TextBlock>
                         <Image Source="{Binding Logo}" ToolTip="{Binding FriendlyName}" Width="184" Height="69"></Image>
