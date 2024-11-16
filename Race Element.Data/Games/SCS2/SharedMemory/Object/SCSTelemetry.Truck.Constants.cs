@@ -4,7 +4,7 @@ public partial class SCSTelemetry {
         /// <summary>
         ///     Config values
         /// </summary>
-        public class Constants {
+        public sealed class Constants {
             /// <summary>
             ///     Initialise a constants object
             /// </summary>
@@ -68,7 +68,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Gear, Retarder, etc.
             /// </summary>
-            public class Motor {
+            public sealed class Motor {
                 /// About: RetarderStepCount
                 /// Set to zero if retarder is not mounted on the truck
                 
@@ -148,7 +148,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Fuel, Adblue, etc.
             /// </summary>
-            public class Capacity {
+            public sealed class Capacity {
                 /// <summary>
                 ///     Fuel tank capacity in litres.
                 /// </summary>
@@ -163,7 +163,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     At which value X give a warning?
             /// </summary>
-            public class WarningFactor {
+            public sealed class WarningFactor {
                 /// <summary>
                 ///     Fraction of the fuel capacity bellow which is activated the fuel warning.
                 /// </summary>
