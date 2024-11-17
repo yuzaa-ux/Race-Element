@@ -6,12 +6,14 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.1.1.0", "Updated to .NET 9"+
-                    "\nnMulti-Sim:"+
-                    "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS)."+
+        {"2.2.0.0", "Updated to .NET 9"+
+                    "\n\nMulti-Sim:"+
+                    "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS). See Multi-Sim guide on the website how to set it up."+
                     "\n- Shift Bar HUD: Added option for Pit Limiter."+
+                    "\n- Added new Shift RPM HUD: You can use this with the shift bar to replace the shift indicator hud."+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Shift Bar HUD: Added option for Pit Limiter."+
+                    "\n- Added new Shift RPM HUD: You can use this with the shift bar to replace the shift indicator hud."+
                     "\n- Acc Livery Settings should now load and save correctly in the settings tab."
                     },
         {"2.1.0.2", "Assetto Corsa Competizione:"+
