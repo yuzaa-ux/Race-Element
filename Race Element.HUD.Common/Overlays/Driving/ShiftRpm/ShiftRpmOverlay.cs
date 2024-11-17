@@ -1,6 +1,8 @@
-﻿using RaceElement.HUD.Overlay.Internal;
+﻿using RaceElement.Data.Common;
+using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.HUD.Overlay.Util;
+using RaceElement.Util.SystemExtensions;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -48,9 +50,18 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
         _cachedBackground?.Draw(g);
 
         int x = 0;
+
+        int currentRpm = SimDataProvider.LocalCar.Engine.Rpm;
+        currentRpm.Clip(0, 99_999);
+
+
+        string s = $"{currentRpm}".FillStart(5, '0');
+
         for (int i = 0; i < 5; i++)
         {
-            _bitmaps.GetForNumber((byte)Random.Shared.Next(0, 9)).Draw(g, new(x, 0));
+            if (byte.TryParse(s.AsSpan(i, 1), out byte number))
+                _bitmaps.GetForNumber(number).Draw(g, new(x, 0));
+
             x += _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing;
         }
     }
@@ -76,10 +87,10 @@ internal sealed class RpmBitmaps : IDisposable
             _ => FontUtil.FontConthrax(config.General.FontSize),
         };
 
-        StringFormat format = StringFormat.GenericDefault;
+        using StringFormat format = StringFormat.GenericDefault;
         format.Alignment = StringAlignment.Center;
         format.LineAlignment = StringAlignment.Center;
-        format.FormatFlags = StringFormatFlags.NoClip;
+        //format.FormatFlags = StringFormatFlags.NoClip;
 
         int bitmapWidth = (int)(config.General.FontSize + 4);
         int bitmapHeight = bitmapWidth + 4;
