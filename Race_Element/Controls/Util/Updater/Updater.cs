@@ -4,6 +4,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace RaceElement.Controls.Util.Updater;
 
@@ -24,7 +26,7 @@ internal sealed class AppUpdater
 
         MoveCurrentExecutableToDocumentsPath(currentAssemblyFile.FullName);
 
-        if (!DownloadNewVersion(asset.BrowserDownloadUrl, currentAssemblyFile.FullName))
+        if (!DownloadNewVersion(asset.BrowserDownloadUrl, currentAssemblyFile.FullName).GetAwaiter().GetResult())
         {
             RevertVersion(assemblyStart);
             return;
@@ -80,12 +82,12 @@ internal sealed class AppUpdater
         return true;
     }
 
-    private bool DownloadNewVersion(string downloadUrl, string targetFile)
+    private static async Task<bool> DownloadNewVersion(string downloadUrl, string targetFile)
     {
         try
         {
-            using var client = new WebClient();
-            client.DownloadFile(downloadUrl, targetFile);
+            using var client = new HttpClient();
+            await client.DownloadFileTaskAsync(new(downloadUrl), targetFile);
 
             LogWriter.WriteToLog($"AutoUpdater: Downloaded latest version from {downloadUrl} to file:\n{targetFile}");
 
