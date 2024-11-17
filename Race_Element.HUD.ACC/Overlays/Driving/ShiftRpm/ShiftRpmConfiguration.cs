@@ -1,7 +1,7 @@
 ﻿using RaceElement.HUD.Overlay.Configuration;
 using System.Drawing;
 
-namespace RaceElement.HUD.Common.Overlays.Driving.ShiftRpm;
+namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftRpm;
 internal sealed class ShiftRpmConfiguration : OverlayConfiguration
 {
     public ShiftRpmConfiguration() => GenericConfiguration.AllowRescale = false;

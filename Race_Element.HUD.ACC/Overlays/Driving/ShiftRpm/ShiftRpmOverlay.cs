@@ -3,14 +3,15 @@ using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.HUD.Overlay.Util;
 using RaceElement.Util.SystemExtensions;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace RaceElement.HUD.Common.Overlays.Driving.ShiftRpm;
+namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftRpm;
 [Overlay(
 Name = "Shift RPM",
 Description = "The current engine RPM as text")]
-internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverlay(rectangle, "Shift RPM")
+internal sealed class ShiftRpmOverlay(Rectangle rectangle) : AbstractOverlay(rectangle, "Shift RPM")
 {
     private readonly ShiftRpmConfiguration _config = new();
 
@@ -51,13 +52,12 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
 
         int x = 0;
 
-        int currentRpm = SimDataProvider.LocalCar.Engine.Rpm;
-        currentRpm.Clip(0, 99_999);
+        int currentRpm = pagePhysics.Rpms;
+        currentRpm.Clip(0, 9_999);
 
+        string s = $"{currentRpm}".FillStart(4, '0');
 
-        string s = $"{currentRpm}".FillStart(5, '0');
-
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (byte.TryParse(s.AsSpan(i, 1), out byte number))
                 _bitmaps.GetForNumber(number).Draw(g, new(x, 0));
