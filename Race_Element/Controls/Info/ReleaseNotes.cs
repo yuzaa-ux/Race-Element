@@ -9,9 +9,10 @@ public static class ReleaseNotes
         {"2.1.1.0", "Updated to .NET 9"+
                     "\nnMulti-Sim:"+
                     "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS)."+
-                    "\n- Shift Bar: Added option for Pit Limiter."+
+                    "\n- Shift Bar HUD: Added option for Pit Limiter."+
                     "\n\nAssetto Corsa Competizione:"+
-                    "\n- Shift Bar: Added option for Pit Limiter."
+                    "\n- Shift Bar HUD: Added option for Pit Limiter."+
+                    "\n- Acc Livery Settings should now load and save correctly in the settings tab."
                     },
         {"2.1.0.2", "Assetto Corsa Competizione:"+
                     "\n- Tyre Temp History HUD can now be automatically hidden in race sessions."+
