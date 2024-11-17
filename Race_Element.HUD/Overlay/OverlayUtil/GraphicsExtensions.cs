@@ -29,7 +29,13 @@ public static class GraphicsExtensions
 
     public static void DrawStringWithShadow(this Graphics g, string text, Font font, Brush brush, Color shadowColor, PointF location, float shadowDistance, StringFormat format = null)
     {
-        format ??= StringFormat.GenericDefault;
+        if (format == null)
+        {
+            format ??= StringFormat.GenericDefault;
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
+        }
+
         using SolidBrush shadowBrush = new(shadowColor);
         g.DrawString(text, font, shadowBrush, new PointF(location.X + shadowDistance, location.Y + shadowDistance), format);
         g.DrawString(text, font, brush, location, format);
@@ -37,7 +43,12 @@ public static class GraphicsExtensions
 
     public static void DrawStringWithShadow(this Graphics g, string text, Font font, Color color, Color shadowColor, PointF location, float shadowDistance, StringFormat format = null)
     {
-        format ??= StringFormat.GenericDefault;
+        if (format == null)
+        {
+            format ??= StringFormat.GenericDefault;
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
+        }
 
         using SolidBrush shadowBrush = new(shadowColor);
         using SolidBrush foregroundBrush = new(color);
@@ -61,7 +72,12 @@ public static class GraphicsExtensions
 
     public static void DrawStringWithShadow(this Graphics g, string text, Font font, Color color, Color shadowColor, RectangleF rectangle, float shadowDistance, StringFormat format = null)
     {
-        format ??= StringFormat.GenericDefault;
+        if (format == null)
+        {
+            format ??= StringFormat.GenericDefault;
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
+        }
 
         rectangle.Y += shadowDistance;
         using SolidBrush shadowBrush = new(shadowColor);
@@ -74,7 +90,12 @@ public static class GraphicsExtensions
 
     public static void DrawStringWithShadow(this Graphics g, string text, Font font, Brush color, Brush shadowColor, RectangleF rectangle, float shadowDistance, StringFormat format = null)
     {
-        format ??= StringFormat.GenericDefault;
+        if (format == null)
+        {
+            format ??= StringFormat.GenericDefault;
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
+        }
 
         rectangle.Y += shadowDistance;
         g.DrawString(text, font, shadowColor, rectangle, format);
@@ -156,7 +177,7 @@ public static class GraphicsExtensions
         // top right arc
         if (radiusTopRight != radiusTopLeft)
         {
-            size = new Size(radiusTopRight , radiusTopRight);
+            size = new Size(radiusTopRight, radiusTopRight);
             arc.Size = size;
         }
 

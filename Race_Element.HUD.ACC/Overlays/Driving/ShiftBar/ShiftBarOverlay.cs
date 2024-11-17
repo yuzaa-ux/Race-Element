@@ -13,13 +13,11 @@ using System.Runtime.InteropServices;
 
 namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftBar;
 
-//#if DEBUG
 [Overlay(
     Name = "Shift Bar",
-    Description = "(Beta) A lightweight RPM Bar. Can render up to 200 Hz.",
+    Description = "A lightweight RPM Bar. Can render up to 200 Hz.",
     Authors = ["Reinier Klarenberg"]
 )]
-//#endif
 internal sealed class ShiftBarOverlay : AbstractOverlay
 {
     private readonly ShiftBarConfiguration _config = new();

@@ -34,7 +34,7 @@ public sealed class EntryListTracker
     {
         get
         {
-            if (_entryListCars.Count > 1)
+            if (_entryListCars.Count > 0)
                 return [.. _entryListCars];
             else return [];
         }

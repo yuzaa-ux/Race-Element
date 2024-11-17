@@ -38,24 +38,29 @@ public sealed class FontUtil
         return GetSpecialFont(size, "RaceElement.HUD.Fonts.ConthraxSb.ttf", "Conthrax Sb");
     }
 
-
     public static Font FontRoboto(float size)
     {
         return GetSpecialFont(size, "RaceElement.HUD.Fonts.Roboto-Regular.ttf", "Roboto");
     }
 
-    public static float MeasureWidth(Font font, string text)
+
+    public static float MeasureWidth(Font font, string text) => MeasureString(font, text).Width;
+    public static float MeasureHeight(Font font, string text) => MeasureString(font, text).Height;
+
+    public static SizeF MeasureString(Font font, string text)
     {
-        float width = 0;
+        SizeF size = new();
 
         CachedBitmap c = new(1, 1, g =>
         {
-            width = g.MeasureString(text, font).Width;
+            size = g.MeasureString(text, font);
         });
         c.Dispose();
 
-        return width;
+        return size;
     }
+
+
 
     private static Font GetSpecialFont(float size, string resourceName, string fontName)
     {

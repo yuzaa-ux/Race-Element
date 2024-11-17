@@ -5,7 +5,7 @@ public partial class SCSTelemetry {
         /// <summary>
         ///     Values that are changing a lot oftener
         /// </summary>
-        public class Current {
+        public sealed class Current {
             /// <summary>
             ///     Initialise a current truck object
             /// </summary>
@@ -98,7 +98,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Gear, Retarder, etc.
             /// </summary>
-            public class Motor {
+            public sealed class Motor {
                 /// <summary>
                 ///     Initialise a motor object
                 /// </summary>
@@ -120,7 +120,7 @@ public partial class SCSTelemetry {
                 /// <summary>
                 ///     Slected Gear, HShifter... etc.
                 /// </summary>
-                public class Gear {
+                public sealed class Gear {
                     /// About: HShifterSlot
                     /// 0 means that no slot is selected
                     ///  
@@ -157,7 +157,7 @@ public partial class SCSTelemetry {
                 /// <summary>
                 ///     Brake Values
                 /// </summary>
-                public class Brakes {
+                public sealed class Brakes {
                     /// About: RetarderLevel
                     /// <0;max>
                     ///     where 0 is disabled retarder and max is maximal value found in Truck configuration
@@ -197,7 +197,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Speed, RPM, Pressures, Temperatures
             /// </summary>
-            public class Dashboard {
+            public sealed class Dashboard {
                 /// <summary>
                 ///     Initialise a dashboard object
                 /// </summary>
@@ -306,7 +306,7 @@ public partial class SCSTelemetry {
                 /// <summary>
                 ///     Contains Fuel values
                 /// </summary>
-                public class Fuel {
+                public sealed class Fuel {
                     /// <summary>
                     ///     Amount of fuel in liters
                     /// </summary>
@@ -326,7 +326,7 @@ public partial class SCSTelemetry {
                 /// <summary>
                 ///     Warnings
                 /// </summary>
-                public class Warnings {
+                public sealed class Warnings {
                     /// <summary>
                     ///     Is the air pressure warning active?
                     /// </summary>
@@ -367,7 +367,7 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Lightlevel and state of Lights
             /// </summary>
-            public class Lights {
+            public sealed class Lights {
                 /// About: Blinker Avtive
                 /// This represents the logical enable state of the blinker. It
                 /// it is true as long the blinker is enabled regardless of the

@@ -1,4 +1,5 @@
 ﻿using RaceElement.Data.ACC.Config;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -27,24 +28,30 @@ public partial class AccLiverySettings : UserControl
 
     private void AddToggleListener(ToggleButton button)
     {
-        button.Checked += (s, e) => SaveSettings();
-        button.Unchecked += (s, e) => SaveSettings();
+        button.Checked += (s, e) => SaveSettings(s, e);
+        button.Unchecked += (s, e) => SaveSettings(s, e);
     }
 
     private void LoadSettings()
     {
         var settings = menu.Settings().Get(false);
 
-        toggleTexDDS.IsChecked = settings.TexCap == 1;
-        toggleTexCap.IsChecked = settings.TexDDS == 0;
+        toggleTexDDS.IsChecked = settings.TexDDS == 1;
+        toggleTexCap.IsChecked = settings.TexCap == 0;
     }
 
-    private void SaveSettings()
+    private void SaveSettings(object sender, RoutedEventArgs e)
     {
         var settings = menu.Settings().Get(false);
 
-        settings.TexCap = toggleTexDDS.IsChecked.Value ? 1 : 0;
-        settings.TexDDS = toggleTexCap.IsChecked.Value ? 0 : 1;
+        if (e.Source is ToggleButton toggle)
+        {
+            if (toggle == toggleTexCap)
+                settings.TexCap = toggle.IsChecked.Value ? 0 : 1;
+
+            if (toggle == toggleTexDDS)
+                settings.TexDDS = toggle.IsChecked.Value ? 1 : 0;
+        }
 
         menu.Settings().Save(settings);
     }
