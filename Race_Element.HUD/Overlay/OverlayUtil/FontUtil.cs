@@ -38,7 +38,6 @@ public sealed class FontUtil
         return GetSpecialFont(size, "RaceElement.HUD.Fonts.ConthraxSb.ttf", "Conthrax Sb");
     }
 
-
     public static Font FontRoboto(float size)
     {
         return GetSpecialFont(size, "RaceElement.HUD.Fonts.Roboto-Regular.ttf", "Roboto");
