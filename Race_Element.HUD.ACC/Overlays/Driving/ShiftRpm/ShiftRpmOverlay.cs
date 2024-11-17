@@ -23,7 +23,7 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : AbstractOverlay(rec
         RefreshRateHz = _config.General.RefreshRate;
 
         _bitmaps = new RpmBitmaps(_config);
-        Width = 5 * _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing * 4;
+        Width = 4 * _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing * 3;
         Height = _bitmaps.Dimension.Height;
 
         _cachedBackground = new(Width, Height, g =>
