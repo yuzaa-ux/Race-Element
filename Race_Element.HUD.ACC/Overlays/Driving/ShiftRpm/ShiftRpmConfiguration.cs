@@ -20,7 +20,7 @@ internal sealed class ShiftRpmConfiguration : OverlayConfiguration
         [IntRange(0, 30, 1)]
         public int ExtraDigitSpacing { get; init; } = 2;
 
-        [IntRange(0, 100, 1)]
+        [IntRange(1, 100, 1)]
         public int RefreshRate { get; init; } = 50;
     }
 
