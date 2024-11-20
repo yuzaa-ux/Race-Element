@@ -9,11 +9,11 @@ public static class ReleaseNotes
         {"2.2.1.0", "- Updated vulnerable .net 4 packages."+
                     "\n- Updated other packages."+
                     "\n\nMulti-Sim:"+
-                    "\n- Shift bar HUD: Added options to customize the redline flashing capability."+
-                    "\n- Shift Rpm HUD: Allow negative digit spacing and set Robot font as default."+
+                    "\n- Shift Bar HUD: Added options to customize the redline flashing capability."+
+                    "\n- Shift Rpm HUD: Allow negative digit spacing and set Roboto font as default."+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Shift Bar HUD: Fixed data mapping for pit limiter and added options to customize the redline flashing capability."+
-                    "\n- Shift Rpm HUD: Allow negative digit spacing and set Robot font as default."
+                    "\n- Shift Rpm HUD: Allow negative digit spacing and set Roboto font as default."
                     },
         {"2.2.0.0", "Updated to .NET 9"+
                     "\n\nMulti-Sim:"+
