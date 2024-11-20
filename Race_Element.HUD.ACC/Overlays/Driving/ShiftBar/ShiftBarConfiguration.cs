@@ -39,14 +39,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public bool RedlineMarker { get; init; } = true;
     }
 
-    [HideForGame(Game.AmericanTruckSimulator | Game.EuroTruckSimulator2)]
-    [ConfigGrouping("Pit Limiter", "Adjust the behavior of the pit limiter")]
-    public PitLimiterGrouping Pitlimiter { get; init; } = new();
-    public sealed class PitLimiterGrouping
-    {
-        [ToolTip("Actives the pit limiter drawing")]
-        public bool Enabled { get; init; } = true;
-    }
+
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
@@ -80,17 +73,29 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public int MaxPreviewRpm { get; init; } = 9250;
     }
 
-    [ConfigGrouping("Redline Flash", "Adjust the behavior of the pit limiter")]
+    [ConfigGrouping("Redline Flash", "Adjust the behavior of the Flash after Redline RPM")]
     public RedlineFlashGrouping RedlineFlash { get; init; } = new();
     public sealed class RedlineFlashGrouping
     {
         [ToolTip("Actives the bar's flashing capability when the Engine Rpm is beyond redline.")]
         public bool Enabled { get; init; } = true;
 
-        [IntRange(10, 700, 1)]
+        [ToolTip("The amount of milliseconds the bar uses the redline color.")]
+        [IntRange(16, 700, 4)]
         public int MillisecondsRedline { get; init; } = 64;
-        [IntRange(10, 800, 1)]
+
+        [ToolTip("The amount of milliseconds the bar uses the flash color.")]
+        [IntRange(16, 800, 4)]
         public int MillisecondsFlash { get; init; } = 32;
+    }
+
+    [HideForGame(Game.AmericanTruckSimulator | Game.EuroTruckSimulator2)]
+    [ConfigGrouping("Pit Limiter", "Adjust the behavior of the pit limiter")]
+    public PitLimiterGrouping Pitlimiter { get; init; } = new();
+    public sealed class PitLimiterGrouping
+    {
+        [ToolTip("Actives the pit limiter drawing")]
+        public bool Enabled { get; init; } = true;
     }
 
     [ConfigGrouping("Colors", "Adjust the colors used in the shift bar")]

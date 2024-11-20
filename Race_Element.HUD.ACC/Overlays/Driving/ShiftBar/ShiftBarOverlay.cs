@@ -89,8 +89,8 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         {
             int redlineMs = _config.RedlineFlash.MillisecondsRedline;
             int flashMs = _config.RedlineFlash.MillisecondsFlash;
-            redlineMs.Clip(10, 700);
-            flashMs.Clip(10, 800);
+            redlineMs.Clip(16, 700);
+            flashMs.Clip(16, 800);
             _redlineTime = TimeSpan.FromMilliseconds(redlineMs);
             _flashTime = TimeSpan.FromMilliseconds(flashMs);
         }
