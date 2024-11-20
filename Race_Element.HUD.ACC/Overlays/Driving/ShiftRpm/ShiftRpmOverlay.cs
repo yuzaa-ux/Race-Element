@@ -103,7 +103,7 @@ internal sealed class RpmBitmaps : IDisposable
             _rpmBitmaps[i] = new(bitmapWidth, bitmapHeight, g =>
             {
                 using SolidBrush textBrush = new(Color.FromArgb(config.Colors.TextOpacity, config.Colors.TextColor));
-                g.DrawStringWithShadow($"{i}", font, textBrush, new RectangleF(0, 2, bitmapWidth, bitmapHeight - 2), format);
+                g.DrawStringWithShadow($"{i}", font, textBrush, new RectangleF(0, 2, bitmapWidth, bitmapHeight), format);
             });
     }
 
