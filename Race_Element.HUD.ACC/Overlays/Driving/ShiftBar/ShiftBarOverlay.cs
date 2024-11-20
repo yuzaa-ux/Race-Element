@@ -58,7 +58,6 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
             _upshiftDataPanel = new(11, panelMinWidth) { Y = Height + 1, FirstRowLine = 0 };
             Height += 3 * _upshiftDataPanel.FontHeight + 1;
         }
-
     }
 
     public sealed override void SetupPreviewData() => _model = new(_config.Upshift.PreviewRpm, _config.Upshift.MaxPreviewRpm);
