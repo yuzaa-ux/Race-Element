@@ -146,7 +146,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
             }
         });
 
-        if (_config.Data.PitLimiter)
+        if (_config.Pitlimiter.Enabled)
             _cachedPitLimiter = ShiftBarShapes.CreatePitLimiter(WorkingSpace, BarSpace);
 
         if (!IsPreviewing)
@@ -214,7 +214,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         DrawBar(g);
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
-        if (_config.Data.PitLimiter && pagePhysics.PitLimiterOn)
+        if (_config.Pitlimiter.Enabled && pagePhysics.PitLimiterOn)
             DrawPitLimiter(g);
 
         if (_config.Upshift.DrawUpshiftData)

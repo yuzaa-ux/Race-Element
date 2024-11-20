@@ -37,14 +37,21 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
-
-        [ToolTip("Displays a pit limiter once activated in-game.")]
-        public bool PitLimiter { get; init; } = true;
     }
+
+    [HideForGame(Game.AmericanTruckSimulator | Game.EuroTruckSimulator2)]
+    [ConfigGrouping("Pit Limiter", "Adjust the behavior of the pit limiter")]
+    public PitLimiterGrouping Pitlimiter { get; init; } = new();
+    public sealed class PitLimiterGrouping
+    {
+        [ToolTip("Actives the pit limiter drawing")]
+        public bool Enabled { get; init; } = true;
+    }
+
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
-    public UpshiftGrouping Upshift { get; init; } = new UpshiftGrouping();
+    public UpshiftGrouping Upshift { get; init; } = new();
     public sealed class UpshiftGrouping
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
@@ -75,7 +82,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     }
 
     [ConfigGrouping("Colors", "Adjust the colors used in the shift bar")]
-    public ColorsGrouping Colors { get; init; } = new ColorsGrouping();
+    public ColorsGrouping Colors { get; init; } = new();
     public sealed class ColorsGrouping
     {
         public Color NormalColor { get; init; } = Color.FromArgb(255, 5, 255, 5);
