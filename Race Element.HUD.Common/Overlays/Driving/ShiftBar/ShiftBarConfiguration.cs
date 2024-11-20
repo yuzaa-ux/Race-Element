@@ -15,10 +15,10 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public int Width { get; init; } = 500;
 
         [IntRange(12, 50, 2)]
-        public int Height { get; init; } = 16;
+        public int Height { get; init; } = 24;
 
         [IntRange(50, 200, 10, GameMaxs = [150], MaxGames = [Game.iRacing])]
-        public int RefreshRate { get; init; } = 80;
+        public int RefreshRate { get; init; } = 90;
     }
 
     [ConfigGrouping("Data", "Adjust data displayed in the shift bar")]
@@ -33,7 +33,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 
         [ToolTip("The amount of RPM that the bar displays, 500 at minimum, will always be limited by the max rpm of the car.\n")]
         [IntRange(500, 30_000, 100)]
-        public int VisibleRpmAmount { get; init; } = 3_000;
+        public int VisibleRpmAmount { get; init; } = 4_000;
 
         [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
@@ -46,7 +46,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
         [FloatRange(69.0f, 99.8f, 0.001f, 3)]
-        public float EarlyPercentage { get; init; } = 94.0f;
+        public float EarlyPercentage { get; init; } = 93.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
         [FloatRange(70f, 99.98f, 0.001f, 3)]
@@ -80,11 +80,11 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
 
         [ToolTip("The amount of milliseconds the bar uses the redline color.")]
         [IntRange(16, 700, 4)]
-        public int MillisecondsRedline { get; init; } = 64;
+        public int MillisecondsRedline { get; init; } = 52;
 
         [ToolTip("The amount of milliseconds the bar uses the flash color.")]
         [IntRange(16, 800, 4)]
-        public int MillisecondsFlash { get; init; } = 32;
+        public int MillisecondsFlash { get; init; } = 48;
     }
 
     [HideForGame(Game.AmericanTruckSimulator | Game.EuroTruckSimulator2)]
@@ -100,7 +100,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     public ColorsGrouping Colors { get; init; } = new();
     public sealed class ColorsGrouping
     {
-        public Color NormalColor { get; init; } = Color.FromArgb(255, 5, 255, 5);
+        public Color NormalColor { get; init; } = Color.FromArgb(255, 255, 255, 255);
 
         public Color EarlyColor { get; init; } = Color.FromArgb(255, 255, 255, 0);
 
