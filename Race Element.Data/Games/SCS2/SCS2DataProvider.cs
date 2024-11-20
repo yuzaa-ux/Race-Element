@@ -34,7 +34,7 @@ internal sealed class SCS2DataProvider : AbstractSimDataProvider
         if (_telemetry != null)
         {
             _telemetry.Data -= OnTelemetryData;
-            _telemetry.pause();
+            _telemetry.Pause();
             _telemetry.Dispose();
         }
     }
