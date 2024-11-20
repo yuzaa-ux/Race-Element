@@ -8,6 +8,8 @@ public static class ReleaseNotes
     {
         {"2.2.1.0", "- Updated vulnerable .net 4 packages."+
                     "\n- Updated other packages."+
+                    "\n\nMulti-Sim:"+
+                    "\n"+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Shift Bar HUD: Fixed data mapping for pit limiter."
                     },
