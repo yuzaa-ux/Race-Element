@@ -27,7 +27,7 @@ internal sealed class ShiftRpmConfiguration : OverlayConfiguration
 
     [ConfigGrouping("Colors", "Adjust colors")]
     public ColorsGrouping Colors { get; init; } = new ColorsGrouping();
-    public class ColorsGrouping
+    public sealed class ColorsGrouping
     {
         public Color TextColor { get; init; } = Color.FromArgb(255, 255, 255, 255);
         [IntRange(75, 255, 1)]
