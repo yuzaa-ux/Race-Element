@@ -44,7 +44,7 @@ public abstract class CommonAbstractOverlay : FloatingWindow
     /// <summary>
     /// The <see cref="Game"/> when this overlay was initialized
     /// </summary>
-    public Game GameWhenStarted { get; private set; } = Game.Any;
+    public Game GameWhenStarted { get; private init; } = Game.Any;
 
     private volatile bool Draw = false;
 
