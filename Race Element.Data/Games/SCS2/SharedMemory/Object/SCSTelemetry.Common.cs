@@ -1,18 +1,21 @@
 ﻿#pragma warning disable 1570
 
-namespace SCSSdkClient.Object; 
+namespace SCSSdkClient.Object;
 
-public partial class SCSTelemetry {
+public sealed partial class SCSTelemetry
+{
 
     /// <summary>
     ///     Telemetry specific channels which might be used by more than one game.
     /// </summary>
-    public class Common {
+    public sealed class Common
+    {
 
         /// <summary>
         ///     initialise a Common object
         /// </summary>
-        public Common() {
+        public Common()
+        {
             GameTime = new Time();
             NextRestStop = new Frequency();
         }

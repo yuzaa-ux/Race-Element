@@ -1,14 +1,18 @@
-﻿namespace SCSSdkClient.Object; 
-public partial class SCSTelemetry {
-    public partial class Truck {
+﻿namespace SCSSdkClient.Object;
+public sealed partial class SCSTelemetry
+{
+    public sealed partial class Truck
+    {
         /// <summary>
         ///     Config values
         /// </summary>
-        public sealed class Constants {
+        public sealed class Constants
+        {
             /// <summary>
             ///     Initialise a constants object
             /// </summary>
-            public Constants() {
+            public Constants()
+            {
                 MotorValues = new Motor();
                 CapacityValues = new Capacity();
                 WarningFactorValues = new WarningFactor();
@@ -68,10 +72,11 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Gear, Retarder, etc.
             /// </summary>
-            public sealed class Motor {
+            public sealed class Motor
+            {
                 /// About: RetarderStepCount
                 /// Set to zero if retarder is not mounted on the truck
-                
+
                 /// <summary>
                 ///     Number of forward gears on undamaged truck
                 /// </summary>
@@ -148,7 +153,8 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     Fuel, Adblue, etc.
             /// </summary>
-            public sealed class Capacity {
+            public sealed class Capacity
+            {
                 /// <summary>
                 ///     Fuel tank capacity in litres.
                 /// </summary>
@@ -163,7 +169,8 @@ public partial class SCSTelemetry {
             /// <summary>
             ///     At which value X give a warning?
             /// </summary>
-            public sealed class WarningFactor {
+            public sealed class WarningFactor
+            {
                 /// <summary>
                 ///     Fraction of the fuel capacity bellow which is activated the fuel warning.
                 /// </summary>

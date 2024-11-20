@@ -2,12 +2,14 @@
 
 #pragma warning disable 1570
 
-namespace SCSSdkClient.Object; 
-public partial class SCSTelemetry {
+namespace SCSSdkClient.Object;
+public sealed partial class SCSTelemetry
+{
     /// <summary>
     ///     Like Time object represent minutes and DateTime object, but represent more a timespan positive or negative
     /// </summary>
-    public class Frequency {
+    public sealed class Frequency
+    {
         public Frequency(int i) => Value = i;
 
         public Frequency() { }
