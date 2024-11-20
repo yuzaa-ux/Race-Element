@@ -6,6 +6,11 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.2.1.0", "- Updated vulnerable .net 4 packages."+
+                    "\n- Updated other packages."+
+                    "\n\nAssetto Corsa Competizione:"+
+                    "\n- Shift Bar HUD: Fixed data mapping for pit limiter."
+                    },
         {"2.2.0.0", "Updated to .NET 9"+
                     "\n\nMulti-Sim:"+
                     "\n- Added support for Euro Truck Simulator 2(ETS2) and American Truck Simulator(ATS). See Multi-Sim guide on the website how to set it up."+
