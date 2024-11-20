@@ -214,7 +214,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         DrawBar(g);
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
-        if (_config.Data.PitLimiter && SimDataProvider.LocalCar.Engine.IsPitLimiterOn)
+        if (_config.Data.PitLimiter && pagePhysics.PitLimiterOn)
             DrawPitLimiter(g);
 
         if (_config.Upshift.DrawUpshiftData)
