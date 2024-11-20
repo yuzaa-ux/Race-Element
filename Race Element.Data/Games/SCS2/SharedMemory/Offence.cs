@@ -1,8 +1,9 @@
-﻿namespace SCSSdkClient; 
+﻿namespace SCSSdkClient;
 /// <summary>
 ///     Offence type
 /// </summary>
-public enum Offence {
+public enum Offence
+{
     ///About: Values
     ///
     /// NoValue                 - No Value from the sdk

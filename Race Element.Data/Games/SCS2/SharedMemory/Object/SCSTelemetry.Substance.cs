@@ -1,9 +1,11 @@
-﻿namespace SCSSdkClient.Object; 
-public partial class SCSTelemetry {
+﻿namespace SCSSdkClient.Object;
+public sealed partial class SCSTelemetry
+{
     /// <summary>
     ///     Contains names to substances in other fields
     /// </summary>
-    public class Substance {
+    public sealed class Substance
+    {
         /// <summary>
         ///     Index of the substance in-game
         /// </summary>

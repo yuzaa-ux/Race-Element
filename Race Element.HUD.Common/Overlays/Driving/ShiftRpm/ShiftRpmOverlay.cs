@@ -5,11 +5,14 @@ using RaceElement.HUD.Overlay.Util;
 using RaceElement.Util.SystemExtensions;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 
 namespace RaceElement.HUD.Common.Overlays.Driving.ShiftRpm;
 [Overlay(
-Name = "Shift RPM",
-Description = "The current engine RPM as text")]
+    Name = "Shift RPM",
+    Description = "The current engine RPM as text",
+    Authors = ["Reinier Klarenberg"]
+)]
 internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverlay(rectangle, "Shift RPM")
 {
     private readonly ShiftRpmConfiguration _config = new();
@@ -54,7 +57,6 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
         int currentRpm = SimDataProvider.LocalCar.Engine.Rpm;
         currentRpm.Clip(0, 99_999);
 
-
         string s = $"{currentRpm}".FillStart(5, '0');
 
         for (int i = 0; i < 5; i++)
@@ -91,7 +93,6 @@ internal sealed class RpmBitmaps : IDisposable
         using StringFormat format = StringFormat.GenericDefault;
         format.Alignment = StringAlignment.Center;
         format.LineAlignment = StringAlignment.Center;
-        //format.FormatFlags = StringFormatFlags.NoClip;
 
         int bitmapWidth = (int)(config.General.FontSize + 4);
         int bitmapHeight = bitmapWidth + 4;
@@ -102,6 +103,7 @@ internal sealed class RpmBitmaps : IDisposable
         for (int i = 0; i <= 9; i++)
             _rpmBitmaps[i] = new(bitmapWidth, bitmapHeight, g =>
             {
+                g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                 using SolidBrush textBrush = new(Color.FromArgb(config.Colors.TextOpacity, config.Colors.TextColor));
                 g.DrawStringWithShadow($"{i}", font, textBrush, new RectangleF(0, 2, bitmapWidth, bitmapHeight - 2), format);
             });

@@ -1,11 +1,13 @@
 ﻿#pragma warning disable 1570
 
-namespace SCSSdkClient.Object; 
-public partial class SCSTelemetry {
+namespace SCSSdkClient.Object;
+public sealed partial class SCSTelemetry
+{
     /// <summary>
     ///     Advisor Values
     /// </summary>
-    public class Navigation {
+    public sealed class Navigation
+    {
         /// <summary>
         ///     Initialise a navigation object
         /// </summary>
@@ -13,7 +15,7 @@ public partial class SCSTelemetry {
 
         /// About: SpeedLimit
         /// Respects the current state of the "Route Advisor speed limit" option
-      
+
         /// <summary>
         ///     The value of truck's navigation distance (in meters)
         /// </summary>

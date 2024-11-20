@@ -2,12 +2,13 @@
 using System.IO.MemoryMappedFiles;
 using SCSSdkClient.Object;
 
-namespace SCSSdkClient; 
+namespace SCSSdkClient;
 
 /// <summary>
 ///     Manage the shared memory
 /// </summary>
-public class SharedMemory {
+public sealed class SharedMemory
+{
 
     /// <summary>
     ///     size of the shared memory in bytes
@@ -55,15 +56,18 @@ public class SharedMemory {
     /// </summary>
     /// <param name="map">map location string</param>
     /// <param name="mapSize">size of the map</param>
-    public void Connect(string map, uint mapSize) {
-        if (Hooked) {
+    public void Connect(string map, uint mapSize)
+    {
+        if (Hooked)
+        {
             Disconnect();
         }
 
         // Reset any errors
         HookException = null;
 
-        try {
+        try
+        {
             RawData = new byte[mapSize];
 
             // Open the map and create a "memory view" at the begin (byte 0)
@@ -72,7 +76,9 @@ public class SharedMemory {
 
             // Mark as a success.
             Hooked = true;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // We were unable to hook onto the map.
             Hooked = false;
             HookException = e;
@@ -82,7 +88,8 @@ public class SharedMemory {
     /// <summary>
     ///     close the memory view and handle
     /// </summary>
-    public void Disconnect() {
+    public void Disconnect()
+    {
         Hooked = false;
 
         _memoryMappedView.Dispose();
@@ -94,7 +101,8 @@ public class SharedMemory {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public SCSTelemetry Update<T>() {
+    public SCSTelemetry Update<T>()
+    {
         Update();
 
         // Convert the data to our object.
@@ -104,8 +112,10 @@ public class SharedMemory {
     /// <summary>
     ///     reread data from memory view
     /// </summary>
-    public void Update() {
-        if (!Hooked || _memoryMappedView == null) {
+    public void Update()
+    {
+        if (!Hooked || _memoryMappedView == null)
+        {
             return;
         }
 

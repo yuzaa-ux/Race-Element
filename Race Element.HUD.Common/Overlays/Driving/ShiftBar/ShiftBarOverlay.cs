@@ -36,8 +36,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
-    private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
-    private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
+    private TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
+    private TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
 
     private readonly TimeSpan _pimiterLimiterFlipTime = TimeSpan.FromMilliseconds(128);
     public ShiftBarOverlay(Rectangle rectangle) : base(rectangle, "Shift Bar")
@@ -92,6 +92,17 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
     {
         UpdateColorDictionary();
 
+        // config settings 
+        if (_config.RedlineFlash.Enabled)
+        {
+            int redlineMs = _config.RedlineFlash.MillisecondsRedline;
+            int flashMs = _config.RedlineFlash.MillisecondsFlash;
+            redlineMs.Clip(16, 700);
+            flashMs.Clip(16, 800);
+            _redlineTime = TimeSpan.FromMilliseconds(redlineMs);
+            _flashTime = TimeSpan.FromMilliseconds(flashMs);
+        }
+
         int horizontalBarPadding = 2;
         int verticalBarPadding = 2;
         BarSpace = new(horizontalBarPadding, verticalBarPadding, WorkingSpace.Width - horizontalBarPadding * 2, WorkingSpace.Height - verticalBarPadding * 2);
@@ -135,14 +146,14 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
 
             if (_config.Data.RedlineMarker)
             {
-                var upshiftPercentages = GetUpShiftPercentages();
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
+                var (earlyPercentage, redlinePercentage) = GetUpShiftPercentages();
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
                 float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(Pens.Red, x, 4, x, _config.Bar.Height - 4);
             }
         });
 
-        if (_config.Data.PitLimiter)
+        if (_config.Pitlimiter.Enabled)
             _cachedPitLimiter = ShiftBarShapes.CreatePitLimiter(WorkingSpace, BarSpace);
 
         if (!IsPreviewing)
@@ -157,6 +168,8 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _cachedBackground?.Dispose();
         _cachedRpmLines?.Dispose();
         _cachedFlashBar?.Dispose();
+        if (_cachedPitLimiter != null)
+            foreach (var item in _cachedPitLimiter) item.Dispose();
 
         foreach (var item in _cachedColorBars) item.Dispose();
         _cachedColorBars.Clear();
@@ -211,7 +224,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         _cachedRpmLines.Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
 
-        if (_config.Data.PitLimiter && SimDataProvider.LocalCar.Engine.IsPitLimiterOn)
+        if (_config.Pitlimiter.Enabled && SimDataProvider.LocalCar.Engine.IsPitLimiterOn)
             DrawPitLimiter(g);
 
         if (_config.Upshift.DrawUpshiftData)
@@ -249,7 +262,7 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
         if (rpmPercentage < 0.02f) return;
 
         double adjustedPercent = GetAdjustedPercentToHideRpm(_model.Rpm, _model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
-        adjustedPercent.Clip(0.05f, 1);
+        adjustedPercent.Clip(0.02f, 1);
         RectangleF percented = new(BarSpace.ToVector4());
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
@@ -260,9 +273,9 @@ internal sealed class ShiftBarOverlay : CommonAbstractOverlay
             cachedColorSpan[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         else
         {
-            (_flashFlip ? _cachedFlashBar : cachedColorSpan[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            (_flashFlip && _config.RedlineFlash.Enabled ? _cachedFlashBar : cachedColorSpan[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
-            if (TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
+            if (_config.RedlineFlash.Enabled && TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
             {
                 _flashFlip = !_flashFlip;
                 _lastFlash = TimeProvider.System.GetTimestamp();

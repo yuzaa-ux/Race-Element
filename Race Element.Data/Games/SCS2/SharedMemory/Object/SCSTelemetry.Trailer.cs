@@ -1,18 +1,21 @@
 ﻿#pragma warning disable 1570
 
-namespace SCSSdkClient.Object; 
+namespace SCSSdkClient.Object;
 
-public partial class SCSTelemetry {
+public sealed partial class SCSTelemetry
+{
 
     /// <summary>
     ///     Trailer Values
     /// </summary>
-    public sealed class Trailer {
+    public sealed class Trailer
+    {
 
         /// <summary>
         ///     Initialise a trailer object
         /// </summary>
-        public Trailer() {
+        public Trailer()
+        {
             Wheelvalues = new Wheels();
             AccelerationValues = new Acceleration();
             WheelsConstant = new WheelsConstants();
@@ -83,7 +86,8 @@ public partial class SCSTelemetry {
         /// </summary>
         public Wheels Wheelvalues { get; internal set; }
 
-        public sealed class Acceleration {
+        public sealed class Acceleration
+        {
 
             /// <summary>
             ///     Represents vehicle space angular acceleration of the trailer measured in rotations/s^2
@@ -106,7 +110,8 @@ public partial class SCSTelemetry {
             public FVector LinearVelocity { get; internal set; }
         }
 
-        public sealed class Damage {
+        public sealed class Damage
+        {
             public float Body { get; internal set; }
             public float Cargo { get; internal set; }
             public float Chassis { get; internal set; }
@@ -116,7 +121,8 @@ public partial class SCSTelemetry {
         /// <summary>
         ///     States of the Wheels
         /// </summary>
-        public sealed class Wheels {
+        public sealed class Wheels
+        {
             /// About: Velocity
             /// Positive velocity corresponds to forward movement
 

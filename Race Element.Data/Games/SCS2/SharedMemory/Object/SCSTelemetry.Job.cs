@@ -1,15 +1,18 @@
 ﻿#pragma warning disable 1570
 
-namespace SCSSdkClient.Object; 
-public partial class SCSTelemetry {
+namespace SCSSdkClient.Object;
+public sealed partial class SCSTelemetry
+{
     /// <summary>
     ///     Job values. Income, destination, source, etc.
     /// </summary>
-    public class Job {
+    public sealed class Job
+    {
         /// <summary>
         ///     Initialise a job object
         /// </summary>
-        public Job() {
+        public Job()
+        {
             DeliveryTime = new Time();
             RemainingDeliveryTime = new Frequency();
             CargoValues = new Cargo();
@@ -22,7 +25,7 @@ public partial class SCSTelemetry {
 
         /// About: RemainingDeliveryTime
         /// The RemainingDeliveryTime is negative if the delivery is to late
-        
+
         /// <summary>
         ///     Remaining in-game time until the job delivery window close
         /// </summary>
@@ -39,7 +42,7 @@ public partial class SCSTelemetry {
         ///     Planned job distance in simulated kilometers.
         ///     Does not include distance driven using ferry.
         /// </summary>
-        public uint PlannedDistanceKm {get;internal set;}
+        public uint PlannedDistanceKm { get; internal set; }
 
 
 
@@ -104,7 +107,8 @@ public partial class SCSTelemetry {
         /// <summary>
         ///     Cargo Values
         /// </summary>
-        public class Cargo {
+        public sealed class Cargo
+        {
             /// <summary>
             ///     Mass in kilograms
             /// </summary>

@@ -12,22 +12,22 @@ internal sealed class ShiftRpmConfiguration : OverlayConfiguration
     {
         [ToolTip("Size of the font")]
         [FloatRange(12.0f, 90.0f, 0.5f, 1)]
-        public float FontSize { get; init; } = 20;
+        public float FontSize { get; init; } = 21.5f;
 
         [ToolTip("Change the Font")]
-        public RpmTextFont Font { get; init; } = RpmTextFont.Obitron;
+        public RpmTextFont Font { get; init; } = RpmTextFont.Roboto;
 
-        [IntRange(0, 30, 1)]
-        public int ExtraDigitSpacing { get; init; } = 2;
+        [IntRange(-10, 30, 1)]
+        public int ExtraDigitSpacing { get; init; } = -8;
 
-        [IntRange(0, 100, 1)]
-        public int RefreshRate { get; init; } = 50;
+        [IntRange(1, 100, 1)]
+        public int RefreshRate { get; init; } = 30;
     }
 
 
     [ConfigGrouping("Colors", "Adjust colors")]
     public ColorsGrouping Colors { get; init; } = new ColorsGrouping();
-    public class ColorsGrouping
+    public sealed class ColorsGrouping
     {
         public Color TextColor { get; init; } = Color.FromArgb(255, 255, 255, 255);
         [IntRange(75, 255, 1)]

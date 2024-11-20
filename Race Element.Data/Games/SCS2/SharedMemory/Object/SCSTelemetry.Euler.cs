@@ -1,11 +1,13 @@
 ﻿#pragma warning disable 1570
 
 namespace SCSSdkClient.Object;
-public partial class SCSTelemetry {
+public sealed partial class SCSTelemetry
+{
     /// <summary>
     ///  Orientation of object.
     /// </summary>
-    public class Euler{
+    public sealed class Euler
+    {
         /// About: Heading
         /// Stored in unit range where <0,1) corresponds to <0,360).
         /// The angle is measured counterclockwise in horizontal plane when looking
