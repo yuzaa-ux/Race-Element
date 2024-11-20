@@ -48,7 +48,6 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         public bool Enabled { get; init; } = true;
     }
 
-
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
     public UpshiftGrouping Upshift { get; init; } = new();
@@ -79,6 +78,19 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [IntRange(10, 17_000, 1)]
         [ToolTip("Sets the current Max Rpm in the above preview image.")]
         public int MaxPreviewRpm { get; init; } = 9250;
+    }
+
+    [ConfigGrouping("Redline Flash", "Adjust the behavior of the pit limiter")]
+    public RedlineFlashGrouping RedlineFlash { get; init; } = new();
+    public sealed class RedlineFlashGrouping
+    {
+        [ToolTip("Actives the bar's flashing capability when the Engine Rpm is beyond redline.")]
+        public bool Enabled { get; init; } = true;
+
+        [IntRange(10, 700, 1)]
+        public int MillisecondsRedline { get; init; } = 64;
+        [IntRange(10, 800, 1)]
+        public int MillisecondsFlash { get; init; } = 32;
     }
 
     [ConfigGrouping("Colors", "Adjust the colors used in the shift bar")]

@@ -1,6 +1,4 @@
 ﻿using RaceElement.Core.Jobs.Loop;
-using RaceElement.Data.Common;
-using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 using RaceElement.HUD.Overlay.Util;
@@ -39,8 +37,8 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
 
     private MaxRpmDetectionJob _maxRpmDetectionJob;
 
-    private readonly TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
-    private readonly TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
+    private TimeSpan _redlineTime = TimeSpan.FromMilliseconds(64);
+    private TimeSpan _flashTime = TimeSpan.FromMilliseconds(32);
 
     private readonly TimeSpan _pimiterLimiterFlipTime = TimeSpan.FromMilliseconds(128);
 
@@ -60,6 +58,7 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
             _upshiftDataPanel = new(11, panelMinWidth) { Y = Height + 1, FirstRowLine = 0 };
             Height += 3 * _upshiftDataPanel.FontHeight + 1;
         }
+
     }
 
     public sealed override void SetupPreviewData() => _model = new(_config.Upshift.PreviewRpm, _config.Upshift.MaxPreviewRpm);
@@ -70,31 +69,33 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         float earlyPercentage = _config.Upshift.EarlyPercentage;
         float upshiftPercentage = _config.Upshift.RedlinePercentage;
 
-        if (GameWhenStarted.HasFlag(Game.RaceRoom))
-        {
-            float maxRpm = SimDataProvider.LocalCar.Engine.MaxRpm;
-            float upshiftRpm = SimDataProvider.LocalCar.Engine.ShiftUpRpm;
-            if (maxRpm > 0 && upshiftRpm > 0)
-            {
-                upshiftPercentage = upshiftRpm * 100 / maxRpm;
-                earlyPercentage = upshiftPercentage * 0.96f;
-            }
-        }
         return (earlyPercentage, upshiftPercentage);
     }
 
     private void UpdateColorDictionary()
     {
-        var percentages = GetUpShiftPercentages();
+        var (earlyPercentage, redlinePercentage) = GetUpShiftPercentages();
 
         _colors.Clear();
         _colors.Add((0.6f, Color.FromArgb(255, _config.Colors.NormalColor)));
-        _colors.Add((percentages.earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
-        _colors.Add((percentages.redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
+        _colors.Add((earlyPercentage / 100f, Color.FromArgb(255, _config.Colors.EarlyColor)));
+        _colors.Add((redlinePercentage / 100f, Color.FromArgb(255, _config.Colors.RedlineColor)));
     }
     public sealed override void BeforeStart()
     {
         UpdateColorDictionary();
+
+        // config settings 
+        if (_config.RedlineFlash.Enabled)
+        {
+            int redlineMs = _config.RedlineFlash.MillisecondsRedline;
+            int flashMs = _config.RedlineFlash.MillisecondsFlash;
+            redlineMs.Clip(10, 700);
+            flashMs.Clip(10, 800);
+            _redlineTime = TimeSpan.FromMilliseconds(redlineMs);
+            _flashTime = TimeSpan.FromMilliseconds(flashMs);
+        }
+
 
         int horizontalBarPadding = 2;
         int verticalBarPadding = 2;
@@ -106,7 +107,12 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         for (int i = 0; i < _colors.Count; i++)
             _cachedColorBars.Add(ShiftBarShapes.CreateColoredBar(WorkingSpace, BarSpace, _colors.ElementAt(i).color));
 
-        _cachedFlashBar = ShiftBarShapes.CreateFlashBar(WorkingSpace, BarSpace, _config);
+        if (_config.RedlineFlash.Enabled)
+        {
+            _cachedFlashBar = ShiftBarShapes.CreateFlashBar(WorkingSpace, BarSpace, _config);
+            int redlineMs = _config.RedlineFlash.MillisecondsRedline;
+        }
+
         _cachedRpmLines = new(WorkingSpace.Width, WorkingSpace.Height, g =>
         {
             var model = _model;
