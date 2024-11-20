@@ -91,7 +91,6 @@ internal sealed class RpmBitmaps : IDisposable
         using StringFormat format = StringFormat.GenericDefault;
         format.Alignment = StringAlignment.Center;
         format.LineAlignment = StringAlignment.Center;
-        //format.FormatFlags = StringFormatFlags.NoClip;
 
         int bitmapWidth = (int)(config.General.FontSize + 4);
         int bitmapHeight = bitmapWidth + 4;
