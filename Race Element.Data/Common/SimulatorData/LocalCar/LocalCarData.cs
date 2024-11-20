@@ -184,7 +184,22 @@ public sealed record ElectronicsData
     /// </summary>
     public float AbsActivation { get; internal set; }
     public float BrakeBias { get; internal set; }
+
+
+    /// <summary>
+    /// Describes the state of the left and right blinkers/turning indicators
+    /// </summary>
+    public BlinkerStatus Blinkers { get; internal set; }
+
+    [Flags]
+    public enum BlinkerStatus : byte
+    {
+        None = (1 << 0),
+        Left = (1 << 1),
+        Right = (1 << 2),
+    }
 }
+
 
 public sealed record RaceData
 {
