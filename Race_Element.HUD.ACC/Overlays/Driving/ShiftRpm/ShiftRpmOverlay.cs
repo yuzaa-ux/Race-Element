@@ -8,9 +8,12 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 
 namespace RaceElement.HUD.ACC.Overlays.Driving.ShiftRpm;
+
 [Overlay(
-Name = "Shift RPM",
-Description = "The current engine RPM as text")]
+    Name = "Shift RPM",
+    Description = "The current engine RPM as text",
+    Authors = ["Reinier Klarenberg"]
+)]
 internal sealed class ShiftRpmOverlay(Rectangle rectangle) : AbstractOverlay(rectangle, "Shift RPM")
 {
     private readonly ShiftRpmConfiguration _config = new();
