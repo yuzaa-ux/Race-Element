@@ -269,9 +269,9 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
             _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         else
         {
-            (_flashFlip ? _cachedFlashBar : _cachedColorBars[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            (_flashFlip && _config.RedlineFlash.Enabled ? _cachedFlashBar : _cachedColorBars[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
-            if (TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
+            if (_config.RedlineFlash.Enabled && TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
             {
                 _flashFlip = !_flashFlip;
                 _lastFlash = TimeProvider.System.GetTimestamp();
