@@ -76,10 +76,11 @@ public abstract class CommonAbstractOverlay : FloatingWindow
 
         // sim data modes
         bool condition = false;
+
         if (SimDataProvider.LocalCar.Engine.IsRunning)
             condition = true;
 
-        if (GameWhenStarted.HasFlag(Game.RaceRoom))   // TODO: map these conditions for other simulators
+        if (GameWhenStarted.HasFlag(Game.RaceRoom | Game.AmericanTruckSimulator | Game.EuroTruckSimulator2 | Game.Automobilista2))   // TODO: map these conditions for other simulators
         {
             if (SimDataProvider.GameData.IsGamePaused)
                 condition = false;
