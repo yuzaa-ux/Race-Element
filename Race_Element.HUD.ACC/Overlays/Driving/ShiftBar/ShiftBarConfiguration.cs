@@ -46,7 +46,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
     {
         [ToolTip("Sets the percentage of max rpm required to activate the early upshift color")]
         [FloatRange(69.0f, 99.8f, 0.001f, 3)]
-        public float EarlyPercentage { get; init; } = 94.0f;
+        public float EarlyPercentage { get; init; } = 93.0f;
 
         [ToolTip("Sets the percentage of max rpm required to activate the upshift color")]
         [FloatRange(70f, 99.98f, 0.001f, 3)]
