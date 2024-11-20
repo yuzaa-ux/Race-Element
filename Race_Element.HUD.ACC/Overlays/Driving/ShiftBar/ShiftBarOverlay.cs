@@ -144,8 +144,8 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
 
             if (_config.Data.RedlineMarker)
             {
-                var upshiftPercentages = GetUpShiftPercentages();
-                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * upshiftPercentages.redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
+                var (earlyPercentage, redlinePercentage) = GetUpShiftPercentages();
+                double adjustedPercent = GetAdjustedPercentToHideRpm((int)(model.MaxRpm * redlinePercentage / 100), model.MaxRpm, _config.Data.HideRpm, _config.Data.MinVisibleRpm);
                 float x = (float)(BarSpace.X + (BarSpace.Width * adjustedPercent));
                 g.DrawLine(Pens.Red, x, 4, x, _config.Bar.Height - 4);
             }
@@ -166,6 +166,8 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         _cachedBackground?.Dispose();
         _cachedRpmLines?.Dispose();
         _cachedFlashBar?.Dispose();
+        if (_cachedPitLimiter != null)
+            foreach (var item in _cachedPitLimiter) item.Dispose();
 
         foreach (var item in _cachedColorBars) item.Dispose();
         _cachedColorBars.Clear();
@@ -262,14 +264,14 @@ internal sealed class ShiftBarOverlay : AbstractOverlay
         RectangleF percented = new(BarSpace.ToVector4());
         percented.Width = (float)(BarSpace.Width * adjustedPercent);
 
-
         int barIndex = GetCurrentColorBarIndex(rpmPercentage);
+        var cachedColorSpan = CollectionsMarshal.AsSpan(_cachedColorBars);
         g.SetClip(percented);
         if (barIndex < _colors.Count - 1)
-            _cachedColorBars[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            cachedColorSpan[barIndex].Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
         else
         {
-            (_flashFlip && _config.RedlineFlash.Enabled ? _cachedFlashBar : _cachedColorBars[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
+            (_flashFlip && _config.RedlineFlash.Enabled ? _cachedFlashBar : cachedColorSpan[barIndex]).Draw(g, 0, 0, WorkingSpace.Width, WorkingSpace.Height);
 
             if (_config.RedlineFlash.Enabled && TimeProvider.System.GetElapsedTime(_lastFlash) > (_flashFlip ? _redlineTime : _flashTime))
             {

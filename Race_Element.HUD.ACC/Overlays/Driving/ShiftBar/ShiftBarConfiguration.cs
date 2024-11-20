@@ -17,7 +17,7 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [IntRange(12, 50, 2)]
         public int Height { get; init; } = 16;
 
-        [IntRange(50, 200, 10, GameMaxs = [80], MaxGames = [Game.iRacing])]
+        [IntRange(50, 200, 10)]
         public int RefreshRate { get; init; } = 80;
     }
 
@@ -38,8 +38,6 @@ internal sealed class ShiftBarConfiguration : OverlayConfiguration
         [ToolTip("Shows a vertical line that indicates the optimal upshift point.")]
         public bool RedlineMarker { get; init; } = true;
     }
-
-
 
     [ConfigGrouping("Upshift Percentages", "Adjust the Early and Upshift percentages.\n" + "The Early is always checked first, so if the Redline is lower than the early.. it won't be hit.")]
     [HideForGame(Game.RaceRoom)]
