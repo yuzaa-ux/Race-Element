@@ -80,7 +80,8 @@ public abstract class CommonAbstractOverlay : FloatingWindow
         if (SimDataProvider.LocalCar.Engine.IsRunning)
             condition = true;
 
-        if (GameWhenStarted.HasFlag(Game.RaceRoom | Game.AmericanTruckSimulator | Game.EuroTruckSimulator2 | Game.Automobilista2))   // TODO: map these conditions for other simulators
+        Game pauseConditionable = Game.RaceRoom | Game.AmericanTruckSimulator | Game.EuroTruckSimulator2 | Game.Automobilista2;
+        if (pauseConditionable.HasFlag(GameWhenStarted))   // TODO: map these conditions for other simulators
         {
             if (SimDataProvider.GameData.IsGamePaused)
                 condition = false;
