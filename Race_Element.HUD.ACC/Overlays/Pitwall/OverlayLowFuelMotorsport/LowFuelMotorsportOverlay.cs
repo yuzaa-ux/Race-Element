@@ -203,11 +203,11 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
                 if (timeDiff.TotalMinutes >= 0 && _synthIdentifier == 0)
                 {
-                    var min = (int)timeDiff.TotalMinutes;
-                    var diff = race.RaceDate.Subtract(new TimeSpan(0, 0, min, 0));
+                    var min = (int)(timeDiff.TotalMinutes + 0.5);
+                    var now = DateTime.Now.AddSeconds(5);
 
                     var speech = new LowFuelMotorsportSpeechSynthesizer(min +  " " +  (min == 1 ? "minute" : "minutes") + " until race starts", this, min);
-                    TaskTimerExecutor.Instance().Add(speech, diff, out _synthIdentifier);
+                    TaskTimerExecutor.Instance().Add(speech, now, out _synthIdentifier);
                 }
             }
         }
