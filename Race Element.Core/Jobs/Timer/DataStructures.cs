@@ -69,19 +69,13 @@ internal class ConcurrentListTimerData
     }
 
     /// <summary>
-    /// Add an element to the list and sort it by "TimePoint". If "TimePoint" is
-    /// lower the "DateTime.now()" the element will not be added.
+    /// Add an element to the list and sort it by "TimePoint".
     /// </summary>
     /// <param name="data">Element to add.</param>
     /// <returns>True if added, false otherwise.</returns>
     public bool Add(TimerData data)
     {
-        if (DateTime.Now > data.TimePoint)
-        {
-            return false;
-        }
-
-        lock (_list)
+       lock (_list)
         {
             _list.Add(data);
             _list.Sort((a, b) => a.TimePoint.CompareTo(b.TimePoint));

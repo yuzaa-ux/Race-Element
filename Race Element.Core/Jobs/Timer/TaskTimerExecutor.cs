@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RaceElement.Core.Jobs.Timer;
 
-public class TimerTask
+public class TaskTimerExecutor
 {
     /// <summary>
     /// Singleton instance so it can be accessed from anywhere.
@@ -12,7 +12,7 @@ public class TimerTask
     /// are any other major issues doing the initialization
     /// this way.
     /// </summary>
-    private static TimerTask _instance = new();
+    private static TaskTimerExecutor _instance = new();
 
     /// <summary>
     /// Queue that will store the jobs to execute.
@@ -31,42 +31,48 @@ public class TimerTask
     private bool _running = false;
 
     /// <summary>
-    /// At what interval tasks have to be checked.
-    /// </summary>
-    private int _intervalMs = 250;
-
-    /// <summary>
-    ///
+    /// Value used to identify the tasks added to the queue.
+    /// This is incremental.
     /// </summary>
     private long _identifier = 0;
+
+    /// <summary>
+    /// Used by worker thread to sleep until next tick or wake up on cancel.
+    /// </summary>
+    private readonly EventWaitHandle _jobSleepEvent = new(false, EventResetMode.AutoReset);
 
     /// <summary>
     /// Get the timer instance.
     /// </summary>
     /// <returns>The Timer instance</returns>
-    public static TimerTask Instance()
+    public static TaskTimerExecutor Instance()
     {
         return _instance;
     }
 
     /// <summary>
-    /// Stop que working thread and clear the queue.
+    /// Stop que working thread and clear the queue. Call dispose only when the
+    /// application has to be closed as it stops the working thread.
     /// </summary>
     public void Dispose()
     {
         _running = false;
+        _jobSleepEvent.Set();
+
         _thread.Join();
         _queue.Clear();
     }
 
     /// <summary>
-    ///
+    /// Add a new element to the execution list. The list is ordered by the
+    /// execution time point. If "TimePoint" is lower the "DateTime.now()"
+    /// the element will not be added.
     /// </summary>
-    /// <param name="job"></param>
-    /// <param name="timePoint"></param>
-    /// <param name="identifier"></param>
-    /// <returns></returns>
-    public bool AddTimer(IJob job, DateTime timePoint, out long identifier)
+    /// <param name="callback">User callback to execute.</param>
+    /// <param name="timePoint">Point in time when to execute.</param>
+    /// <param name="identifier">Identifier given by the system to the task.</param>
+    /// <returns>True if the element is added, false otherwise.</returns>
+    public bool AddTimer(IJob callback, DateTime timePoint, out long identifier)
     {
         if (DateTime.Now > timePoint)
         {
@@ -75,19 +81,28 @@ public class TimerTask
         }
 
         TimerData timerData = new();
-        identifier = ++_identifier;
+        identifier = Interlocked.Increment(ref _identifier);
 
-        timerData.Callback = job;
         timerData.Id = identifier;
+        timerData.Callback = callback;
         timerData.TimePoint = timePoint;
 
         _queue.Add(timerData);
+        _jobSleepEvent.Set();
+
         return true;
     }
 
+    /// <summary>
+    /// Remove element from the execution queue.
+    /// </summary>
+    /// <param name="identifier">Identifier of the task to remove.</param>
+    /// <returns>True if the is removed, false otherwise.</returns>
     public bool RemoveTimer(long identifier)
     {
-        return _queue.Remove(identifier);
+        var result = _queue.Remove(identifier);
+        _jobSleepEvent.Set();
+        return result;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -95,15 +110,15 @@ public class TimerTask
     /// <summary>
     /// Default constructor. Creates the worker threads.
     /// </summary>
-    private TimerTask()
+    private TaskTimerExecutor()
     {
-        _running = true;
         _thread = new Thread(Worker);
+        _running = true;
         _thread.Start();
     }
 
     /// <summary>
-    /// Hack to run user function call back inside a task.
+    /// Hack to run execute function callback inside a C# Task.
     /// </summary>
     /// <param name="job">Jos to execute.</param>
     private void Callback(IJob job)
@@ -123,12 +138,14 @@ public class TimerTask
         {
             if (_queue.TryPeekFront(out TimerData timerData))
             {
-                if (DateTime.Now > timerData.TimePoint)
+                var diff = timerData.TimePoint - DateTime.Now;
+                if (diff.TotalMilliseconds <= 0)
                 {
                     Task.Factory.StartNew(() => { Callback(timerData.Callback); });
                     _queue.TryFront(out TimerData _);
-                } else Thread.Sleep(_intervalMs);
-            } else Thread.Sleep(_intervalMs);
+                } else
+                    _jobSleepEvent.WaitOne((int)diff.TotalMilliseconds);
+            } else _jobSleepEvent.WaitOne();
         }
     }
 }
