@@ -71,7 +71,7 @@ public class TaskTimerExecutor
     /// <param name="callback">User callback to execute.</param>
     /// <param name="timePoint">Point in time when to execute.</param>
     /// <param name="identifier">Identifier given by the system to the task.</param>
-    /// <returns>True if the element is added, false otherwise.</returns>
+    /// <returns>True on success, false otherwise.</returns>
     public bool Add(IJob callback, DateTime timePoint, out long identifier)
     {
         if (DateTime.Now > timePoint)
@@ -94,10 +94,11 @@ public class TaskTimerExecutor
     }
 
     /// <summary>
-    /// Remove element from the execution queue.
+    /// Remove element from the execution queue. Will return false if the
+    /// element is not found.
     /// </summary>
     /// <param name="identifier">Identifier of the task to remove.</param>
-    /// <returns>True if the is removed, false otherwise.</returns>
+    /// <returns>True on success, false otherwise.</returns>
     public bool RemoveTimer(long identifier)
     {
         var result = _queue.Remove(identifier);
@@ -127,10 +128,10 @@ public class TaskTimerExecutor
     }
 
     /// <summary>
-    /// Peeks the first task on the queue and sees if it has to be executed.
+    /// Peeks the first task in the queue and sees if it has to be executed.
     /// If the queue is empty or there is no task to execute the worker it
-    /// will sleep "_intervalMs". Tasks have to be ordered by execution
-    /// time point.
+    /// will sleep until a task is added or the first task has to be
+    /// executed. Tasks have to be ordered by execution time point.
     /// </summary>
     private void Worker()
     {
@@ -143,8 +144,7 @@ public class TaskTimerExecutor
                 {
                     Task.Factory.StartNew(() => { Callback(timerData.Callback); });
                     _queue.TryFront(out TimerData _);
-                } else
-                    _jobSleepEvent.WaitOne((int)diff.TotalMilliseconds);
+                } else _jobSleepEvent.WaitOne((int)diff.TotalMilliseconds);
             } else _jobSleepEvent.WaitOne();
         }
     }

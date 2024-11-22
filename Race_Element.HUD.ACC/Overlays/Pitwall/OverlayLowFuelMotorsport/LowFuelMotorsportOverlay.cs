@@ -205,7 +205,9 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 {
                     var min = (int)timeDiff.TotalMinutes;
                     var diff = race.RaceDate.Subtract(new TimeSpan(0, 0, min, 0));
-                    TaskTimerExecutor.Instance().Add(new LowFuelMotorsportSpeechSynthesizer(min + " minutes until race starts", this, min), diff, out _synthIdentifier);
+
+                    var speech = new LowFuelMotorsportSpeechSynthesizer(min +  " " +  (min == 1 ? "minute" : "minutes") + " until race starts", this, min);
+                    TaskTimerExecutor.Instance().Add(speech, diff, out _synthIdentifier);
                 }
             }
         }
@@ -214,11 +216,8 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
             TaskTimerExecutor.Instance().RemoveTimer(_synthIdentifier);
             _synthIdentifier = 0;
 
-            var now = DateTime.Now;
-            now = now.AddSeconds(1);
-
-            long ignore;
-            TaskTimerExecutor.Instance().Add(new LowFuelMotorsportSpeechSynthesizer("Race canceled by user", this, -1), now, out ignore);
+            var speech = new LowFuelMotorsportSpeechSynthesizer("Race canceled by user", this, -1);
+            TaskTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(1), out long _);
         }
 
         return licenseText;

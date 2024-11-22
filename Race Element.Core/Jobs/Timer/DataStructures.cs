@@ -37,9 +37,10 @@ internal class ConcurrentListTimerData
 
     /// <summary>
     /// Try to get the first element of the list without removing it from it.
+    /// Will return false the output variable to null if the list is empty.
     /// </summary>
     /// <param name="data">Out data.</param>
-    /// <returns>True if element peeked, else otherwise.</returns>
+    /// <returns>True on success, else otherwise.</returns>
     public bool TryPeekFront(out TimerData data)
     {
         lock (_lockObj)
@@ -57,9 +58,10 @@ internal class ConcurrentListTimerData
 
     /// <summary>
     /// Try to get the first element of the list. This method removes the element from it.
+    /// Will return false the output variable to null if the list is empty.
     /// </summary>
     /// <param name="data">Out data.</param>
-    /// <returns>True if element is removed, else otherwise.</returns>
+    /// <returns>True sucess, else otherwise.</returns>
     public bool TryFront(out TimerData data)
     {
         lock (_lockObj)
@@ -79,9 +81,10 @@ internal class ConcurrentListTimerData
 
     /// <summary>
     /// Add an element to the list and sort it by "TimePoint".
+    /// Always return true.
     /// </summary>
     /// <param name="data">Element to add.</param>
-    /// <returns>True if added, false otherwise.</returns>
+    /// <returns>True on success, false otherwise.</returns>
     public bool Add(TimerData data)
     {
        lock (_lockObj)
@@ -94,10 +97,11 @@ internal class ConcurrentListTimerData
     }
 
     /// <summary>
-    /// Remove the element with the given ID from the list.
+    /// Remove the element with the given ID from the list. If the element
+    /// is not found will return false.
     /// </summary>
     /// <param name="id">Element identifier.</param>
-    /// <returns>True if the element has been removed, false otherwise.</returns>
+    /// <returns>True on success, false otherwise.</returns>
     public bool Remove(long id)
     {
         lock (_lockObj)
