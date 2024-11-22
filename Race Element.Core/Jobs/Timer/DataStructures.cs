@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace RaceElement.Core.Jobs.Timer;
 
@@ -24,7 +25,15 @@ internal class TimerData
 
 internal class ConcurrentListTimerData
 {
+    /// <summary>
+    /// List of TimerData objects.
+    /// </summary>
     private List<TimerData> _list = new();
+
+    /// <summary>
+    /// Use to avoid concurrent access to the list.
+    /// </summary>
+    private readonly Lock _lockObj = new();
 
     /// <summary>
     /// Try to get the first element of the list without removing it from it.
@@ -33,7 +42,7 @@ internal class ConcurrentListTimerData
     /// <returns>True if element peeked, else otherwise.</returns>
     public bool TryPeekFront(out TimerData data)
     {
-        lock (_list)
+        lock (_lockObj)
         {
             if (_list.Count == 0)
             {
@@ -53,7 +62,7 @@ internal class ConcurrentListTimerData
     /// <returns>True if element is removed, else otherwise.</returns>
     public bool TryFront(out TimerData data)
     {
-        lock (_list)
+        lock (_lockObj)
         {
             if (_list.Count == 0)
             {
@@ -75,7 +84,7 @@ internal class ConcurrentListTimerData
     /// <returns>True if added, false otherwise.</returns>
     public bool Add(TimerData data)
     {
-       lock (_list)
+       lock (_lockObj)
         {
             _list.Add(data);
             _list.Sort((a, b) => a.TimePoint.CompareTo(b.TimePoint));
@@ -91,7 +100,7 @@ internal class ConcurrentListTimerData
     /// <returns>True if the element has been removed, false otherwise.</returns>
     public bool Remove(long id)
     {
-        lock (_list)
+        lock (_lockObj)
         {
             var item = _list.SingleOrDefault(r => r.Id == id);
             if (item == null) return false;
@@ -106,7 +115,7 @@ internal class ConcurrentListTimerData
     /// </summary>
     public void Clear()
     {
-        lock (_list)
+        lock (_lockObj)
         {
             _list.Clear();
         }
