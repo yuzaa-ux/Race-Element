@@ -72,7 +72,7 @@ public class TaskTimerExecutor
     /// <param name="timePoint">Point in time when to execute.</param>
     /// <param name="identifier">Identifier given by the system to the task.</param>
     /// <returns>True if the element is added, false otherwise.</returns>
-    public bool AddTimer(IJob callback, DateTime timePoint, out long identifier)
+    public bool Add(IJob callback, DateTime timePoint, out long identifier)
     {
         if (DateTime.Now > timePoint)
         {
