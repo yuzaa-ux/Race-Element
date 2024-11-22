@@ -4,6 +4,7 @@ using System.Drawing.Text;
 using System.Drawing;
 using System;
 using System.Windows.Forms;
+using RaceElement.Core.Jobs.Timer;
 using static RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.LowFuelMotorsportConfiguration;
 using RaceElement.HUD.Overlay.Util;
 using RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
@@ -26,6 +27,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     private LowFuelMotorsportJob _lfmJob;
 
     private SizeF _previousTextBounds = Size.Empty;
+    private long _5Min = 0, _3Min = 0, _1Min = 0, _raceStarted = 0;
 
     public LowFuelMotorsportOverlay(Rectangle rectangle) : base(rectangle, "Low Fuel Motorsport")
     {
@@ -192,10 +194,51 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
             if (race.RaceDate.Year != 1)
             {
+                var timeDiff = race.RaceDate.Subtract(DateTime.Now);
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
                 licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
-            }
 
+                if (_5Min == 0 && timeDiff.TotalSeconds > 0)
+                {
+                    var min5 = race.RaceDate.Subtract(new TimeSpan(0, 0, 5, 0));
+                    TimerTask.Instance().AddTimer(new LowFuelMotorsportSpeechSynthesizer("5 minutes until race start"), min5, out _5Min);
+
+                    var min3 = race.RaceDate.Subtract(new TimeSpan(0, 0, 3, 0));
+                    TimerTask.Instance().AddTimer(new LowFuelMotorsportSpeechSynthesizer("3 minutes until race start"), min3, out _3Min);
+
+                    var min1 = race.RaceDate.Subtract(new TimeSpan(0, 0, 1, 0));
+                    TimerTask.Instance().AddTimer(new LowFuelMotorsportSpeechSynthesizer("1 minutes until race start"), min1, out _1Min);
+
+                    TimerTask.Instance().AddTimer(new LowFuelMotorsportSpeechSynthesizer("Race has started"), race.RaceDate, out _raceStarted);
+                }
+                else if (timeDiff.TotalSeconds < 0)
+                {
+                    _5Min = 0;
+                    _3Min = 0;
+                    _1Min = 0;
+                    _raceStarted = 0;
+                }
+            }
+        }
+        else if (_5Min != 0)
+        {
+            TimerTask.Instance().RemoveTimer(_5Min);
+            _5Min = 0;
+
+            TimerTask.Instance().RemoveTimer(_3Min);
+            _3Min = 0;
+
+            TimerTask.Instance().RemoveTimer(_1Min);
+            _1Min = 0;
+
+            TimerTask.Instance().RemoveTimer(_raceStarted);
+            _raceStarted = 0;
+
+            var now = DateTime.Now;
+            now = now.AddSeconds(1);
+
+            long ignore;
+            TimerTask.Instance().AddTimer(new LowFuelMotorsportSpeechSynthesizer("Race canceled by user"), now, out ignore);
         }
 
         return licenseText;
