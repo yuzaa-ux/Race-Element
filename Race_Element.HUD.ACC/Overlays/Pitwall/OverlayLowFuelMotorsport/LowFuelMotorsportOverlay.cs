@@ -205,13 +205,13 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 if (timeDiff.TotalMinutes >= 0 && _synthIdentifier.PropertyAsValue == 0)
                 {
                     var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate, _synthIdentifier);
-                    TaskTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out _synthIdentifier.PropertyAsReference[0]);
+                    JobTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out _synthIdentifier.PropertyAsReference[0]);
                 }
             }
         }
         else if (_synthIdentifier.PropertyAsValue != 0)
         {
-            TaskTimerExecutor.Instance().RemoveTimer(_synthIdentifier.PropertyAsValue);
+            JobTimerExecutor.Instance().RemoveTimer(_synthIdentifier.PropertyAsValue);
             _synthIdentifier.PropertyAsValue = 0;
         }
 

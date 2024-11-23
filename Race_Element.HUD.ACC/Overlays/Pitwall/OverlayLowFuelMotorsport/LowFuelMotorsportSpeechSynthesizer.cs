@@ -66,6 +66,6 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
         }
 
         LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTime, _synthIdentifier);
-        TaskTimerExecutor.Instance().Add(speech, time, out _synthIdentifier.PropertyAsReference[0]);
+        JobTimerExecutor.Instance().Add(speech, time, out _synthIdentifier.PropertyAsReference[0]);
     }
 }

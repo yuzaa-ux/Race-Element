@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RaceElement.Core.Jobs.Timer;
 
-public sealed class TaskTimerExecutor
+public sealed class JobTimerExecutor
 {
     /// <summary>
     /// Singleton instance so it can be accessed from anywhere.
@@ -12,7 +12,7 @@ public sealed class TaskTimerExecutor
     /// are any other major issues doing the initialization
     /// this way.
     /// </summary>
-    private static TaskTimerExecutor _instance = new();
+    private static JobTimerExecutor _instance = new();
 
     /// <summary>
     /// Queue that will store the jobs to execute.
@@ -45,7 +45,7 @@ public sealed class TaskTimerExecutor
     /// Get the timer instance.
     /// </summary>
     /// <returns>The Timer instance</returns>
-    public static TaskTimerExecutor Instance()
+    public static JobTimerExecutor Instance()
     {
         return _instance;
     }
@@ -111,7 +111,7 @@ public sealed class TaskTimerExecutor
     /// <summary>
     /// Default constructor. Creates the worker threads.
     /// </summary>
-    private TaskTimerExecutor()
+    private JobTimerExecutor()
     {
         _thread = new Thread(Worker);
         _running = true;
