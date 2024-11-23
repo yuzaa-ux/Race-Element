@@ -10,6 +10,26 @@ public interface IJob
     public abstract void Cancel();
 }
 
+public class ReferenceProperty<T>
+{
+    private T[] _typeReference;
+
+    public ReferenceProperty(T value)
+    {
+        _typeReference = new T[] { value };
+    }
+
+    public T PropertyAsValue
+    {
+        get { return _typeReference[0]; }
+        set { _typeReference[0] = value; }
+    }
+    public T[] PropertyAsReference
+    {
+        get { return _typeReference; }
+    }
+}
+
 public static class IJobExtensions
 {
     /// <summary>

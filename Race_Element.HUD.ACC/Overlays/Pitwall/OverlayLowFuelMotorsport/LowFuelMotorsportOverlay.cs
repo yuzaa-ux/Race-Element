@@ -4,6 +4,7 @@ using System.Drawing.Text;
 using System.Drawing;
 using System;
 using System.Windows.Forms;
+using RaceElement.Core.Jobs;
 using RaceElement.Core.Jobs.Timer;
 using static RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.LowFuelMotorsportConfiguration;
 using RaceElement.HUD.Overlay.Util;
@@ -27,7 +28,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     private LowFuelMotorsportJob _lfmJob;
 
     private SizeF _previousTextBounds = Size.Empty;
-    private long _synthIdentifier = 0;
+    private readonly ReferenceProperty<long> _synthIdentifier = new(0);
 
     public LowFuelMotorsportOverlay(Rectangle rectangle) : base(rectangle, "Low Fuel Motorsport")
     {
@@ -201,56 +202,19 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
                 licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
 
-                if (timeDiff.TotalMinutes >= 0 && _synthIdentifier == 0)
+                if (timeDiff.TotalMinutes >= 0 && _synthIdentifier.PropertyAsValue == 0)
                 {
-                    var min = (int)(timeDiff.TotalMinutes + 0.5);
-                    var now = DateTime.Now.AddSeconds(5);
-
-                    var speech = new LowFuelMotorsportSpeechSynthesizer(min +  " " +  (min == 1 ? "minute" : "minutes") + " until race starts", this, min);
-                    TaskTimerExecutor.Instance().Add(speech, now, out _synthIdentifier);
+                    var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate, _synthIdentifier);
+                    TaskTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out _synthIdentifier.PropertyAsReference[0]);
                 }
             }
         }
-        else if (_synthIdentifier != 0)
+        else if (_synthIdentifier.PropertyAsValue != 0)
         {
-            TaskTimerExecutor.Instance().RemoveTimer(_synthIdentifier);
-            _synthIdentifier = 0;
-
-            var speech = new LowFuelMotorsportSpeechSynthesizer("Race canceled by user", this, -1);
-            TaskTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(1), out long _);
+            TaskTimerExecutor.Instance().RemoveTimer(_synthIdentifier.PropertyAsValue);
+            _synthIdentifier.PropertyAsValue = 0;
         }
 
         return licenseText;
-    }
-
-    public void SynthesizerCallback(int lastTimeInSec)
-    {
-        if (lastTimeInSec > 5)
-        {
-            var speech = new LowFuelMotorsportSpeechSynthesizer("5 minutes until race starts", this, 5);
-            var time = _apiObject.Races[0].RaceDate.Subtract(new TimeSpan(0, 0, 5, 0));
-            TaskTimerExecutor.Instance().Add(speech, time, out _synthIdentifier);
-        }
-        if (lastTimeInSec > 3)
-        {
-            var speech = new LowFuelMotorsportSpeechSynthesizer("3 minutes until race starts", this, 3);
-            var time = _apiObject.Races[0].RaceDate.Subtract(new TimeSpan(0, 0, 3, 0));
-            TaskTimerExecutor.Instance().Add(speech, time, out _synthIdentifier);
-        }
-        else if (lastTimeInSec > 1)
-        {
-            var speech = new LowFuelMotorsportSpeechSynthesizer("1 minute until race starts", this, 1);
-            var time = _apiObject.Races[0].RaceDate.Subtract(new TimeSpan(0, 0, 1, 0));
-            TaskTimerExecutor.Instance().Add(speech, time, out _synthIdentifier);
-        }
-        else if (lastTimeInSec > 0)
-        {
-            var speech = new LowFuelMotorsportSpeechSynthesizer("Time to race!", this, -1);
-            TaskTimerExecutor.Instance().Add(speech, _apiObject.Races[0].RaceDate, out _synthIdentifier);
-        }
-        else
-        {
-            _synthIdentifier = 0;
-        }
     }
 }
