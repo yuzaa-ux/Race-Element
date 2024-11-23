@@ -6,17 +6,13 @@ namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 
 internal class LowFuelMotorsportSpeechSynthesizer : IJob
 {
-    private readonly SpeechSynthesizer _synth;
+    private readonly LowFuelMotorsportOverlay _overlay;
     private readonly String _message;
-
-    private LowFuelMotorsportOverlay _overlay;
-    private int _time;
+    private readonly int _time;
 
     public LowFuelMotorsportSpeechSynthesizer(String message, LowFuelMotorsportOverlay overlay, int time)
     {
-        _synth = new SpeechSynthesizer();
         _message = message;
-
         _overlay = overlay;
         _time = time;
     }
@@ -26,7 +22,9 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
 
     public void Run()
     {
-        _synth.SpeakAsync(_message);
+        var speech = new SpeechSynthesizer();
+            speech.Speak(_message);
+            speech.Dispose();
         _overlay.SynthesizerCallback(_time);
     }
 }
