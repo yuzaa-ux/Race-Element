@@ -37,9 +37,9 @@ public sealed class TaskTimerExecutor
     private long _identifier = 0;
 
     /// <summary>
-    /// Used by worker thread to sleep until next tick or wake up on cancel.
+    /// Used by worker thread to sleep until next clock, wake up because of add/remove or cancel.
     /// </summary>
-    private readonly EventWaitHandle _jobSleepEvent = new(false, EventResetMode.AutoReset);
+    private readonly EventWaitHandle _jobWaitEvent = new(false, EventResetMode.AutoReset);
 
     /// <summary>
     /// Get the timer instance.
@@ -57,7 +57,7 @@ public sealed class TaskTimerExecutor
     public void Dispose()
     {
         _running = false;
-        _jobSleepEvent.Set();
+        _jobWaitEvent.Set();
 
         _thread.Join();
         _queue.Clear();
@@ -88,7 +88,7 @@ public sealed class TaskTimerExecutor
         timerData.TimePoint = timePoint;
 
         _queue.Add(timerData);
-        _jobSleepEvent.Set();
+        _jobWaitEvent.Set();
 
         return true;
     }
@@ -102,7 +102,7 @@ public sealed class TaskTimerExecutor
     public bool RemoveTimer(long identifier)
     {
         var result = _queue.Remove(identifier);
-        _jobSleepEvent.Set();
+        _jobWaitEvent.Set();
         return result;
     }
 
@@ -144,8 +144,8 @@ public sealed class TaskTimerExecutor
                 {
                     Task.Factory.StartNew(() => { Callback(timerData.Callback); });
                     _queue.TryFront(out TimerData _);
-                } else _jobSleepEvent.WaitOne((int)diff.TotalMilliseconds);
-            } else _jobSleepEvent.WaitOne();
+                } else _jobWaitEvent.WaitOne((int)diff.TotalMilliseconds);
+            } else _jobWaitEvent.WaitOne();
         }
     }
 }
