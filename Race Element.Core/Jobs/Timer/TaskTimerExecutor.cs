@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RaceElement.Core.Jobs.Timer;
 
-public class TaskTimerExecutor
+public sealed class TaskTimerExecutor
 {
     /// <summary>
     /// Singleton instance so it can be accessed from anywhere.

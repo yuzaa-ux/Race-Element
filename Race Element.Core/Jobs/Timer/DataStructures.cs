@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace RaceElement.Core.Jobs.Timer;
 
-internal class TimerData
+internal sealed class TimerData
 {
     /// <summary>
     /// Worker identifier. Used to access it from outside.
@@ -23,7 +23,7 @@ internal class TimerData
     public DateTime TimePoint;
 }
 
-internal class ConcurrentListTimerData
+internal sealed class ConcurrentListTimerData
 {
     /// <summary>
     /// List of TimerData objects.
