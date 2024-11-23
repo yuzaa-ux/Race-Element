@@ -88,23 +88,27 @@ public sealed class GapTracker : AbstractLoopJob
 
         Parallel.ForEach(EntryListTracker.Instance.Cars, entry =>
         {
-            if (!GapData.TryGetValue(entry.Key, out GapPointData[] data))
+            try
             {
-                data = new GapPointData[TotalGaps];
-                GapData.TryAdd(entry.Key, data);
-            }
-
-            float gapStep = 1f / TotalGaps;
-            for (int i = 0; i < TotalGaps; i++)
-            {
-                float spline = entry.Value.RealtimeCarUpdate.SplinePosition;
-                float estimatedGapSpline = i * gapStep;
-                if (spline > estimatedGapSpline && spline < estimatedGapSpline + gapStep * 1.5f)
+                if (!GapData.TryGetValue(entry.Key, out GapPointData[] data))
                 {
-                    if (data[i].PassedAt == DateTime.MinValue || DateTime.UtcNow > data[i].PassedAt.AddMinutes(1))
-                        data[i] = new GapPointData() { PassedAt = DateTime.UtcNow };
+                    data = new GapPointData[TotalGaps];
+                    GapData.TryAdd(entry.Key, data);
+                }
+
+                float gapStep = 1f / TotalGaps;
+                for (int i = 0; i < TotalGaps; i++)
+                {
+                    float spline = entry.Value.RealtimeCarUpdate.SplinePosition;
+                    float estimatedGapSpline = i * gapStep;
+                    if (spline > estimatedGapSpline && spline < estimatedGapSpline + gapStep * 1.5f)
+                    {
+                        if (data[i].PassedAt == DateTime.MinValue || DateTime.UtcNow > data[i].PassedAt.AddMinutes(1))
+                            data[i] = new GapPointData() { PassedAt = DateTime.UtcNow };
+                    }
                 }
             }
+            catch (Exception) { }
         });
     }
 }
