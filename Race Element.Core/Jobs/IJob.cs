@@ -10,14 +10,9 @@ public interface IJob
     public abstract void Cancel();
 }
 
-public class ReferenceProperty<T>
+public sealed class ReferenceProperty<T>(T value)
 {
-    private T[] _typeReference;
-
-    public ReferenceProperty(T value)
-    {
-        _typeReference = new T[] { value };
-    }
+    private readonly T[] _typeReference = [value];
 
     public T PropertyAsValue
     {
