@@ -15,7 +15,7 @@ internal sealed class TimerData
     /// <summary>
     /// Function to execute.
     /// </summary>
-    public IJob Callback;
+    public IJob Job;
 
     /// <summary>
     /// Point in time when to execute the function.
@@ -28,7 +28,7 @@ internal sealed class ConcurrentListTimerData
     /// <summary>
     /// List of TimerData objects.
     /// </summary>
-    private List<TimerData> _list = new();
+    private readonly List<TimerData> _list = [];
 
     /// <summary>
     /// Use to avoid concurrent access to the list.
@@ -87,7 +87,7 @@ internal sealed class ConcurrentListTimerData
     /// <returns>True on success, false otherwise.</returns>
     public bool Add(TimerData data)
     {
-       lock (_lockObj)
+        lock (_lockObj)
         {
             _list.Add(data);
             _list.Sort((a, b) => a.TimePoint.CompareTo(b.TimePoint));
