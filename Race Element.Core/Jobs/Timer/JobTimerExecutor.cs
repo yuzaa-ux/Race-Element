@@ -12,12 +12,12 @@ public sealed class JobTimerExecutor
     /// are any other major issues doing the initialization
     /// this way.
     /// </summary>
-    private static JobTimerExecutor _instance = new();
+    private static readonly JobTimerExecutor _instance = new();
 
     /// <summary>
     /// Queue that will store the jobs to execute.
     /// </summary>
-    private ConcurrentListTimerData _queue = new();
+    private readonly ConcurrentListTimerData _queue = new();
 
     /// <summary>
     /// Thread that will loop over all the task on the queue
@@ -45,10 +45,7 @@ public sealed class JobTimerExecutor
     /// Get the timer instance.
     /// </summary>
     /// <returns>The Timer instance</returns>
-    public static JobTimerExecutor Instance()
-    {
-        return _instance;
-    }
+    public static JobTimerExecutor Instance() => _instance;
 
     /// <summary>
     /// Stop que working thread and clear the queue. Call dispose only when the
@@ -59,7 +56,7 @@ public sealed class JobTimerExecutor
         _running = false;
         _jobWaitEvent.Set();
 
-        _thread.Join();
+        _thread?.Join();
         _queue.Clear();
     }
 
@@ -68,11 +65,11 @@ public sealed class JobTimerExecutor
     /// execution time point. If "TimePoint" is lower the "DateTime.now()"
     /// the element will not be added.
     /// </summary>
-    /// <param name="callback">User callback to execute.</param>
+    /// <param name="job">User callback to execute.</param>
     /// <param name="timePoint">Point in time when to execute.</param>
     /// <param name="identifier">Identifier given by the system to the task.</param>
     /// <returns>True on success, false otherwise.</returns>
-    public bool Add(IJob callback, DateTime timePoint, out long identifier)
+    public bool Add(IJob job, DateTime timePoint, out long identifier)
     {
         if (DateTime.Now > timePoint)
         {
@@ -84,7 +81,7 @@ public sealed class JobTimerExecutor
         identifier = Interlocked.Increment(ref _identifier);
 
         timerData.Id = identifier;
-        timerData.Callback = callback;
+        timerData.Job = job;
         timerData.TimePoint = timePoint;
 
         _queue.Add(timerData);
@@ -118,14 +115,6 @@ public sealed class JobTimerExecutor
         _thread.Start();
     }
 
-    /// <summary>
-    /// Hack to run execute function callback inside a C# Task.
-    /// </summary>
-    /// <param name="job">Jos to execute.</param>
-    private void Callback(IJob job)
-    {
-        job.Run();
-    }
 
     /// <summary>
     /// Peeks the first task in the queue and sees if it has to be executed.
@@ -142,7 +131,7 @@ public sealed class JobTimerExecutor
                 var diff = timerData.TimePoint - DateTime.Now;
                 if (diff.TotalMilliseconds <= 0)
                 {
-                    Task.Factory.StartNew(() => { Callback(timerData.Callback); });
+                    Task.Factory.StartNew(timerData.Job.Run);
                     _queue.TryFront(out TimerData _);
                 } else _jobWaitEvent.WaitOne((int)diff.TotalMilliseconds);
             } else _jobWaitEvent.WaitOne();
