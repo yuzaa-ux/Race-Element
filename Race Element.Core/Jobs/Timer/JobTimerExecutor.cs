@@ -23,7 +23,7 @@ public sealed class JobTimerExecutor
     /// Thread that will loop over all the task on the queue
     /// and run them when it is needed.
     /// </summary>
-    private Thread _thread = null;
+    private readonly Thread _thread = null;
 
     /// <summary>
     /// Is worker thread running.
