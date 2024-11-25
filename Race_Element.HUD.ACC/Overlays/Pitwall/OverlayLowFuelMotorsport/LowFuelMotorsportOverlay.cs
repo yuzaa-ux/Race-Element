@@ -210,7 +210,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
                 if (timeDiff.TotalMinutes >= 0)
                 {
-                    var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate.ToUniversalTime());
+                    var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate.ToUniversalTime(), this);
                     JobTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out Guid jobId);
                     _speechJobIds.Add(jobId);
                 }
