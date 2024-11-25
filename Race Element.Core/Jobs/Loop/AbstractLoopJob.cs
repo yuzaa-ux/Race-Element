@@ -18,6 +18,8 @@ public abstract partial class AbstractLoopJob : IJob
     /// <returns>true if the job is active, false otherwise</returns>
     public bool IsRunning { get; private set; } = false;
 
+    public Guid JobId => Guid.NewGuid();
+
     /// <summary>Set at what interval <see cref="RunAction"/> is executed. If the execution
     /// time is less than the interval it will wait until the next interval,
     /// otherwise it will be executed immediately.
@@ -113,4 +115,4 @@ public abstract partial class AbstractLoopJob : IJob
         AfterCancel();
         _workerExitEvent.Set();
     }
- }
+}

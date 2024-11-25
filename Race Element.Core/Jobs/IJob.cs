@@ -5,25 +5,10 @@ namespace RaceElement.Core.Jobs;
 
 public interface IJob
 {
+    public Guid JobId { get; }
     public bool IsRunning { get; }
     public abstract void Run();
     public abstract void Cancel();
-}
-
-public sealed class ReferenceProperty<T>(T value)
-{
-    // https://stackoverflow.com/questions/6253551/c-sharp-reference-member-variable
-    private readonly T[] _typeReference = [value];
-
-    public T PropertyAsValue
-    {
-        get { return _typeReference[0]; }
-        set { _typeReference[0] = value; }
-    }
-    public T[] PropertyAsReference
-    {
-        get { return _typeReference; }
-    }
 }
 
 public static class IJobExtensions

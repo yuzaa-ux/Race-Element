@@ -7,29 +7,30 @@ namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 
 internal class LowFuelMotorsportSpeechSynthesizer : IJob
 {
-    private readonly ReferenceProperty<long> _synthIdentifier;
-    private readonly DateTime _raceStartTime;
+    private readonly DateTime _raceStartTimeUtc;
 
-    public LowFuelMotorsportSpeechSynthesizer(DateTime raceStartTime, ReferenceProperty<long> synthIdentifier)
+    public LowFuelMotorsportSpeechSynthesizer(DateTime raceStartTimeUtc)
     {
-        _synthIdentifier = synthIdentifier;
-        _raceStartTime = raceStartTime;
+        _raceStartTimeUtc = raceStartTimeUtc;
     }
 
     public bool IsRunning { get; private set; } = false;
+
+    public Guid JobId => Guid.NewGuid();
+
     public void Cancel() { }
 
     public void Run()
     {
-        var diffSec = (int)((_raceStartTime - DateTime.Now).TotalSeconds);
-        string message = $"{diffSec / 60} minutes until race starts";
+        var timeDiff = (_raceStartTimeUtc - DateTime.UtcNow);
+        string message = $"{timeDiff.Minutes} minutes until race starts";
         int minTimeRaceStartSec = 5;
 
-        if (diffSec <= minTimeRaceStartSec)
+        if (timeDiff.TotalSeconds <= minTimeRaceStartSec)
         {
             message = "Race has started";
         }
-        else if (diffSec <= 60)
+        else if (timeDiff.TotalSeconds < 60)
         {
             message = "Race starts in less than 1 minute";
         }
@@ -38,34 +39,30 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
         speech.Speak(message);
         speech.Dispose();
 
-        if (diffSec > minTimeRaceStartSec)
+        if (timeDiff.TotalSeconds > minTimeRaceStartSec)
         {
-            NextMessage(diffSec);
-        }
-        else
-        {
-            _synthIdentifier.PropertyAsValue = 0;
+            NextMessage((int)timeDiff.TotalSeconds);
         }
     }
 
     private void NextMessage(int remainingTimeSeconds)
     {
-        DateTime time = _raceStartTime;
+        DateTime time = _raceStartTimeUtc;
 
         if (remainingTimeSeconds > (5 * 60))
         {
-            time = _raceStartTime.Subtract(new TimeSpan(0, 0, 5, 0));
+            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 5, 0));
         }
         else if (remainingTimeSeconds > (3 * 60))
         {
-            time = _raceStartTime.Subtract(new TimeSpan(0, 0, 3, 0));
+            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 3, 0));
         }
         else if (remainingTimeSeconds > 60)
         {
-            time = _raceStartTime.Subtract(new TimeSpan(0, 0, 1, 0));
+            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 1, 0));
         }
 
-        LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTime, _synthIdentifier);
-        JobTimerExecutor.Instance().Add(speech, time, out _synthIdentifier.PropertyAsReference[0]);
+        LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTimeUtc);
+        JobTimerExecutor.Instance().Add(speech, time, out Guid _);
     }
 }
