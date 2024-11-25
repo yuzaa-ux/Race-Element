@@ -202,7 +202,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 raceText
             );
 
-            if (race.RaceDate.Year != 1)
+            if (race.RaceDate.Year != 1 && _speechJobIds.Count == 0)
             {
                 var timeDiff = race.RaceDate.Subtract(DateTime.Now);
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
