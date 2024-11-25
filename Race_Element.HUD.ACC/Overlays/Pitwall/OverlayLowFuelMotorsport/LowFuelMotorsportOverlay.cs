@@ -29,7 +29,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     private ApiObject _apiObject;
     private LowFuelMotorsportJob _lfmJob;
 
-    private readonly List<Guid> _speechJobIds = [];
+    internal readonly List<Guid> _speechJobIds = [];
 
     private SizeF _previousTextBounds = Size.Empty;
 
@@ -100,6 +100,9 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
     public sealed override void BeforeStop()
     {
+        foreach (Guid jobId in _speechJobIds)
+            JobTimerExecutor.Instance().Remove(jobId);
+
         if (IsPreviewing) return;
 
         _lfmJob.OnNewApiObject -= OnNewApiObject;

@@ -8,10 +8,12 @@ namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 internal class LowFuelMotorsportSpeechSynthesizer : IJob
 {
     private readonly DateTime _raceStartTimeUtc;
+    private readonly LowFuelMotorsportOverlay _lfmOverlay;
 
-    public LowFuelMotorsportSpeechSynthesizer(DateTime raceStartTimeUtc)
+    public LowFuelMotorsportSpeechSynthesizer(DateTime raceStartTimeUtc, LowFuelMotorsportOverlay lfmOverlay)
     {
         _raceStartTimeUtc = raceStartTimeUtc;
+        _lfmOverlay = lfmOverlay;
     }
 
     public bool IsRunning { get; private set; } = false;
@@ -62,7 +64,8 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
             time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 1, 0));
         }
 
-        LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTimeUtc);
-        JobTimerExecutor.Instance().Add(speech, time, out Guid _);
+        LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTimeUtc, _lfmOverlay);
+        if (JobTimerExecutor.Instance().Add(speech, time, out Guid jobId))
+            _lfmOverlay._speechJobIds.Add(jobId);
     }
 }
