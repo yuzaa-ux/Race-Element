@@ -144,6 +144,9 @@ public sealed class JobTimerExecutor
             {
                 if (kv.Value.Job.IsRunning) return;
 
+                if (kv.Value.WasStarted && !kv.Value.Job.IsRunning)
+                    _dic.TryRemove(kv.Key, out TimerData _);
+
                 if (!kv.Value.WasStarted && DateTime.UtcNow > kv.Value.TimePoint)
                 {
                     kv.Value.WasStarted = true;
