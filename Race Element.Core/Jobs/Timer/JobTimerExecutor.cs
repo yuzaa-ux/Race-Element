@@ -160,6 +160,7 @@ public sealed class JobTimerExecutor
                     _jobWaitEvent.WaitOne(timeDifference);
                     continue;
                 }
+                else continue;
             }
 
             _jobWaitEvent.WaitOne(TimeSpan.FromMinutes(1));
