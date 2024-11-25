@@ -96,7 +96,7 @@ public sealed class JobTimerExecutor
     /// </summary>
     /// <param name="identifier">Identifier of the task to remove.</param>
     /// <returns>True on success, false otherwise.</returns>
-    public bool RemoveTimer(long identifier)
+    public bool Remove(long identifier)
     {
         var result = _queue.Remove(identifier);
         _jobWaitEvent.Set();

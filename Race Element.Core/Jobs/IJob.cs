@@ -12,6 +12,7 @@ public interface IJob
 
 public sealed class ReferenceProperty<T>(T value)
 {
+    // https://stackoverflow.com/questions/6253551/c-sharp-reference-member-variable
     private readonly T[] _typeReference = [value];
 
     public T PropertyAsValue

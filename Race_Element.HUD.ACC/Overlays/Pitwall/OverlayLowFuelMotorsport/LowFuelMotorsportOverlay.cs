@@ -211,7 +211,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
         }
         else if (_synthIdentifier.PropertyAsValue != 0)
         {
-            JobTimerExecutor.Instance().RemoveTimer(_synthIdentifier.PropertyAsValue);
+            JobTimerExecutor.Instance().Remove(_synthIdentifier.PropertyAsValue);
             _synthIdentifier.PropertyAsValue = 0;
         }
 
