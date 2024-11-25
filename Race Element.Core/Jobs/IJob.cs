@@ -5,6 +5,7 @@ namespace RaceElement.Core.Jobs;
 
 public interface IJob
 {
+    public Guid JobId { get; }
     public bool IsRunning { get; }
     public abstract void Run();
     public abstract void Cancel();

@@ -14,7 +14,7 @@ using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
+using RaceElement.Core.Jobs.Timer;
 
 namespace RaceElement;
 
@@ -220,6 +220,7 @@ public partial class App : Application
 
     private void App_Exit(object sender, ExitEventArgs e)
     {
+        JobTimerExecutor.Instance().Dispose();
         AccScheduler.UnregisterJobs();
         Environment.Exit(0);
     }
