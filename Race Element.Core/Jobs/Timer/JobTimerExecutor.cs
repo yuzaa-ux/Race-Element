@@ -56,6 +56,8 @@ public sealed class JobTimerExecutor
         _jobWaitEvent.Set();
 
         _thread?.Join();
+
+        Parallel.ForEach(_dic, timer => timer.Value.Job.Cancel());
         _dic.Clear();
     }
 
