@@ -155,12 +155,11 @@ public sealed class JobTimerExecutor
             if (earliest.Key != Guid.Empty)
             {
                 var timeDifference = (earliest.Value.TimePoint - DateTime.UtcNow);
+
                 if (timeDifference > TimeSpan.FromMilliseconds(1))
-                {
                     _jobWaitEvent.WaitOne(timeDifference);
-                    continue;
-                }
-                else continue;
+
+                continue;
             }
 
             _jobWaitEvent.WaitOne(TimeSpan.FromMinutes(1));
