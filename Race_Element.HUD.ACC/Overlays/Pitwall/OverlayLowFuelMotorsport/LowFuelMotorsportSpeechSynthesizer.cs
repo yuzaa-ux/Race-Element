@@ -18,7 +18,8 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
 
     public bool IsRunning { get; private set; } = false;
 
-    public Guid JobId => Guid.NewGuid();
+    private readonly Guid _id = Guid.NewGuid();
+    public Guid JobId => _id;
 
     public void Cancel() { }
 

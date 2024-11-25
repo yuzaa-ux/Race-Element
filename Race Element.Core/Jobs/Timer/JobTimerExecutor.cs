@@ -117,8 +117,6 @@ public sealed class JobTimerExecutor
         return false;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-
     /// <summary>
     /// Default constructor. Creates the worker threads.
     /// </summary>
@@ -128,7 +126,6 @@ public sealed class JobTimerExecutor
         _running = true;
         _thread.Start();
     }
-
 
     /// <summary>
     /// Peeks the first task in the queue and sees if it has to be executed.
@@ -140,12 +137,14 @@ public sealed class JobTimerExecutor
     {
         while (_running)
         {
+            ConcurrentBag<Guid> finishedTimers = [];
+
             Parallel.ForEach(_dic, (KeyValuePair<Guid, TimerData> kv) =>
             {
                 if (kv.Value.Job.IsRunning) return;
 
                 if (kv.Value.WasStarted && !kv.Value.Job.IsRunning)
-                    _dic.TryRemove(kv.Key, out TimerData _);
+                    finishedTimers.Add(kv.Key);
 
                 if (!kv.Value.WasStarted && DateTime.UtcNow > kv.Value.TimePoint)
                 {
@@ -153,6 +152,9 @@ public sealed class JobTimerExecutor
                     Task.Factory.StartNew(kv.Value.Job.Run);
                 }
             });
+
+            if (!finishedTimers.IsEmpty)
+                Parallel.ForEach(finishedTimers, x => _dic.Remove(x, out TimerData _));
 
             var earliest = _dic.Where(x => !x.Value.WasStarted && x.Value.TimePoint > DateTime.UtcNow)
                  .OrderByDescending(x => x.Value.TimePoint)

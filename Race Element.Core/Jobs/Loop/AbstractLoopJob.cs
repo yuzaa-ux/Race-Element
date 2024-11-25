@@ -18,7 +18,8 @@ public abstract partial class AbstractLoopJob : IJob
     /// <returns>true if the job is active, false otherwise</returns>
     public bool IsRunning { get; private set; } = false;
 
-    public Guid JobId => Guid.NewGuid();
+    private readonly Guid _id = Guid.NewGuid();
+    public Guid JobId => _id;
 
     /// <summary>Set at what interval <see cref="RunAction"/> is executed. If the execution
     /// time is less than the interval it will wait until the next interval,
