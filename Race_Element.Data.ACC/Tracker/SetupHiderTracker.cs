@@ -1,4 +1,6 @@
 ﻿using OBSWebsocketDotNet;
+using RaceElement.Data.Common;
+using RaceElement.Data.Games;
 using RaceElement.Util.Settings;
 using SLOBSharp.Client;
 using SLOBSharp.Client.Requests;
@@ -58,14 +60,32 @@ public sealed class SetupHiderTracker : IDisposable
                 while (IsTracking)
                 {
                     Thread.Sleep(50);
-                    var pageGraphics = ACCSharedMemory.Instance.ReadGraphicsPageFile(true);
 
-                    if (pageGraphics.Status != ACCSharedMemory.AcStatus.AC_OFF)
-                        if (pageGraphics.IsSetupMenuVisible != _toggle)
-                        {
-                            _toggle = pageGraphics.IsSetupMenuVisible;
-                            Toggle(pageGraphics.IsSetupMenuVisible);
-                        }
+                    switch (GameManager.CurrentGame)
+                    {
+                        case Game.AssettoCorsaCompetizione:
+                            {
+                                var pageGraphics = ACCSharedMemory.Instance.ReadGraphicsPageFile(true);
+                                if (pageGraphics.Status != ACCSharedMemory.AcStatus.AC_OFF)
+                                    if (pageGraphics.IsSetupMenuVisible != _toggle)
+                                    {
+                                        _toggle = pageGraphics.IsSetupMenuVisible;
+                                        Toggle(pageGraphics.IsSetupMenuVisible);
+                                    }
+                                break;
+                            }
+
+                        case Game.iRacing:
+                            {
+                                if (SimDataProvider.GameData.IsCarSetupScreenVisible != _toggle)
+                                {
+                                    _toggle = SimDataProvider.GameData.IsCarSetupScreenVisible;
+                                    Toggle(_toggle);
+                                }
+                                break;
+                            }
+
+                    }
                 }
             })
             { IsBackground = true }.Start();

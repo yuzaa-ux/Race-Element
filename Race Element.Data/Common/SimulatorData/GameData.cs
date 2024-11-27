@@ -9,4 +9,6 @@ public sealed record GameData
     public bool IsGamePaused { get; internal set; } = false;
     public bool IsInReplay { get; internal set; } = false;
 
+    public bool IsCarSetupScreenVisible { get; internal set; } = false;
+
 }
