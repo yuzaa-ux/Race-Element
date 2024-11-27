@@ -6,6 +6,10 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.2.2.0", "Assetto Corsa Competizione:"+
+                    "\n - Added Nordschleife Corner names by Mrpbody and Lect3R."+
+                    "\n - Low Fuel Motorsport HUD: Added 5/3/1 minute speech warning option by Andrei Jianu."
+                    },
         {"2.2.1.0", "- Updated vulnerable .net 4 packages."+
                     "\n- Updated other packages."+
                     "\n\nMulti-Sim:"+

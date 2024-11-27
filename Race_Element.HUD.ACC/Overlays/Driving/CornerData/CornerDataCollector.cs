@@ -6,7 +6,7 @@ using static RaceElement.HUD.ACC.Overlays.Driving.OverlayCornerData.CornerDataOv
 
 namespace RaceElement.HUD.ACC.Overlays.Driving.OverlayCornerData;
 
-internal class CornerDataCollector
+internal sealed class CornerDataCollector
 {
     private bool IsCollecting = false;
     private readonly List<float> CornerSpeeds = [];
@@ -37,12 +37,15 @@ internal class CornerDataCollector
     {
         if (overlay.pagePhysics != null)
         {
+            if (overlay.pageGraphics.IsInPitLane) return;
+
             int currentCornerIndex = overlay.GetCurrentCorner(overlay.pageGraphics.NormalizedCarPosition);
 
             if (currentCornerIndex == -1 && overlay._previousCorner != -1)
             {
                 CornerExited(overlay);
             }
+
 
             if (currentCornerIndex != -1)
             {

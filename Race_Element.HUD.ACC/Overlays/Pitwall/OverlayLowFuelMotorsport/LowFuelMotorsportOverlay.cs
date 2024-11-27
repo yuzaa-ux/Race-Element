@@ -4,9 +4,13 @@ using System.Drawing.Text;
 using System.Drawing;
 using System;
 using System.Windows.Forms;
+using RaceElement.Core.Jobs;
+using RaceElement.Core.Jobs.Timer;
 using static RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.LowFuelMotorsportConfiguration;
 using RaceElement.HUD.Overlay.Util;
 using RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 
@@ -24,6 +28,8 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
     private ApiObject _apiObject;
     private LowFuelMotorsportJob _lfmJob;
+
+    internal readonly List<Guid> _speechJobIds = [];
 
     private SizeF _previousTextBounds = Size.Empty;
 
@@ -94,6 +100,9 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
     public sealed override void BeforeStop()
     {
+        foreach (Guid jobId in _speechJobIds)
+            JobTimerExecutor.Instance().Remove(jobId);
+
         if (IsPreviewing) return;
 
         _lfmJob.OnNewApiObject -= OnNewApiObject;
@@ -142,7 +151,10 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
     private string GenerateLFMLicense()
     {
-        if (_apiObject.User.UserName == null && !IsPreviewing) return "No data";
+        if (_apiObject.User.UserName == null && !IsPreviewing)
+        {
+            return "No data";
+        }
 
         string licenseText = string.Format
         (
@@ -190,12 +202,25 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 raceText
             );
 
-            if (race.RaceDate.Year != 1)
+            if (_config.Others.SpeechWarnings && race.RaceDate.Year != 1 && _speechJobIds.Count == 0)
             {
+                var timeDiff = race.RaceDate.Subtract(DateTime.Now);
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
                 licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
-            }
 
+                if (timeDiff.TotalMinutes >= 0)
+                {
+                    var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate.ToUniversalTime(), this);
+                    JobTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out Guid jobId);
+                    _speechJobIds.Add(jobId);
+                }
+            }
+        }
+        else if (_speechJobIds.Count > 0)
+        {
+            Guid toRemove = _speechJobIds.FirstOrDefault();
+            JobTimerExecutor.Instance().Remove(toRemove);
+            _speechJobIds.Remove(toRemove);
         }
 
         return licenseText;
