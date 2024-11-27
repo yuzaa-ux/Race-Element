@@ -45,5 +45,8 @@ internal sealed class LowFuelMotorsportConfiguration : OverlayConfiguration
         [ToolTip("Show always")]
         public bool ShowAlways { get; init; } = false;
 
+        [ToolTip("Enables speech warnings ahead of the race.\n5 Minutes ahead, 3 minutes ahead and 1 minute ahead.")]
+        public bool SpeechWarnings { get; init; } = false;
+
     }
 }
