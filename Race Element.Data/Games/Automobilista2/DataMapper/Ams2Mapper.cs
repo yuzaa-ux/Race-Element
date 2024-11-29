@@ -107,6 +107,60 @@ internal static class Ams2Mapper
 
             session.AddOrUpdateCar(i, carInfo);
         }
+        
+        // Flag Mapper
+        switch ((Constants.RaceFlags)shared.mHighestFlagColour)
+        {
+            case Constants.RaceFlags.FLAG_COLOUR_GREEN:
+            {
+                session.CurrentFlag = CurrentFlag.Green;
+            } break;
+
+            case Constants.RaceFlags.FLAG_COLOUR_BLUE:
+            {
+                session.CurrentFlag = CurrentFlag.Blue;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_YELLOW:
+            {
+                session.CurrentFlag = CurrentFlag.Yellow;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_RED:
+            {
+                session.CurrentFlag = CurrentFlag.Red;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_BLACK:
+            {
+                session.CurrentFlag = CurrentFlag.Black;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_WHITE_SLOW_CAR:
+            {
+                session.CurrentFlag = CurrentFlag.White;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_WHITE_FINAL_LAP:
+            {
+                session.CurrentFlag = CurrentFlag.White;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_DOUBLE_YELLOW:
+            {
+                session.CurrentFlag = CurrentFlag.Yellow;
+            } break;
+            
+            case Constants.RaceFlags.FLAG_COLOUR_BLACK_AND_WHITE:
+            {
+                session.CurrentFlag = CurrentFlag.Black;
+            } break;
+            
+            default:
+            {
+                session.CurrentFlag = CurrentFlag.Green;
+            } break;
+        }
     }
 
     public static void ToLocalCar(Shared shared, LocalCarData local)

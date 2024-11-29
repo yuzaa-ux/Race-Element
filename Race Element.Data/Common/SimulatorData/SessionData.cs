@@ -82,6 +82,8 @@ public sealed record SessionData
 
     public bool IsSetupMenuVisible { get; set; }
     public double SessionTimeLeftSecs { get; set; }
+    
+    public CurrentFlag CurrentFlag { get; set; }
 }
 
 
@@ -115,4 +117,18 @@ public enum Status : int
     REPLAY,
     LIVE,
     PAUSE,
+}
+
+public enum CurrentFlag : int
+{
+    None,
+    Green,
+    Blue,
+    Yellow,
+    Red,
+    Black,
+    White,
+    Checkered,
+    Finish,
+    Max
 }

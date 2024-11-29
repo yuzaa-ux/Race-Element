@@ -45,9 +45,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     }
 
     private Font _font;
-
-    private PanelText _timeHeader;
-    private PanelText _timeValue;
+    
     private PanelText _globalFlagHeader;
     private PanelText _globalFlagValue;
     private PanelText _sessionTypeLabel;
@@ -105,14 +103,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             g.DrawLine(underlinePen, 0, lineHeight - 1, valueWidth, lineHeight - 1);
         });
 
-        if (this._config.InfoPanel.TimeOfDay)
-        {
-            _timeHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-            _timeValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-            headerRect.Offset(0, lineHeight);
-            valueRect.Offset(0, lineHeight);
-        }
-
         if (this._config.InfoPanel.GlobalFlag)
         {
             _globalFlagHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
@@ -160,8 +150,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     {
         _font?.Dispose();
 
-        _timeHeader?.Dispose();
-        _timeValue?.Dispose();
         _globalFlagHeader?.Dispose();
         _globalFlagValue?.Dispose();
         _sessionTypeLabel?.Dispose();
@@ -179,16 +167,10 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     public sealed override void Render(Graphics g)
     {
         SessionData session = SessionData.Instance;
-        if (this._config.InfoPanel.TimeOfDay)
-        {
-            TimeSpan time = TimeSpan.FromMilliseconds(0);
-            _timeHeader.Draw(g, "Time", this.Scale);
-            _timeValue.Draw(g, $"{time:hh\\:mm\\:ss}", this.Scale);
-        }
 
         if (this._config.InfoPanel.GlobalFlag)
         {
-            string flag = "";
+            string flag = session.CurrentFlag.ToString();
             _globalFlagHeader.Draw(g, "Flag", this.Scale);
             _globalFlagValue.Draw(g, $"{flag}", this.Scale);
         }
