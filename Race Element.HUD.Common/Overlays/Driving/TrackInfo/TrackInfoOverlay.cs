@@ -25,8 +25,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         public InfoPanelGrouping InfoPanel { get; init; } = new InfoPanelGrouping();
         public sealed class InfoPanelGrouping
         {
-            [ToolTip("Displays the actual time on track.")]
-            public bool TimeOfDay { get; init; } = true;
 
             [ToolTip("Shows the global track flag.")]
             public bool GlobalFlag { get; init; } = true;
@@ -54,8 +52,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     private PanelText _airTempValue;
     private PanelText _trackTempLabel;
     private PanelText _trackTempValue;
-    private PanelText _gripLabel;
-    private PanelText _gripValue;
     private PanelText _windLabel;
     private PanelText _windValue;
     
@@ -118,12 +114,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
         }
-
-        _gripLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-        _gripValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-        headerRect.Offset(0, lineHeight);
-        valueRect.Offset(0, lineHeight);
-
+        
         _airTempLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _airTempValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
@@ -158,8 +149,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         _airTempValue?.Dispose();
         _trackTempLabel?.Dispose();
         _trackTempValue?.Dispose();
-        _gripLabel?.Dispose();
-        _gripValue?.Dispose();
         _windLabel?.Dispose();
         _windValue?.Dispose();
     }
@@ -181,10 +170,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             _sessionTypeLabel.Draw(g, "Session", this.Scale);
             _sessionTypeValue.Draw(g, $"{sessionName}", this.Scale);
         }
-
-        string grip = "";
-        _gripLabel.Draw(g, "Grip", this.Scale);
-        _gripValue.Draw(g, $"{grip}", this.Scale);
 
         string airTemp = session.Weather.AirTemperature.ToString("F3");
         _airTempLabel.Draw(g, "Air", this.Scale);
