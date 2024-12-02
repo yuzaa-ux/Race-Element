@@ -19,7 +19,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.LapDeltaBar;
     Version = 1,
     OverlayType = OverlayType.Drive,
     OverlayCategory = OverlayCategory.Lap,
-    Game = Game.RaceRoom | Game.Automobilista2 | Game.RaceRoom,
+    Game = Game.RaceRoom,
     Authors = ["Reinier Klarenberg", "Dirk Wolf"])]
 internal sealed class LapDeltaOverlay : CommonAbstractOverlay
 {

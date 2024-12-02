@@ -202,16 +202,16 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 raceText
             );
 
-            if (_config.Others.SpeechWarnings && race.RaceDate.Year != 1 && _speechJobIds.Count == 0)
+            if (race.RaceDate.Year != 1)
             {
                 var timeDiff = race.RaceDate.Subtract(DateTime.Now);
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
                 licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
 
-                if (timeDiff.TotalMinutes >= 0)
+                if (_config.Others.SpeechWarnings && _speechJobIds.Count == 0 && timeDiff.TotalMinutes >= 0)
                 {
                     var speech = new LowFuelMotorsportSpeechSynthesizer(race.RaceDate.ToUniversalTime(), this);
-                    JobTimerExecutor.Instance().Add(speech, DateTime.Now.AddSeconds(5), out Guid jobId);
+                    JobTimerExecutor.Instance().Add(speech, DateTime.UtcNow.AddSeconds(5), out Guid jobId);
                     _speechJobIds.Add(jobId);
                 }
             }
