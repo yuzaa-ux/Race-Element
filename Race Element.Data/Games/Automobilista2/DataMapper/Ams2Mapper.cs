@@ -27,7 +27,7 @@ internal static class Ams2Mapper
 
         // Race session and phase type
         session.SessionType = ToSessionType((Constants.RaceSession)shared.mSessionState);
-        
+        session.Phase = ToSessionPhase((Constants.RaceState)shared.mRaceState);
 
         // Update drivers list
         for (int i = 0; i < shared.mNumParticipants; ++i)
@@ -190,6 +190,17 @@ internal static class Ams2Mapper
         _ => RaceSessionType.Practice,
     };
     
-    
+    private static SessionPhase ToSessionPhase(Constants.RaceState state) => state switch
+    {
+        Constants.RaceState.RACESTATE_NOT_STARTED => SessionPhase.Starting,
+        Constants.RaceState.RACESTATE_RACING => SessionPhase.Session,
+        Constants.RaceState.RACESTATE_FINISHED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_DISQUALIFIED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_RETIRED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_DNF => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_INVALID => SessionPhase.NONE,
+        Constants.RaceState.RACESTATE_MAX => SessionPhase.ResultUI,
+        _ => SessionPhase.NONE
+    };
 
 }
