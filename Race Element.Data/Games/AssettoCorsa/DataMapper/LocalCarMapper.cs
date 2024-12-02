@@ -25,8 +25,8 @@ internal static partial class LocalCarMapper
     // -- Brakes Data
     [MapProperty(nameof(PageFilePhysics.BrakeTemperature), nameof(@LocalCarData.Brakes.DiscTemperature))]
     // -- Electronics activation
-    [MapProperty(nameof(PageFilePhysics.TC), nameof(@LocalCarData.Electronics.TractionControlActivation))]
-    [MapProperty(nameof(PageFilePhysics.Abs), nameof(@LocalCarData.Electronics.AbsActivation))]
+    [MapProperty(nameof(PageFilePhysics.TC), nameof(@LocalCarData.Electronics.TractionControlLevel))]
+    [MapProperty(nameof(PageFilePhysics.Abs), nameof(@LocalCarData.Electronics.AbsLevel))]
     [MapProperty(nameof(PageFilePhysics.Fuel), nameof(@LocalCarData.Engine.FuelLiters))]
 
     private static partial void WithPhysicsPage(PageFilePhysics pagePhysics, LocalCarData commonData);
