@@ -26,39 +26,8 @@ internal static class Ams2Mapper
         session.IsSetupMenuVisible = shared.mGameState == (int)Constants.GameState.GAME_INGAME_INMENU_TIME_TICKING;
 
         // Race session and phase type
-        switch ((Constants.RaceSession)shared.mSessionState)
-        {
-            case Constants.RaceSession.SESSION_RACE:
-            {
-                session.SessionType = RaceSessionType.Race;
-            } break;
-
-            case Constants.RaceSession.SESSION_TEST:
-            {
-                session.SessionType = RaceSessionType.Practice;
-            } break;
-
-            case Constants.RaceSession.SESSION_QUALIFY:
-            {
-                session.SessionType = RaceSessionType.Qualifying;
-            } break;
-
-            case Constants.RaceSession.SESSION_TIME_ATTACK:
-            {
-                session.SessionType = RaceSessionType.Hotstint;
-            } break;
-
-            case Constants.RaceSession.SESSION_FORMATION_LAP:
-            {
-                session.Phase = SessionPhase.FormationLap;
-            } break;
-
-            default:
-            {
-                session.Phase = SessionPhase.NONE;
-                session.SessionType = RaceSessionType.Practice;
-            } break;
-        }
+        session.SessionType = ToSessionType((Constants.RaceSession)shared.mSessionState);
+        
 
         // Update drivers list
         for (int i = 0; i < shared.mNumParticipants; ++i)
@@ -207,5 +176,20 @@ internal static class Ams2Mapper
         Constants.RaceFlags.FLAG_COLOUR_BLACK_AND_WHITE => CurrentFlag.Penalty,
         _ => CurrentFlag.None
     };
+
+    private static RaceSessionType ToSessionType(Constants.RaceSession session) => session switch
+    {
+        Constants.RaceSession.SESSION_TEST => RaceSessionType.Practice,
+        Constants.RaceSession.SESSION_QUALIFY => RaceSessionType.Qualifying,
+        Constants.RaceSession.SESSION_PRACTICE => RaceSessionType.Practice,
+        Constants.RaceSession.SESSION_RACE => RaceSessionType.Race,
+        Constants.RaceSession.SESSION_TIME_ATTACK => RaceSessionType.Hotlap,
+        Constants.RaceSession.SESSION_FORMATION_LAP => RaceSessionType.Race,
+        Constants.RaceSession.SESSION_INVALID => RaceSessionType.Replay,
+        Constants.RaceSession.SESSION_MAX => RaceSessionType.Race,
+        _ => RaceSessionType.Practice,
+    };
     
+    
+
 }
