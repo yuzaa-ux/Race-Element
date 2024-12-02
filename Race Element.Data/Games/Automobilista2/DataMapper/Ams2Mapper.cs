@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using RaceElement.Data.Games.Automobilista2.SharedMemory;
+﻿using RaceElement.Data.Games.Automobilista2.SharedMemory;
 using RaceElement.Data.Common.SimulatorData.LocalCar;
 using RaceElement.Data.Common.SimulatorData;
 
@@ -109,58 +108,8 @@ internal static class Ams2Mapper
         }
         
         // Flag Mapper
-        switch ((Constants.RaceFlags)shared.mHighestFlagColour)
-        {
-            case Constants.RaceFlags.FLAG_COLOUR_GREEN:
-            {
-                session.CurrentFlag = CurrentFlag.Green;
-            } break;
+        session.CurrentFlag = ToFlag((Constants.RaceFlags)shared.mHighestFlagColour);
 
-            case Constants.RaceFlags.FLAG_COLOUR_BLUE:
-            {
-                session.CurrentFlag = CurrentFlag.Blue;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_YELLOW:
-            {
-                session.CurrentFlag = CurrentFlag.Yellow;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_RED:
-            {
-                session.CurrentFlag = CurrentFlag.Red;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_BLACK:
-            {
-                session.CurrentFlag = CurrentFlag.Black;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_WHITE_SLOW_CAR:
-            {
-                session.CurrentFlag = CurrentFlag.White;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_WHITE_FINAL_LAP:
-            {
-                session.CurrentFlag = CurrentFlag.White;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_DOUBLE_YELLOW:
-            {
-                session.CurrentFlag = CurrentFlag.Yellow;
-            } break;
-            
-            case Constants.RaceFlags.FLAG_COLOUR_BLACK_AND_WHITE:
-            {
-                session.CurrentFlag = CurrentFlag.Black;
-            } break;
-            
-            default:
-            {
-                session.CurrentFlag = CurrentFlag.Green;
-            } break;
-        }
     }
 
     public static void ToLocalCar(Shared shared, LocalCarData local)
@@ -242,4 +191,21 @@ internal static class Ams2Mapper
             _prevLapCount = shared.mParticipantInfo[shared.mViewedParticipantIndex].mCurrentLap;
         }
     }
+    
+    private static CurrentFlag ToFlag(Constants.RaceFlags flag) => flag switch
+    {
+        Constants.RaceFlags.FLAG_COLOUR_GREEN => CurrentFlag.Green,
+        Constants.RaceFlags.FLAG_COLOUR_BLUE => CurrentFlag.Blue,
+        Constants.RaceFlags.FLAG_COLOUR_YELLOW => CurrentFlag.Yellow,
+        Constants.RaceFlags.FLAG_COLOUR_RED => CurrentFlag.Red,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK => CurrentFlag.Black,
+        Constants.RaceFlags.FLAG_COLOUR_WHITE_FINAL_LAP => CurrentFlag.White,
+        Constants.RaceFlags.FLAG_COLOUR_WHITE_SLOW_CAR => CurrentFlag.White,
+        Constants.RaceFlags.FLAG_COLOUR_CHEQUERED => CurrentFlag.Checkered,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK_ORANGE_CIRCLE => CurrentFlag.Damage,
+        Constants.RaceFlags.FLAG_COLOUR_MAX => CurrentFlag.Max,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK_AND_WHITE => CurrentFlag.Penalty,
+        _ => CurrentFlag.None
+    };
+    
 }
