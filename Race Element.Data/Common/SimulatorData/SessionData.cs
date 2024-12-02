@@ -129,6 +129,7 @@ public enum CurrentFlag : int
     Black,
     White,
     Checkered,
-    Finish,
+    Damage,
+    Penalty,
     Max
 }
