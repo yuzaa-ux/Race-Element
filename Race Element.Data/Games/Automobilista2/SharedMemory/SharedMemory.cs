@@ -3,15 +3,17 @@ using System.Runtime.InteropServices;
 
 namespace RaceElement.Data.Games.Automobilista2.SharedMemory;
 
-internal static class AMS2SharedMemory
+internal static class SharedMemory
 {
-    public static SharedMemory.Shared Memory;
+    private static Shared Memory;
     private static MemoryMappedFile _file;
-    private static byte[] _buffer;
 
-    public static Automobilista2.SharedMemory.Shared ReadSharedMemory(bool fromCache = false)
+    public static Shared ReadSharedMemory(bool fromCache = false)
     {
-        if (fromCache) return Memory;
+        if (fromCache)
+        {
+            return Memory;
+        }
 
         try
         {
@@ -25,8 +27,9 @@ internal static class AMS2SharedMemory
         var view = _file.CreateViewStream();
         BinaryReader stream = new(view);
 
-        _buffer = stream.ReadBytes(Marshal.SizeOf(typeof(RaceRoom.SharedMemory.Shared)));
-        GCHandle handle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
+        var buffer = stream.ReadBytes(Marshal.SizeOf(typeof(Shared)));
+        GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+
         Memory = (Shared)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Shared));
         handle.Free();
 
@@ -37,6 +40,5 @@ internal static class AMS2SharedMemory
     {
         Memory = new();
         _file?.Dispose();
-        _buffer = [];
     }
 }
