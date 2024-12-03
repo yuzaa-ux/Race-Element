@@ -39,7 +39,7 @@ internal sealed class Automobilista2DataProvider : AbstractSimDataProvider
         {
             try
             {
-                Shared sharedMemory = AMS2SharedMemory.ReadSharedMemory();
+                Shared sharedMemory = SharedMemory.SharedMemory.ReadSharedMemory();
                 Ams2Mapper.ToLocalSession(sharedMemory, sessionData);
                 Ams2Mapper.ToLocalCar(sharedMemory, localCar);
 
