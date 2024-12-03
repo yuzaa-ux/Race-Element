@@ -6,7 +6,9 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.2.2.2", "Automobilista 2:"+
+        {"2.2.2.2", "Multi-Sim:"+
+                    "\n- Shift RPM HUD: amount of visible digits can now be adjusted."+
+                    "\n\nAutomobilista 2:"+
                     "\n- Added Track Info HUD. (By ConnorMolz)."+
                     "\n- Fixed shared memory implementation."
                     },
