@@ -13,7 +13,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.TrackInfo;
 
 [Overlay(
     Name = "Track Info",
-    Description = "A bar displaying a flat and zoomed in version of the Track Circle HUD.",
+    Description = "This Overlay is used to display track information, basic weather information and the current waved flag.",
     Game = Game.Automobilista2,
     Authors = ["Reinier Klarenberg", "Connor Molz"]
 )]
