@@ -71,7 +71,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         int lineHeight = _font.Height;
 
         int unscaledHeaderWidth = 100;
-        int unscaledValueWidth = 94;
+        int unscaledValueWidth = 124;
 
         int headerWidth = (int)(unscaledHeaderWidth * this.Scale);
         int valueWidth = (int)(unscaledValueWidth * this.Scale);
