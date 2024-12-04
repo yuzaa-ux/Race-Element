@@ -41,7 +41,7 @@ internal sealed class BrakeTempHistoryOverlay : AbstractOverlay
         RefreshRateHz = 1 / 3f;
     }
 
-    public override void SetupPreviewData()
+    public sealed override void SetupPreviewData()
     {
         _temperatureHistory.Add(new()
         {
@@ -209,7 +209,6 @@ internal sealed class BrakeTempHistoryOverlay : AbstractOverlay
             for (int i = 0; i < 4; i++)
             {
                 AbstractDrawableCell[] row = _graphicsGrid.Grid[1 + i];
-                bool isFrontBrakes = i < 2;
 
                 DrawableTextCell min = (DrawableTextCell)row[1];
                 min.CachedBackground = GetBackgroundSet(last.Min[i])[1];
