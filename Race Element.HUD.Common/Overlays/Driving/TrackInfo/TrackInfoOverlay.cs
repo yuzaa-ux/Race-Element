@@ -160,30 +160,30 @@ public class TrackInfoOverlay: CommonAbstractOverlay
 
         if (this._config.InfoPanel.GlobalFlag)
         {
-            string flag = SessionData.Instance.CurrentFlag.ToString();
+            string flag = SimDataProvider.Session.CurrentFlag.ToString();
             _globalFlagHeader.Draw(g, "Flag", this.Scale);
             _globalFlagValue.Draw(g, $"{flag}", this.Scale);
         }
 
         if (this._config.InfoPanel.SessionType)
         {
-            string sessionName = SessionData.Instance.SessionType.ToString();
+            string sessionName = SimDataProvider.Session.SessionType.ToString();
             _sessionTypeLabel.Draw(g, "Session", this.Scale);
             _sessionTypeValue.Draw(g, $"{sessionName}", this.Scale);
         }
 
-        string airTemp = SessionData.Instance.Weather.AirTemperature.ToString("F3");
+        string airTemp = SimDataProvider.Session.Weather.AirTemperature.ToString("F1");
         _airTempLabel.Draw(g, "Air", this.Scale);
         _airTempValue.Draw(g, $"{airTemp} °C", this.Scale);
 
         if (this._config.InfoPanel.TrackTemperature)
         {
-            string roadTemp = SessionData.Instance.Track.Temperature.ToString("F3");
+            string roadTemp = SimDataProvider.Session.Track.Temperature.ToString("F3");
             _trackTempLabel.Draw(g, "Track", this.Scale);
             _trackTempValue.Draw(g, $"{roadTemp} °C", this.Scale);
         }
         
-        string windSpeed = SessionData.Instance.Weather.AirDirection.ToString("F1");
+        string windSpeed = SimDataProvider.Session.Weather.AirDirection.ToString("F1");
         _windLabel.Draw(g, "Wind", this.Scale);
         _windValue.Draw(g, $"{windSpeed} km/h", this.Scale);
     }
