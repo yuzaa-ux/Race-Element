@@ -125,6 +125,7 @@ public enum CurrentFlag : int
     Green,
     Blue,
     Yellow,
+    DoubleYellow,
     Red,
     Black,
     White,

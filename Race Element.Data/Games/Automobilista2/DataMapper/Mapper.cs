@@ -166,6 +166,7 @@ internal static class Ams2Mapper
         Constants.RaceFlags.FLAG_COLOUR_GREEN => CurrentFlag.Green,
         Constants.RaceFlags.FLAG_COLOUR_BLUE => CurrentFlag.Blue,
         Constants.RaceFlags.FLAG_COLOUR_YELLOW => CurrentFlag.Yellow,
+        Constants.RaceFlags.FLAG_COLOUR_DOUBLE_YELLOW => CurrentFlag.Yellow,
         Constants.RaceFlags.FLAG_COLOUR_RED => CurrentFlag.Red,
         Constants.RaceFlags.FLAG_COLOUR_BLACK => CurrentFlag.Black,
         Constants.RaceFlags.FLAG_COLOUR_WHITE_FINAL_LAP => CurrentFlag.White,
