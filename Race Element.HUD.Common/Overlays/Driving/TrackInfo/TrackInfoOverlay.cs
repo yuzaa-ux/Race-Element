@@ -53,6 +53,8 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     private PanelText _airTempValue;
     private PanelText _trackTempLabel;
     private PanelText _trackTempValue;
+    private PanelText _windDirectionLabel;
+    private PanelText _windDirectionValue;
     private PanelText _windLabel;
     private PanelText _windValue;
     
@@ -128,6 +130,11 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
         }
+        
+        _windDirectionLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+        _windDirectionValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
+        headerRect.Offset(0, lineHeight);
+        valueRect.Offset(0, lineHeight);
 
         _windLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _windValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
@@ -150,6 +157,8 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         _airTempValue?.Dispose();
         _trackTempLabel?.Dispose();
         _trackTempValue?.Dispose();
+        _windDirectionLabel?.Dispose();
+        _windDirectionValue?.Dispose();
         _windLabel?.Dispose();
         _windValue?.Dispose();
     }
@@ -183,8 +192,41 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             _trackTempValue.Draw(g, $"{roadTemp} °C", this.Scale);
         }
         
-        string windSpeed = SimDataProvider.Session.Weather.AirDirection.ToString("F1");
+        string windDirection = RadianToDirection(SimDataProvider.Session.Weather.AirDirection);
+        _windDirectionLabel.Draw(g, "Direction", this.Scale);
+        _windDirectionValue.Draw(g, $"{windDirection}", this.Scale);
+        
+        string windSpeed = SimDataProvider.Session.Weather.AirVelocity.ToString("F1");
         _windLabel.Draw(g, "Wind", this.Scale);
         _windValue.Draw(g, $"{windSpeed} km/h", this.Scale);
+    }
+    
+    private string RadianToDirection(double radian)
+    {
+        // Normalize radian to range [0, 2π)
+        double twoPi = 2 * Math.PI;
+        radian = radian % twoPi;
+        if (radian < 0)
+            radian += twoPi;
+
+        // Define the boundaries for each direction
+        double sector = twoPi / 8; // Divide the circle into 8 equal parts
+
+        if (radian >= 0 && radian < sector)
+            return "E";
+        else if (radian >= sector && radian < 2 * sector)
+            return "NE";
+        else if (radian >= 2 * sector && radian < 3 * sector)
+            return "N";
+        else if (radian >= 3 * sector && radian < 4 * sector)
+            return "NW";
+        else if (radian >= 4 * sector && radian < 5 * sector)
+            return "W";
+        else if (radian >= 5 * sector && radian < 6 * sector)
+            return "SW";
+        else if (radian >= 6 * sector && radian < 7 * sector)
+            return "S";
+        else
+            return "SE";
     }
 }
