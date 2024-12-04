@@ -17,6 +17,10 @@ internal sealed class ShiftRpmConfiguration : OverlayConfiguration
         [ToolTip("Change the Font")]
         public RpmTextFont Font { get; init; } = RpmTextFont.Roboto;
 
+        [ToolTip("Amount of visible digits. Adjust if you've got a high reving engine(10k+ rpm)")]
+        [IntRange(2, 6, 1)]
+        public int Digits { get; init; } = 4;
+
         [IntRange(-10, 30, 1)]
         public int ExtraDigitSpacing { get; init; } = -8;
 

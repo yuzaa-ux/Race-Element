@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeHistory;
+namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeTempHistory;
 
 internal readonly record struct BrakeTempHistoryModel
 {
