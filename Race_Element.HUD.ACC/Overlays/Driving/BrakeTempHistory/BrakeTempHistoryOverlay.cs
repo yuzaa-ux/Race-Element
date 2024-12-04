@@ -10,7 +10,7 @@ using System.Linq;
 using RaceElement.HUD.Overlay.Internal;
 using RaceElement.HUD.Overlay.OverlayUtil;
 
-namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeHistory;
+namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeTempHistory;
 
 
 [Overlay(Name = "Brake Temp History",
@@ -93,7 +93,7 @@ internal sealed class BrakeTempHistoryOverlay : AbstractOverlay
 
     private void CreateGraphicsGrid()
     {
-        float scale = this.Scale;
+        float scale = Scale;
         if (IsPreviewing) scale = 1f;
 
         _font = FontUtil.FontSegoeMono(12f * scale);
@@ -103,7 +103,7 @@ internal sealed class BrakeTempHistoryOverlay : AbstractOverlay
         int columns = 4;    // Lap/Tyre, Avg, Min, Max
         _graphicsGrid = new GraphicsGrid(rows, columns);
 
-        float fontHeight = (int)(_font.GetHeight(120));
+        float fontHeight = (int)_font.GetHeight(120);
         int columnHeight = (int)(Math.Ceiling(fontHeight) + 1 * scale);
         int[] columnWidths = [(int)(50f * scale), (int)(60f * scale), (int)(60f * scale), (int)(60f * scale)];
         int totalWidth = columnWidths.Sum();
@@ -161,8 +161,8 @@ internal sealed class BrakeTempHistoryOverlay : AbstractOverlay
         _graphicsGrid.Grid[0][2] = col3;
         _graphicsGrid.Grid[0][3] = col4;
 
-        this.Width = totalWidth + 1;
-        this.Height = columnHeight * 5; // +1 for header
+        Width = totalWidth + 1;
+        Height = columnHeight * 5; // +1 for header
 
         StringFormat sf = new() { Alignment = StringAlignment.Center };
         // config data rows

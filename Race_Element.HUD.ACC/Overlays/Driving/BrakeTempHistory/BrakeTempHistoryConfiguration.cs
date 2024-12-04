@@ -1,6 +1,6 @@
 ﻿using RaceElement.HUD.Overlay.Configuration;
 
-namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeHistory;
+namespace RaceElement.HUD.ACC.Overlays.Driving.BrakeTempHistory;
 
 internal class BrakeTempHistoryConfiguration : OverlayConfiguration
 {
