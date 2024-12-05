@@ -14,8 +14,8 @@ internal static class Ams2Mapper
         // Wheather
         session.Weather.AirDirection = (float)Math.Atan2(shared.mWindDirectionY, shared.mWindDirectionX);
         session.Weather.AirTemperature = shared.mAmbientTemperature;
-        session.Weather.AirVelocity = Convert.ToSingle(shared.mWindSpeed + 3.6);
-        
+        session.Weather.AirVelocity = shared.mWindSpeed * 3.6f;
+
 
         // Track
         session.Track.Length = (int)(shared.mTrackLength + 0.5f);
@@ -76,7 +76,7 @@ internal static class Ams2Mapper
 
             session.AddOrUpdateCar(i, carInfo);
         }
-        
+
         // Flag Mapper
         session.CurrentFlag = ToFlag((Constants.RaceFlags)shared.mHighestFlagColour);
 
@@ -161,7 +161,7 @@ internal static class Ams2Mapper
             _prevLapCount = shared.mParticipantInfo[shared.mViewedParticipantIndex].mCurrentLap;
         }
     }
-    
+
     private static CurrentFlag ToFlag(Constants.RaceFlags flag) => flag switch
     {
         Constants.RaceFlags.FLAG_COLOUR_GREEN => CurrentFlag.Green,
@@ -191,7 +191,7 @@ internal static class Ams2Mapper
         Constants.RaceSession.SESSION_MAX => RaceSessionType.Race,
         _ => RaceSessionType.Practice,
     };
-    
+
     private static SessionPhase ToSessionPhase(Constants.RaceState state) => state switch
     {
         Constants.RaceState.RACESTATE_NOT_STARTED => SessionPhase.Starting,
