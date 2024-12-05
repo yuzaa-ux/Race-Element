@@ -144,7 +144,7 @@ public static class GameExtensions
 
         foreach (string exeName in ExeNames.All)
         {
-            Process? process = processes.FirstOrDefault(x => x.ProcessName == exeName);
+            using Process? process = processes.FirstOrDefault(x => x.ProcessName == exeName);
             if (process != null)
                 return GameFromProcessName(process.ProcessName);
         }
