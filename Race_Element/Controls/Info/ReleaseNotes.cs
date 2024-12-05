@@ -6,6 +6,8 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.2.2.4", "Race Element:"+
+                    "\n- When started, automatically scans for any supported simulators and switches."},
         {"2.2.2.2", "Multi-Sim:"+
                     "\n- Shift RPM HUD: amount of visible digits can now be adjusted."+
                     "\n\nAutomobilista 2:"+

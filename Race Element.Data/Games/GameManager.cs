@@ -1,6 +1,5 @@
 ﻿using RaceElement.Core.Jobs.Loop;
 using RaceElement.Data.Common;
-using RaceElement.Data.Games.iRacing;
 
 namespace RaceElement.Data.Games;
 
