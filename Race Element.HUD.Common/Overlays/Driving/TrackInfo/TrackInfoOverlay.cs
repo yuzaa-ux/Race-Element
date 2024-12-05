@@ -53,8 +53,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     private PanelText _airTempValue;
     private PanelText _trackTempLabel;
     private PanelText _trackTempValue;
-    private PanelText _windDirectionLabel;
-    private PanelText _windDirectionValue;
     private PanelText _windLabel;
     private PanelText _windValue;
     
@@ -70,8 +68,8 @@ public class TrackInfoOverlay: CommonAbstractOverlay
 
         int lineHeight = _font.Height;
 
-        int unscaledHeaderWidth = 100;
-        int unscaledValueWidth = 124;
+        int unscaledHeaderWidth = 66;
+        int unscaledValueWidth = 114;
 
         int headerWidth = (int)(unscaledHeaderWidth * this.Scale);
         int valueWidth = (int)(unscaledValueWidth * this.Scale);
@@ -130,11 +128,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
         }
-        
-        _windDirectionLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-        _windDirectionValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-        headerRect.Offset(0, lineHeight);
-        valueRect.Offset(0, lineHeight);
 
         _windLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _windValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
@@ -157,8 +150,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         _airTempValue?.Dispose();
         _trackTempLabel?.Dispose();
         _trackTempValue?.Dispose();
-        _windDirectionLabel?.Dispose();
-        _windDirectionValue?.Dispose();
         _windLabel?.Dispose();
         _windValue?.Dispose();
     }
@@ -193,12 +184,9 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         }
         
         string windDirection = RadianToDirection(SimDataProvider.Session.Weather.AirDirection);
-        _windDirectionLabel.Draw(g, "Direction", this.Scale);
-        _windDirectionValue.Draw(g, $"{windDirection}", this.Scale);
-        
-        string windSpeed = (SimDataProvider.Session.Weather.AirVelocity * 3.6).ToString("F2");
-        _windLabel.Draw(g, "Speed", this.Scale);
-        _windValue.Draw(g, $"{windSpeed} km/h", this.Scale);
+        string windSpeed = (SimDataProvider.Session.Weather.AirVelocity).ToString("F2");
+        _windLabel.Draw(g, "Wind", this.Scale);
+        _windValue.Draw(g, $"{windSpeed} > {windDirection}", this.Scale);
     }
     
     private static string RadianToDirection(double radian)
@@ -211,25 +199,17 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         
         int sectorIndex = (int)(radian / (twoPi / 8));
 
-        switch (sectorIndex)
+        return sectorIndex switch
         {
-            case 0:
-                return "E";
-            case 1:
-                return "NE";
-            case 2:
-                return "N";
-            case 3:
-                return "NW";
-            case 4:
-                return "W";
-            case 5:
-                return "SW";
-            case 6:
-                return "S";
-            default:
-                return "SE";
-        }
+            0 => "E",
+            1 => "NE",
+            2 => "N",
+            3 => "NW",
+            4 => "W",
+            5 => "SW",
+            6 => "S",
+            _ => "SE",
+        };
 
     }
 }

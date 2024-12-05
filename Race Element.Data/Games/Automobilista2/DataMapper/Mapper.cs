@@ -14,7 +14,8 @@ internal static class Ams2Mapper
         // Wheather
         session.Weather.AirDirection = (float)Math.Atan2(shared.mWindDirectionY, shared.mWindDirectionX);
         session.Weather.AirTemperature = shared.mAmbientTemperature;
-        session.Weather.AirVelocity = shared.mWindSpeed;
+        session.Weather.AirVelocity = Convert.ToSingle(shared.mWindSpeed + 3.6);
+        
 
         // Track
         session.Track.Length = (int)(shared.mTrackLength + 0.5f);
