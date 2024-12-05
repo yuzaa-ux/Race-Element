@@ -270,6 +270,8 @@ public sealed class IRacingDataProvider : AbstractSimDataProvider
                 Debug.WriteLine("new lap lastLapFuelConsumption {0} lastLapFuelLevelLiters {1}", lastLapFuelConsumption, lastLapFuelLevelLiters);
             }
 
+            SimDataProvider.GameData.IsCarSetupScreenVisible = _iRacingSDK.Data.GetBool(isInGarage);
+
             localCar.Engine.Rpm = (int)_iRacingSDK.Data.GetFloat(rPMDatum);
             localCar.Engine.IsRunning = localCar.Engine.Rpm > 0 && _iRacingSDK.Data.GetBool(isOnTrackCar) & !_iRacingSDK.Data.GetBool(isInGarage);
             // m/s -> km/h

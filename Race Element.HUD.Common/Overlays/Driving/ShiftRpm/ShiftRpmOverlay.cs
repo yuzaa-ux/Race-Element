@@ -25,7 +25,7 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
         RefreshRateHz = _config.General.RefreshRate;
 
         _bitmaps = new RpmBitmaps(_config);
-        Width = 5 * _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing * 4;
+        Width = _config.General.Digits * _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing * (_config.General.Digits - 1);
         Height = _bitmaps.Dimension.Height;
 
         _cachedBackground = new(Width, Height, g =>
@@ -55,11 +55,11 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
         int x = 0;
 
         int currentRpm = SimDataProvider.LocalCar.Engine.Rpm;
-        currentRpm.Clip(0, 99_999);
+        currentRpm.Clip(0, 999_999);
 
-        string s = $"{currentRpm}".FillStart(5, '0');
+        string s = $"{currentRpm}".FillStart(_config.General.Digits, '0');
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < _config.General.Digits; i++)
         {
             if (byte.TryParse(s.AsSpan(i, 1), out byte number))
                 _bitmaps.GetForNumber(number).Draw(g, new(x, 0));
@@ -67,57 +67,59 @@ internal sealed class ShiftRpmOverlay(Rectangle rectangle) : CommonAbstractOverl
             x += _bitmaps.Dimension.Width + _config.General.ExtraDigitSpacing;
         }
     }
-}
 
-internal sealed class RpmBitmaps : IDisposable
-{
-    private readonly CachedBitmap[] _rpmBitmaps = new CachedBitmap[10];
-    public readonly (int Width, int Height) Dimension;
-    public RpmBitmaps(ShiftRpmConfiguration config)
+    private sealed class RpmBitmaps : IDisposable
     {
-        GenerateBitMaps(config);
-        Dimension = (_rpmBitmaps[0].Width, _rpmBitmaps[0].Height);
-    }
-
-    private void GenerateBitMaps(ShiftRpmConfiguration config)
-    {
-        Font font = config.General.Font switch
+        private readonly CachedBitmap[] _rpmBitmaps = new CachedBitmap[10];
+        public readonly (int Width, int Height) Dimension;
+        public RpmBitmaps(ShiftRpmConfiguration config)
         {
-            ShiftRpmConfiguration.RpmTextFont.Conthrax => FontUtil.FontConthrax(config.General.FontSize),
-            ShiftRpmConfiguration.RpmTextFont.Obitron => FontUtil.FontOrbitron(config.General.FontSize),
-            ShiftRpmConfiguration.RpmTextFont.Roboto => FontUtil.FontRoboto(config.General.FontSize),
-            ShiftRpmConfiguration.RpmTextFont.Segoe => FontUtil.FontSegoeMono(config.General.FontSize),
-            _ => FontUtil.FontConthrax(config.General.FontSize),
-        };
+            GenerateBitMaps(config);
+            Dimension = (_rpmBitmaps[0].Width, _rpmBitmaps[0].Height);
+        }
 
-        using StringFormat format = StringFormat.GenericDefault;
-        format.Alignment = StringAlignment.Center;
-        format.LineAlignment = StringAlignment.Center;
-
-        int bitmapWidth = (int)(config.General.FontSize + 4);
-        int bitmapHeight = bitmapWidth + 4;
-
-        if (bitmapHeight < FontUtil.MeasureHeight(font, "0123456789"))
-            bitmapHeight = (int)Math.Round(FontUtil.MeasureHeight(font, "0123456789"));
-
-        for (int i = 0; i <= 9; i++)
-            _rpmBitmaps[i] = new(bitmapWidth, bitmapHeight, g =>
+        private void GenerateBitMaps(ShiftRpmConfiguration config)
+        {
+            Font font = config.General.Font switch
             {
-                g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                using SolidBrush textBrush = new(Color.FromArgb(config.Colors.TextOpacity, config.Colors.TextColor));
-                g.DrawStringWithShadow($"{i}", font, textBrush, new RectangleF(0, 2, bitmapWidth, bitmapHeight - 2), format);
-            });
+                ShiftRpmConfiguration.RpmTextFont.Conthrax => FontUtil.FontConthrax(config.General.FontSize),
+                ShiftRpmConfiguration.RpmTextFont.Obitron => FontUtil.FontOrbitron(config.General.FontSize),
+                ShiftRpmConfiguration.RpmTextFont.Roboto => FontUtil.FontRoboto(config.General.FontSize),
+                ShiftRpmConfiguration.RpmTextFont.Segoe => FontUtil.FontSegoeMono(config.General.FontSize),
+                _ => FontUtil.FontConthrax(config.General.FontSize),
+            };
+
+            using StringFormat format = StringFormat.GenericDefault;
+            format.Alignment = StringAlignment.Center;
+            format.LineAlignment = StringAlignment.Center;
+
+            int bitmapWidth = (int)(config.General.FontSize + 4);
+            int bitmapHeight = bitmapWidth + 4;
+
+            if (bitmapHeight < FontUtil.MeasureHeight(font, "0123456789"))
+                bitmapHeight = (int)Math.Round(FontUtil.MeasureHeight(font, "0123456789"));
+
+            for (int i = 0; i <= 9; i++)
+                _rpmBitmaps[i] = new(bitmapWidth, bitmapHeight, g =>
+                {
+                    g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+                    using SolidBrush textBrush = new(Color.FromArgb(config.Colors.TextOpacity, config.Colors.TextColor));
+                    g.DrawStringWithShadow($"{i}", font, textBrush, new RectangleF(0, 2, bitmapWidth, bitmapHeight - 2), format);
+                });
+        }
+
+        public CachedBitmap GetForNumber(byte number)
+        {
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(number, 9);
+            return _rpmBitmaps.AsSpan()[number];
+        }
+
+        public void Dispose()
+        {
+            foreach (CachedBitmap cachedBitmap in _rpmBitmaps)
+                cachedBitmap?.Dispose();
+        }
+
     }
 
-    public CachedBitmap GetForNumber(byte number)
-    {
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(number, 9);
-        return _rpmBitmaps.AsSpan()[number];
-    }
-
-    public void Dispose()
-    {
-        foreach (CachedBitmap cachedBitmap in _rpmBitmaps)
-            cachedBitmap?.Dispose();
-    }
 }

@@ -31,21 +31,27 @@ public sealed class OverlaysAcc
 
     public static void CloseAll()
     {
-        Mouse.SetCursor(Cursors.Wait);
+        var closeAllSTa = new Thread(() =>
+        {
+            Mouse.SetCursor(Cursors.Wait);
+            int activeCount = AbstractOverlays.Count;
 
-        int activeCount = AbstractOverlays.Count;
+            lock (_lock)
+                while (ActiveOverlays.Count > 0)
+                {
+                    ActiveOverlays[0].EnableReposition(false);
+                    ActiveOverlays[0].Stop();
+                    ActiveOverlays.Remove(ActiveOverlays[0]);
+                }
 
-        lock (_lock)
-            while (ActiveOverlays.Count > 0)
-            {
-                ActiveOverlays[0].EnableReposition(false);
-                ActiveOverlays[0].Stop();
-                ActiveOverlays.Remove(ActiveOverlays[0]);
-            }
+            if (activeCount > 0)
+                Thread.Sleep(500);
 
-        if (activeCount > 0)
-            Thread.Sleep(500);
 
-        Mouse.SetCursor(Cursors.Arrow);
+            Mouse.SetCursor(Cursors.Wait);
+        });
+        closeAllSTa.SetApartmentState(ApartmentState.STA);
+        closeAllSTa.Start();
+        closeAllSTa.Join();
     }
 }

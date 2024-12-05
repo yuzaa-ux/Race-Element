@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using RaceElement.Data.Games.Automobilista2.SharedMemory;
+﻿using RaceElement.Data.Games.Automobilista2.SharedMemory;
 using RaceElement.Data.Common.SimulatorData.LocalCar;
 using RaceElement.Data.Common.SimulatorData;
 
@@ -15,7 +14,8 @@ internal static class Ams2Mapper
         // Wheather
         session.Weather.AirDirection = (float)Math.Atan2(shared.mWindDirectionY, shared.mWindDirectionX);
         session.Weather.AirTemperature = shared.mAmbientTemperature;
-        session.Weather.AirVelocity = shared.mWindSpeed;
+        session.Weather.AirVelocity = shared.mWindSpeed * 3.6f;
+
 
         // Track
         session.Track.Length = (int)(shared.mTrackLength + 0.5f);
@@ -27,39 +27,8 @@ internal static class Ams2Mapper
         session.IsSetupMenuVisible = shared.mGameState == (int)Constants.GameState.GAME_INGAME_INMENU_TIME_TICKING;
 
         // Race session and phase type
-        switch ((Constants.RaceSession)shared.mSessionState)
-        {
-            case Constants.RaceSession.SESSION_RACE:
-            {
-                session.SessionType = RaceSessionType.Race;
-            } break;
-
-            case Constants.RaceSession.SESSION_TEST:
-            {
-                session.SessionType = RaceSessionType.Practice;
-            } break;
-
-            case Constants.RaceSession.SESSION_QUALIFY:
-            {
-                session.SessionType = RaceSessionType.Qualifying;
-            } break;
-
-            case Constants.RaceSession.SESSION_TIME_ATTACK:
-            {
-                session.SessionType = RaceSessionType.Hotstint;
-            } break;
-
-            case Constants.RaceSession.SESSION_FORMATION_LAP:
-            {
-                session.Phase = SessionPhase.FormationLap;
-            } break;
-
-            default:
-            {
-                session.Phase = SessionPhase.NONE;
-                session.SessionType = RaceSessionType.Practice;
-            } break;
-        }
+        session.SessionType = ToSessionType((Constants.RaceSession)shared.mSessionState);
+        session.Phase = ToSessionPhase((Constants.RaceState)shared.mRaceState);
 
         // Update drivers list
         for (int i = 0; i < shared.mNumParticipants; ++i)
@@ -107,6 +76,10 @@ internal static class Ams2Mapper
 
             session.AddOrUpdateCar(i, carInfo);
         }
+
+        // Flag Mapper
+        session.CurrentFlag = ToFlag((Constants.RaceFlags)shared.mHighestFlagColour);
+
     }
 
     public static void ToLocalCar(Shared shared, LocalCarData local)
@@ -188,4 +161,48 @@ internal static class Ams2Mapper
             _prevLapCount = shared.mParticipantInfo[shared.mViewedParticipantIndex].mCurrentLap;
         }
     }
+
+    private static CurrentFlag ToFlag(Constants.RaceFlags flag) => flag switch
+    {
+        Constants.RaceFlags.FLAG_COLOUR_GREEN => CurrentFlag.Green,
+        Constants.RaceFlags.FLAG_COLOUR_BLUE => CurrentFlag.Blue,
+        Constants.RaceFlags.FLAG_COLOUR_YELLOW => CurrentFlag.Yellow,
+        Constants.RaceFlags.FLAG_COLOUR_DOUBLE_YELLOW => CurrentFlag.Yellow,
+        Constants.RaceFlags.FLAG_COLOUR_RED => CurrentFlag.Red,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK => CurrentFlag.Black,
+        Constants.RaceFlags.FLAG_COLOUR_WHITE_FINAL_LAP => CurrentFlag.White,
+        Constants.RaceFlags.FLAG_COLOUR_WHITE_SLOW_CAR => CurrentFlag.White,
+        Constants.RaceFlags.FLAG_COLOUR_CHEQUERED => CurrentFlag.Checkered,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK_ORANGE_CIRCLE => CurrentFlag.Damage,
+        Constants.RaceFlags.FLAG_COLOUR_MAX => CurrentFlag.Max,
+        Constants.RaceFlags.FLAG_COLOUR_BLACK_AND_WHITE => CurrentFlag.Penalty,
+        _ => CurrentFlag.None
+    };
+
+    private static RaceSessionType ToSessionType(Constants.RaceSession session) => session switch
+    {
+        Constants.RaceSession.SESSION_TEST => RaceSessionType.Practice,
+        Constants.RaceSession.SESSION_QUALIFY => RaceSessionType.Qualifying,
+        Constants.RaceSession.SESSION_PRACTICE => RaceSessionType.Practice,
+        Constants.RaceSession.SESSION_RACE => RaceSessionType.Race,
+        Constants.RaceSession.SESSION_TIME_ATTACK => RaceSessionType.Hotlap,
+        Constants.RaceSession.SESSION_FORMATION_LAP => RaceSessionType.Race,
+        Constants.RaceSession.SESSION_INVALID => RaceSessionType.Replay,
+        Constants.RaceSession.SESSION_MAX => RaceSessionType.Race,
+        _ => RaceSessionType.Practice,
+    };
+
+    private static SessionPhase ToSessionPhase(Constants.RaceState state) => state switch
+    {
+        Constants.RaceState.RACESTATE_NOT_STARTED => SessionPhase.Starting,
+        Constants.RaceState.RACESTATE_RACING => SessionPhase.Session,
+        Constants.RaceState.RACESTATE_FINISHED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_DISQUALIFIED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_RETIRED => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_DNF => SessionPhase.SessionOver,
+        Constants.RaceState.RACESTATE_INVALID => SessionPhase.NONE,
+        Constants.RaceState.RACESTATE_MAX => SessionPhase.ResultUI,
+        _ => SessionPhase.NONE
+    };
+
 }
