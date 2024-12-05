@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using RaceElement.Data.Common;
-using RaceElement.Data.Common.SimulatorData;
 using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Configuration;
 using RaceElement.HUD.Overlay.Internal;
@@ -17,7 +16,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.TrackInfo;
     Game = Game.Automobilista2,
     Authors = ["Reinier Klarenberg", "Connor Molz"]
 )]
-public class TrackInfoOverlay: CommonAbstractOverlay
+public class TrackInfoOverlay : CommonAbstractOverlay
 {
     private readonly TrackInfoConfig _config = new();
     private sealed class TrackInfoConfig : OverlayConfiguration
@@ -44,7 +43,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     }
 
     private Font _font;
-    
+
     private PanelText _globalFlagHeader;
     private PanelText _globalFlagValue;
     private PanelText _sessionTypeLabel;
@@ -55,8 +54,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
     private PanelText _trackTempValue;
     private PanelText _windLabel;
     private PanelText _windValue;
-    
-    
+
     public TrackInfoOverlay(Rectangle rectangle) : base(rectangle, "Track Info")
     {
         RefreshRateHz = 1;
@@ -115,7 +113,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
         }
-        
+
         _airTempLabel = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _airTempValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
@@ -156,8 +154,6 @@ public class TrackInfoOverlay: CommonAbstractOverlay
 
     public sealed override void Render(Graphics g)
     {
-        
-
         if (this._config.InfoPanel.GlobalFlag)
         {
             string flag = SimDataProvider.Session.CurrentFlag.ToString();
@@ -182,13 +178,13 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             _trackTempLabel.Draw(g, "Track", this.Scale);
             _trackTempValue.Draw(g, $"{roadTemp} °C", this.Scale);
         }
-        
+
         string windDirection = RadianToDirection(SimDataProvider.Session.Weather.AirDirection);
         string windSpeed = (SimDataProvider.Session.Weather.AirVelocity).ToString("F2");
         _windLabel.Draw(g, "Wind", this.Scale);
         _windValue.Draw(g, $"{windSpeed} > {windDirection}", this.Scale);
     }
-    
+
     private static string RadianToDirection(double radian)
     {
         // Normalize radian to range [0, 2π)
@@ -196,7 +192,7 @@ public class TrackInfoOverlay: CommonAbstractOverlay
         radian = radian % twoPi;
         if (radian < 0)
             radian += twoPi;
-        
+
         int sectorIndex = (int)(radian / (twoPi / 8));
 
         return sectorIndex switch
@@ -210,6 +206,5 @@ public class TrackInfoOverlay: CommonAbstractOverlay
             6 => "S",
             _ => "SE",
         };
-
     }
 }
