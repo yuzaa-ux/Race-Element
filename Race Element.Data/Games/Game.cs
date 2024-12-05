@@ -1,4 +1,6 @@
-﻿namespace RaceElement.Data.Games;
+﻿using System.Diagnostics;
+
+namespace RaceElement.Data.Games;
 
 [Flags]
 public enum Game : int
@@ -37,6 +39,18 @@ public static class GameExtensions
         public const string Automobilista2 = "AMS2";
         public const string EuroTruckSimulator2 = "ETS2";
         public const string AmericanTruckSimulator = "ATS";
+    }
+
+    private static class ExeNames
+    {
+        public const string AssettoCorsaCompetizione = "AC2-Win64-Shipping";
+        public const string AssettoCorsa = "acs";
+        public const string IRacing = "iRacingSim64DX11";
+        public const string RaceRoomX64 = "RRRE64";
+        public const string RaceRoom = "RRRE";
+        public const string Automobilista2 = "AMS2AVX";
+        public const string EuroTruckSimulator2 = "eurotrucks2";
+        public const string AmericanTruckSimulator = "amtrucks";
     }
 
     public static string ToFriendlyName(this Game game) => game switch
@@ -107,5 +121,47 @@ public static class GameExtensions
         if (found == null) return null;
 
         return enumAssembly.GetManifestResourceStream(found);
+    }
+
+    public static Game GetRunningGame()
+    {
+        var processes = Process.GetProcesses();
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.AssettoCorsa) != null)
+        {
+            return Game.AssettoCorsa1;
+        }
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.AssettoCorsaCompetizione) != null)
+        {
+            return Game.AssettoCorsaCompetizione;
+        }
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.Automobilista2) != null)
+        {
+            return Game.Automobilista2;
+        }
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.IRacing) != null)
+        {
+            return Game.iRacing;
+        }
+
+        if (processes.FirstOrDefault(x => (x.ProcessName == ExeNames.RaceRoomX64 || x.ProcessName == ExeNames.RaceRoom)) != null)
+        {
+            return Game.RaceRoom;
+        }
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.EuroTruckSimulator2) != null)
+        {
+            return Game.EuroTruckSimulator2;
+        }
+
+        if (processes.FirstOrDefault(x => x.ProcessName == ExeNames.AmericanTruckSimulator) != null)
+        {
+            return Game.AmericanTruckSimulator;
+        }
+
+        return Game.Any;
     }
 }
