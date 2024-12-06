@@ -91,7 +91,7 @@ internal sealed class TyreInfoOverlay : AbstractOverlay
             DrawBrakeTemps(g, 66, 147, Position.Rear);
         }
 
-        if (this._config.Information.LossOfPressure)
+        if (this._config.Information.LossOfPressure && pageGraphics.SessionType != ACCSharedMemory.AcSessionType.AC_HOTLAP)
         {
             DrawTyrePressureLoss(g, 22, 0, Wheel.FrontLeft);
             DrawTyrePressureLoss(g, 110, 0, Wheel.FrontRight);

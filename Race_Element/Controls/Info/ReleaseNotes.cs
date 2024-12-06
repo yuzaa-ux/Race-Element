@@ -6,6 +6,9 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.2.2.4", "Assetto Corsa Competizione:"+
+                    "\n- Tyre Info HUD: Pressure loss is now hidden during hotlap mode."
+                    },
         {"2.2.2.2", "Multi-Sim:"+
                     "\n- Shift RPM HUD: amount of visible digits can now be adjusted."+
                     "\n\nAutomobilista 2:"+
