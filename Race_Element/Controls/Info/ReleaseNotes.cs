@@ -6,7 +6,9 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.2.2.4", "Assetto Corsa Competizione:"+
+        {"2.2.2.4", "Race Element:"+
+                    "\n- When started, automatically scans for any supported simulators and switches."
+                    "\n\nAssetto Corsa Competizione:"+
                     "\n- Tyre Info HUD: Pressure loss is now hidden during hotlap mode."
                     },
         {"2.2.2.2", "Multi-Sim:"+

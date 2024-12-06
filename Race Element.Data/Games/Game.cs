@@ -1,4 +1,6 @@
-﻿namespace RaceElement.Data.Games;
+﻿using System.Diagnostics;
+
+namespace RaceElement.Data.Games;
 
 [Flags]
 public enum Game : int
@@ -38,6 +40,33 @@ public static class GameExtensions
         public const string EuroTruckSimulator2 = "ETS2";
         public const string AmericanTruckSimulator = "ATS";
     }
+
+    private static class ExeNames
+    {
+        public static readonly string[] All = [AssettoCorsa, AssettoCorsaCompetizione, IRacing, RaceRoom, RaceRoomX64, Automobilista2, EuroTruckSimulator2, AmericanTruckSimulator];
+
+        public const string AssettoCorsaCompetizione = "AC2-Win64-Shipping";
+        public const string AssettoCorsa = "acs";
+        public const string IRacing = "iRacingSim64DX11";
+        public const string RaceRoomX64 = "RRRE64";
+        public const string RaceRoom = "RRRE";
+        public const string Automobilista2 = "AMS2AVX";
+        public const string EuroTruckSimulator2 = "eurotrucks2";
+        public const string AmericanTruckSimulator = "amtrucks";
+    }
+
+    public static Game GameFromProcessName(string processName) => processName switch
+    {
+        ExeNames.AssettoCorsa => Game.AssettoCorsa1,
+        ExeNames.AssettoCorsaCompetizione => Game.AssettoCorsaCompetizione,
+        ExeNames.Automobilista2 => Game.Automobilista2,
+        ExeNames.IRacing => Game.iRacing,
+        ExeNames.RaceRoom => Game.RaceRoom,
+        ExeNames.RaceRoomX64 => Game.RaceRoom,
+        ExeNames.EuroTruckSimulator2 => Game.EuroTruckSimulator2,
+        ExeNames.AmericanTruckSimulator => Game.AmericanTruckSimulator,
+        _ => Game.Any,
+    };
 
     public static string ToFriendlyName(this Game game) => game switch
     {
@@ -107,5 +136,19 @@ public static class GameExtensions
         if (found == null) return null;
 
         return enumAssembly.GetManifestResourceStream(found);
+    }
+
+    public static Game GetRunningGame()
+    {
+        var processes = Process.GetProcesses();
+
+        foreach (string exeName in ExeNames.All)
+        {
+            using Process? process = processes.FirstOrDefault(x => x.ProcessName == exeName);
+            if (process != null)
+                return GameFromProcessName(process.ProcessName);
+        }
+
+        return Game.Any;
     }
 }

@@ -2,19 +2,11 @@
 using RaceElement.Util.Settings;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RaceElement.Controls;
 /// <summary>
@@ -30,14 +22,15 @@ public partial class GamePicker : UserControl
         comboGamePicker.SelectionChanged += (s, e) =>
         {
             var item = comboGamePicker.SelectedItem as GamePickerModel;
-
-            Game currentGame = (Game)item.Game;
+            Game currentGame = item.Game;
             GameManager.SetCurrentGame(currentGame);
 
             var uiSettings = new UiSettings();
             var settings = uiSettings.Get();
+
             settings.SelectedGame = currentGame;
             uiSettings.Save(settings);
+
             SetToolTip(currentGame);
         };
         ToolTipService.SetInitialShowDelay(this, 0);
@@ -63,7 +56,6 @@ public partial class GamePicker : UserControl
             BitmapImage logo = new();
             if (logStream != null)
             {
-                var bitmap = new BitmapImage();
                 logo.BeginInit();
                 logo.StreamSource = logStream;
                 logo.CacheOption = BitmapCacheOption.OnLoad;
@@ -99,14 +91,19 @@ public partial class GamePicker : UserControl
             });
         }
         availableGames.Sort((a, b) => a.FriendlyName.CompareTo(b.FriendlyName));
-
         comboGamePicker.ItemsSource = availableGames;
 
         var uiSettings = new UiSettings();
-        Game selectedGame = uiSettings.Get().SelectedGame;
-        var all = Resources.Values;
+        Game selectedGame = GameExtensions.GetRunningGame();
+
+        if (selectedGame == Game.Any)
+        {
+            selectedGame = uiSettings.Get().SelectedGame;;
+        }
+
         var model = availableGames.FirstOrDefault(x => x.Game == selectedGame);
         model ??= availableGames.FirstOrDefault(x => x.Game == Game.AssettoCorsaCompetizione);
+
         SetToolTip(model.Game);
         comboGamePicker.SelectedItem = model;
     }
