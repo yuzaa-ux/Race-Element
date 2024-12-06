@@ -13,7 +13,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.CarElectronics;
 
 [Overlay(
     Name = "Car Electronics",
-    Description = "This Overlay is used to display track information, basic weather information and the current waved flag.",
+    Description = "Shows current Brake Bias, ABS and TC settings.",
     Game = Game.Automobilista2,
     Authors = ["Connor Molz"]
 )]
