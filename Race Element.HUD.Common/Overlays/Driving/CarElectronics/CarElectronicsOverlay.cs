@@ -123,6 +123,17 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
         string tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel.ToString();
         string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F2");
         
+        // AMS2 is reporting -1 for ABS and TC when they are not existing in the current car
+        if (abs == "-1")
+        {
+            abs = "0";
+        }
+        
+        if (tc == "-1")
+        {
+            tc = "0";
+        }
+        
         if (abs != "0" || _config.InfoPanel.ShowAbsIfOff)
         {
             _absHeader.Draw(g, "ABS", this.Scale);
