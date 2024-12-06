@@ -34,6 +34,10 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
             
             [ToolTip("Dispose Traction Control if it is off.")]
             public bool ShowTcIfOff { get; init; } = true;
+            
+            [ToolTip("Refresh rate in Hz of the HUD.")]
+            [IntRange(1, 10, 2)]
+            public int RefreshRate { get; init; } = 10;
         }
         
         public CarElectronicsConfig()
@@ -44,7 +48,7 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
     
     public CarElectronicsOverlay(Rectangle rectangle) : base(rectangle, "Car Electronics")
     {
-        RefreshRateHz = 1;
+        RefreshRateHz = _config.InfoPanel.RefreshRate;
     }
 
     // Window Components
