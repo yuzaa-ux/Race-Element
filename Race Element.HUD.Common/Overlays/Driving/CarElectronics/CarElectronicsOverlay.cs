@@ -121,7 +121,7 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
     {
         string abs = SimDataProvider.LocalCar.Electronics.AbsLevel.ToString();
         string tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel.ToString();
-        string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F1");
+        string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F2");
         
         if (abs != "0" || _config.InfoPanel.ShowAbsIfOff)
         {
