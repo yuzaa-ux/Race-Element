@@ -168,7 +168,7 @@ public class TrackInfoOverlay : CommonAbstractOverlay
             _sessionTypeValue.Draw(g, $"{sessionName}", this.Scale);
         }
 
-        string airTemp = SimDataProvider.Session.Weather.AirTemperature.ToString("F1");
+        string airTemp = SimDataProvider.Session.Weather.AirTemperature.ToString("F2");
         _airTempLabel.Draw(g, "Air", this.Scale);
         _airTempValue.Draw(g, $"{airTemp} °C", this.Scale);
 

@@ -109,7 +109,7 @@ internal static class Ams2Mapper
 
         // Car electronics
         local.Electronics.TractionControlLevel = shared.mTractionControlSetting;
-        local.Electronics.BrakeBias = shared.mBrakeBias;
+        local.Electronics.BrakeBias = 1 - shared.mBrakeBias;
 
         local.Electronics.AbsActivation = shared.mAntiLockActive ? 1.0f : 0.0f;
         local.Electronics.AbsLevel = shared.mAntiLockSetting;
