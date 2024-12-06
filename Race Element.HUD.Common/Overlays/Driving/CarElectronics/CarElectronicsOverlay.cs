@@ -104,6 +104,11 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
         });
         
         // Init ABS, TC and BB headers and values
+        _bbHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+        _bbValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
+        headerRect.Offset(0, lineHeight);
+        valueRect.Offset(0, lineHeight);
+        
         _absHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _absValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
@@ -111,11 +116,6 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
         
         _tcHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _tcValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-        headerRect.Offset(0, lineHeight);
-        valueRect.Offset(0, lineHeight);
-        
-        _bbHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-        _bbValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
         valueRect.Offset(0, lineHeight);
         
@@ -138,6 +138,10 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
             tc = "0";
         }
         
+        // Drawing the UI
+        _bbHeader.Draw(g, "BB", this.Scale);
+        _bbValue.Draw(g, bb, this.Scale);
+        
         if (abs != "0" || _config.InfoPanel.ShowAbsIfOff)
         {
             _absHeader.Draw(g, "ABS", this.Scale);
@@ -150,8 +154,6 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
             _tcValue.Draw(g, tc, this.Scale);
         }
         
-        _bbHeader.Draw(g, "BB", this.Scale);
-        _bbValue.Draw(g, bb, this.Scale);
         
     }
     
