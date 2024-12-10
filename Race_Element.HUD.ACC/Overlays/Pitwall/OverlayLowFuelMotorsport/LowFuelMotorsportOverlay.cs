@@ -11,6 +11,7 @@ using RaceElement.HUD.Overlay.Util;
 using RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 
@@ -30,7 +31,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     private LowFuelMotorsportElo _elo;
     private LowFuelMotorsportJob _lfmJob;
 
-    internal readonly List<Guid> _speechJobIds = [];
+    internal readonly ConcurrentBag<Guid> _speechJobIds = [];
 
     private SizeF _previousTextBounds = Size.Empty;
 
@@ -237,11 +238,10 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
                 }
             }
         }
-        else if (_speechJobIds.Count > 0)
+        else if (!_speechJobIds.IsEmpty)
         {
-            Guid toRemove = _speechJobIds.FirstOrDefault();
-            JobTimerExecutor.Instance().Remove(toRemove);
-            _speechJobIds.Remove(toRemove);
+            if (_speechJobIds.TryTake(out Guid toRemove))
+                JobTimerExecutor.Instance().Remove(toRemove);
         }
 
         return licenseText;
