@@ -108,11 +108,22 @@ internal static class Ams2Mapper
         local.Engine.Rpm = (int)shared.mRpm;
 
         // Car electronics
+        // AMS 2 is reporting -1 if the current car has no TC
         local.Electronics.TractionControlLevel = shared.mTractionControlSetting;
-        local.Electronics.BrakeBias = shared.mBrakeBias;
+        if (local.Electronics.TractionControlLevel == -1)
+        {
+            local.Electronics.TractionControlActivation = 0;
+        }
+        
+        local.Electronics.BrakeBias = 1 - shared.mBrakeBias;
 
         local.Electronics.AbsActivation = shared.mAntiLockActive ? 1.0f : 0.0f;
         local.Electronics.AbsLevel = shared.mAntiLockSetting;
+        // AMS 2 is reporting -1 if the current car has no ABS
+        if (local.Electronics.AbsLevel == -1)
+        {
+            local.Electronics.AbsLevel = 0;
+        }
 
         // Car inputs
         local.Inputs.HandBrake = shared.mHandBrake;
