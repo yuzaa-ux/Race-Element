@@ -121,7 +121,7 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         headerRect.Offset(0, lineHeight);
         valueRect.Offset(0, lineHeight);
 
-        if (_config.InfoPanel.ShowTc)
+        if (_config.InfoPanel.ShowAbs)
         {
             _absHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
             _absValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
