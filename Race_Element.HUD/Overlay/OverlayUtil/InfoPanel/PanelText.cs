@@ -14,7 +14,6 @@ public sealed class PanelText
     private CachedBitmap _cachedPanelText;
 
 
-
     // text properties
     public StringFormat StringFormat { get; set; } = new StringFormat()
     {
@@ -38,26 +37,42 @@ public sealed class PanelText
         CachedBackground?.Draw(g, (int)(Rectangle.X / scale), (int)(Rectangle.Y / scale), (int)(Rectangle.Width / scale), (int)(Rectangle.Height / scale));
 
         if (!_text.Equals(text) || _cachedPanelText == null)
-        {
-            _cachedPanelText = new CachedBitmap((int)Rectangle.Width, (int)Rectangle.Height, g =>
-            {
-                if (g == null)
-                    return;
+            Render(text);
 
-                RectangleF relativeRectangle = Rectangle;
-                relativeRectangle.X = 0;
-                relativeRectangle.Y = 0;
-
-                if (_font != null)
-                {
-                    g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                    g.TextContrast = 1;
-                    g.DrawStringWithShadow(text, _font, Brush, relativeRectangle, StringFormat);
-                }
-            });
-        }
         _text = text;
 
+        _cachedPanelText?.Draw(g, (int)(Rectangle.X / scale), (int)(Rectangle.Y / scale), (int)(Rectangle.Width / scale), (int)(Rectangle.Height / scale));
+    }
+
+    /// <summary>
+    /// Manually update the internal bitmap used for the text, forces it.
+    /// </summary>
+    /// <param name="text"></param>
+    public void Render(string text)
+    {
+        _cachedPanelText?.Dispose();
+
+        _cachedPanelText = new CachedBitmap((int)Rectangle.Width, (int)Rectangle.Height, g =>
+        {
+            if (g == null)
+                return;
+
+            RectangleF relativeRectangle = Rectangle;
+            relativeRectangle.X = 0;
+            relativeRectangle.Y = 0;
+
+            if (_font != null)
+            {
+                g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+                g.TextContrast = 1;
+                g.DrawStringWithShadow(text, _font, Brush, relativeRectangle, StringFormat);
+            }
+        });
+    }
+
+    public void Draw(Graphics g, float scale)
+    {
+        CachedBackground?.Draw(g, (int)(Rectangle.X / scale), (int)(Rectangle.Y / scale), (int)(Rectangle.Width / scale), (int)(Rectangle.Height / scale));
         _cachedPanelText?.Draw(g, (int)(Rectangle.X / scale), (int)(Rectangle.Y / scale), (int)(Rectangle.Width / scale), (int)(Rectangle.Height / scale));
     }
 
