@@ -41,20 +41,13 @@ internal sealed class LowFuelMotorsportSpeechSynthesizer(DateTime RaceStartTimeU
 
     private void NextMessage(int remainingTimeSeconds)
     {
-        DateTime time = RaceStartTimeUtc;
-
-        if (remainingTimeSeconds > (5 * 60))
+        DateTime time = remainingTimeSeconds switch
         {
-            time = RaceStartTimeUtc.Subtract(new TimeSpan(0, 0, 5, 0));
-        }
-        else if (remainingTimeSeconds > (3 * 60))
-        {
-            time = RaceStartTimeUtc.Subtract(new TimeSpan(0, 0, 3, 0));
-        }
-        else if (remainingTimeSeconds > 60)
-        {
-            time = RaceStartTimeUtc.Subtract(new TimeSpan(0, 0, 1, 0));
-        }
+            > (5 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(5)),
+            > (3 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(3)),
+            > (1 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(1)),
+            _ => RaceStartTimeUtc,
+        };
 
         LowFuelMotorsportSpeechSynthesizer speech = new(RaceStartTimeUtc, LfmOverlay);
         if (JobTimerExecutor.Instance().Add(speech, time, out Guid jobId))
