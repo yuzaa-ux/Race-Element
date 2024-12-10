@@ -84,7 +84,7 @@ internal sealed class BrakeTempHistoryJob : AbstractLoopJob
 
     public sealed override void RunAction()
     {
-        if (_overlay.DefaultShouldRender())
+        if (_overlay.ShouldRender())
         {
             float[] temperatures = _overlay.pagePhysics.BrakeTemperature;
 

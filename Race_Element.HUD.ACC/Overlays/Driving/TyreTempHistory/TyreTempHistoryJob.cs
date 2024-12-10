@@ -86,7 +86,7 @@ internal sealed class TyreTempHistoryJob : AbstractLoopJob
 
     public sealed override void RunAction()
     {
-        if (_overlay.DefaultShouldRender())
+        if (_overlay.ShouldRender())
         {
             float[] pressures = _overlay.pagePhysics.TyreCoreTemperature;
 
