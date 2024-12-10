@@ -5,8 +5,8 @@ namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
 
 public class LowFuelMotorsportElo
 {
-    static readonly float LN2 = 0.69314718056f;
-    static readonly float E   = 2.71828182845f;
+    const float LN2 = 0.69314718056f;
+    const float E   = 2.71828182845f;
 
     private RaceInfo _raceInfo;
     private float _magic;

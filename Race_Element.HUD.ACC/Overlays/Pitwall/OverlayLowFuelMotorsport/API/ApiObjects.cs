@@ -79,7 +79,8 @@ internal readonly record struct User
 public readonly record struct SplitEntry(int RaceNumber, int Elo, bool IsPlayer);
 
 /// <summary>
-/// Information about the race. ELO multiplayer and split entry list.
+/// Information about the race.
+/// ELO multiplier and split entry list.
 /// </summary>
 public struct RaceInfo
 {
