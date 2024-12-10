@@ -66,11 +66,12 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
 
         foreach (var e in entries)
         {
-            var entry = new SplitEntry();
-            entry.IsPlayer = id == (string)e["steam_id"];
-
-            entry.RaceNumber = (int)e["raceNumber"];
-            entry.Elo = (int)e["elo"];
+            var entry = new SplitEntry
+            {
+                IsPlayer = id == (string)e["steam_id"],
+                RaceNumber = (int)e["raceNumber"],
+                Elo = (int)e["elo"]
+            };
 
             raceInfo.entries.Add(entry);
         }

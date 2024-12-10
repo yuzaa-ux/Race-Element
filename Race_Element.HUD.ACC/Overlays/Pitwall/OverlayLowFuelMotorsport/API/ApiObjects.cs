@@ -76,17 +76,7 @@ internal readonly record struct User
 /// information used for compute the ELO and the position
 /// threshold where the player wins/losses ELO.
 /// </summary>
-public struct SplitEntry
-{
-    /// <summary>Car race number (give by LFM based on ELO).</summary>
-    public int RaceNumber;
-
-    /// <summary>Current driver ELO.</summary>
-    public int Elo;
-
-    /// <summary>Is this entry the player? Based on steam id.</summary>
-    public bool IsPlayer;
-}
+public readonly record struct SplitEntry(int RaceNumber, int Elo, bool IsPlayer);
 
 /// <summary>
 /// Information about the race. ELO multiplayer and split entry list.
