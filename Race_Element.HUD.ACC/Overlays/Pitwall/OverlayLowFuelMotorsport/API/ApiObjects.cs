@@ -70,3 +70,20 @@ internal readonly record struct User
     [JsonProperty("fav_sim")] public int FavSim { get; init; }
     [JsonProperty("sr_license")] public string SrLicense { get; init; }
 }
+
+/// <summary>
+/// LFM entry for the entry list. This is just the basic
+/// information used for compute the ELO and the position
+/// threshold where the player wins/losses ELO.
+/// </summary>
+public struct SplitEntry
+{
+    /// <summary>Car race number (give by LFM based on ELO).</summary>
+    public int RaceNumber;
+
+    /// <summary>Current driver ELO.</summary>
+    public int Elo;
+
+    /// <summary>This entry is the player itself? Based on steam id.</summary>
+    public bool IsPlayer;
+}

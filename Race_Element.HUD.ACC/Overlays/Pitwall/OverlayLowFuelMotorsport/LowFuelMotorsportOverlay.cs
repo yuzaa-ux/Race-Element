@@ -27,6 +27,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     private Font _fontFamily;
 
     private ApiObject _apiObject;
+    private LowFuelMotorsportElo _elo;
     private LowFuelMotorsportJob _lfmJob;
 
     internal readonly List<Guid> _speechJobIds = [];
@@ -91,12 +92,14 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
             IntervalMillis = _config.Connection.Interval * 1000,
         };
 
+        _lfmJob.OnNewSplitObject += OnNewSplitInfo;
         _lfmJob.OnNewApiObject += OnNewApiObject;
 
         _lfmJob.Run();
     }
 
     private void OnNewApiObject(object sender, ApiObject apiObject) => _apiObject = apiObject;
+    private void OnNewSplitInfo(object sender, List<SplitEntry> entries) => _elo = new(entries);
 
     public sealed override void BeforeStop()
     {
@@ -119,7 +122,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
 
     public override void Render(Graphics g)
     {
-        string licenseText = GenerateLFMLicense();
+        string licenseText = GenerateLicense();
 
         SizeF bounds = g.MeasureString(licenseText, _fontFamily);
         if (!bounds.Equals(_previousTextBounds))
@@ -149,7 +152,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
         return $"{diff:dd\\:hh\\:mm\\:ss}";
     }
 
-    private string GenerateLFMLicense()
+    private string GenerateLicense()
     {
         if (_apiObject.User.UserName == null && !IsPreviewing)
         {
@@ -206,7 +209,25 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
             {
                 var timeDiff = race.RaceDate.Subtract(DateTime.Now);
                 string time = TimeSpanToStringCountDown(race.RaceDate.Subtract(DateTime.Now));
-                licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
+
+                if (_elo != null)
+                {
+                    string elo = "-";
+                    int carNumber = _elo.GetCarNumber();
+                    int threshold = _elo.GetPositionThreshold();
+
+                    if (pageGraphics.SessionType == ACCSharedMemory.AcSessionType.AC_RACE)
+                    {
+                        elo = _elo.GetElo(pageGraphics.Position).ToString();
+                    }
+
+                    time = string.Format("Car: {0}  Threshold: {1}  Elo: {2}   {3}", carNumber, threshold, elo, time);
+                    licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
+                }
+                else
+                {
+                    licenseText = string.Format("{0}\n{1}", licenseText, time.PadLeft(licenseText.IndexOf('\n'), ' '));
+                }
 
                 if (_config.Others.SpeechWarnings && _speechJobIds.Count == 0 && timeDiff.TotalMinutes >= 0)
                 {

@@ -2,6 +2,7 @@ using RaceElement.Core.Jobs.Loop;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
 
@@ -10,7 +11,10 @@ namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
 {
     public static readonly string DRIVER_RACE_API_URL = "https://api2.lowfuelmotorsport.com/api/licenseWidgetUserData/{0}";
+    public static readonly string RACE_API_URL = "https://api3.lowfuelmotorsport.com/api/race/{0}";
+
     public EventHandler<ApiObject> OnNewApiObject;
+    public EventHandler<List<SplitEntry>> OnNewSplitObject;
 
     public override void RunAction()
     {
@@ -21,19 +25,54 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
 
         try
         {
-            using HttpClient client = new();
-            string url = string.Format(DRIVER_RACE_API_URL, userId);
-
-            using HttpResponseMessage response = client.GetAsync(url).Result;
-            using HttpContent content = response.Content;
-
-            string json = content.ReadAsStringAsync().Result;
-            ApiObject root = JObject.Parse(json).ToObject<ApiObject>();
-            OnNewApiObject?.Invoke(null, root);
+            RaceInformation();
         }
         catch (Exception e)
         {
             Debug.WriteLine(e);
         }
+    }
+
+    private string GetContents(string url)
+    {
+        using HttpClient client = new();
+
+        using HttpResponseMessage response = client.GetAsync(url).Result;
+        using HttpContent content = response.Content;
+
+        return content.ReadAsStringAsync().Result;
+    }
+
+    private void RaceInformation()
+    {
+        string json = GetContents(string.Format(DRIVER_RACE_API_URL, userId));
+        ApiObject root = JObject.Parse(json).ToObject<ApiObject>();
+        OnNewApiObject?.Invoke(null, root);
+
+        if (root.Races.Count > 0)
+        {
+            SplitInformation(root.Races[0].Split, root.Races[0].RaceId, root.User.SteamId);
+        }
+    }
+
+    private void SplitInformation(int split, int race, string id)
+    {
+        var json = JObject.Parse(GetContents(string.Format(RACE_API_URL, race)));
+        var entries = json["splits"]["participants"][(split - 1)]["entries"];
+        var list = new List<SplitEntry>();
+
+        foreach (var e in entries)
+        {
+            var entry = new SplitEntry();
+            entry.IsPlayer = id == (string)e["steam_id"];
+
+            entry.RaceNumber = (int)e["raceNumber"];
+            entry.Elo = (int)e["elo"];
+
+
+            list.Add(entry);
+        }
+
+        OnNewSplitObject?.Invoke(null, list);
     }
 }
