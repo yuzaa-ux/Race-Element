@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport.API;
 
-public class LowFuelMotorsportElo
+internal sealed class LowFuelMotorsportElo
 {
-    const float LN2 = 0.69314718056f;
-    const float E   = 2.71828182845f;
+    private const float LN2 = 0.69314718056f;
+    private const float E = 2.71828182845f;
 
-    private RaceInfo _raceInfo;
-    private float _magic;
+    private readonly RaceInfo _raceInfo;
+    private readonly float _magic;
 
     public LowFuelMotorsportElo(RaceInfo raceInfo)
     {
@@ -17,10 +17,7 @@ public class LowFuelMotorsportElo
         _magic = ComputeMagic(_raceInfo.Entries);
     }
 
-    public int GetPositionThreshold()
-    {
-        return (int)Math.Floor(_raceInfo.Entries.Count - _magic);
-    }
+    public int GetPositionThreshold() => (int)Math.Floor(_raceInfo.Entries.Count - _magic);
 
     public int GetElo(int position)
     {
@@ -34,20 +31,20 @@ public class LowFuelMotorsportElo
         return player.RaceNumber;
     }
 
-    private float ComputeMagic(int selfElo, int otherElo)
+    private static float ComputeMagic(int selfElo, int otherElo)
     {
         float e = (1600.0f / LN2);
-        float youExp   = (-selfElo / e);
+        float youExp = (-selfElo / e);
         float otherExp = (-otherElo / e);
 
-        double you   = Math.Pow(E, youExp);
+        double you = Math.Pow(E, youExp);
         double other = Math.Pow(E, otherExp);
 
-        double result = ((1 - you) * other)/((1 - other) * you + (1 - you) * other);
+        double result = ((1 - you) * other) / ((1 - other) * you + (1 - you) * other);
         return (float)result;
     }
 
-    private float ComputeMagic(List<SplitEntry> entries)
+    private static float ComputeMagic(List<SplitEntry> entries)
     {
         float magic = 0;
         SplitEntry player = entries.Find(x => x.IsPlayer);

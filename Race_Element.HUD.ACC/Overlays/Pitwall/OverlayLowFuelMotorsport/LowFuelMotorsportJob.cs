@@ -33,7 +33,7 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
         }
     }
 
-    private string GetContents(string url)
+    private static string GetContents(string url)
     {
         using HttpClient client = new();
 
