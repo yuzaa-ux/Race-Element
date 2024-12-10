@@ -149,7 +149,7 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         }
     }
 
-    private long lastRedraw = TimeProvider.System.GetTimestamp();
+    private long _lastRedraw;
     private void OnNewData(object? sender, DataModel newDataModel)
     {
         // update the data model if it doesn't match the new one.
@@ -160,16 +160,16 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
             if (ShouldRender())
                 RequestRedraw();
 
-            lastRedraw = TimeProvider.System.GetTimestamp();
+            _lastRedraw = TimeProvider.System.GetTimestamp();
         }
 
         // render at least once a second.
-        if (TimeProvider.System.GetElapsedTime(lastRedraw) > TimeSpan.FromSeconds(1))
+        if (TimeProvider.System.GetElapsedTime(_lastRedraw) > TimeSpan.FromSeconds(1))
         {
             if (ShouldRender())
                 RequestRedraw();
 
-            lastRedraw = TimeProvider.System.GetTimestamp();
+            _lastRedraw = TimeProvider.System.GetTimestamp();
         }
     }
 
