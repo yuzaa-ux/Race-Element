@@ -168,56 +168,66 @@ public abstract class CommonAbstractOverlay : FloatingWindow
             Draw = true;
             this.Show();
             this.hasClosed = false;
-            if (!RequestsDrawItself)
-            {
-                Thread renderThread = new(() =>
+
+            if (RequestsDrawItself)
+                this.RefreshRateHz = 5;
+
+            Thread renderThread = new(() =>
+              {
+                  double tickRefreshRate = Math.Ceiling(1000 / this.RefreshRateHz);
+
+                  var time = TimeProvider.System;
+                  TimeSpan interval = TimeSpan.FromMilliseconds(tickRefreshRate);
+                  TimeSpan waitTime;
+                  long lastStart;
+                  while (Draw)
                   {
-                      double tickRefreshRate = Math.Ceiling(1000 / this.RefreshRateHz);
+                      lastStart = time.GetTimestamp();
 
-                      var time = TimeProvider.System;
-                      TimeSpan interval = TimeSpan.FromMilliseconds(tickRefreshRate);
-                      TimeSpan waitTime;
-                      long lastStart;
-                      while (Draw)
+                      if (this._disposed)
                       {
-                          lastStart = time.GetTimestamp();
+                          this.Stop();
+                          break;
+                      }
 
-                          if (this._disposed)
+                      if ((ShouldRender() || IsRepositioning))
+                      {
+                          if (RequestsDrawItself)
                           {
-                              this.Stop();
-                              break;
-                          }
-
-
-                          if (ShouldRender() || IsRepositioning)
-                              this.UpdateLayeredWindow();
-                          else
-                          {
-                              if (!hasClosed)
+                              if (hasClosed)
                               {
-                                  hasClosed = true;
-                                  if (WindowMode) // Don't destroy the handle of this window since some stream/vr apps cannot "redetect" the hud window.
-                                      this.UpdateLayeredWindow();
-                                  else
-                                      this.Hide();
+                                  this.Show();
+                                  hasClosed = false;
                               }
                           }
-
-                          waitTime = interval - time.GetElapsedTime(lastStart);
-                          Timers.TimeBeginPeriod(1);
-                          if (waitTime.Ticks > 0)
-                              Thread.Sleep(waitTime);
-                          Timers.TimeEndPeriod(1);
+                          else
+                              this.UpdateLayeredWindow();
                       }
-                  });
-                renderThread.IsBackground = true;
-                renderThread.SetApartmentState(ApartmentState.MTA);
-                renderThread.Start();
-            }
+                      else
+                      {
+                          if (!hasClosed)
+                          {
+                              hasClosed = true;
+                              if (WindowMode) // Don't destroy the handle of this window since some stream/vr apps cannot "redetect" the hud window.
+                                  this.UpdateLayeredWindow();
+                              else
+                                  this.Hide();
+                          }
+                      }
+
+                      waitTime = interval - time.GetElapsedTime(lastStart);
+                      Timers.TimeBeginPeriod(1);
+                      if (waitTime.Ticks > 0)
+                          Thread.Sleep(waitTime);
+                      Timers.TimeEndPeriod(1);
+                  }
+              });
+            renderThread.IsBackground = true;
+            renderThread.SetApartmentState(ApartmentState.MTA);
+            renderThread.Start();
         }
         catch (Exception ex) { Debug.WriteLine(ex); }
     }
-
 
     public void RequestRedraw()
     {
