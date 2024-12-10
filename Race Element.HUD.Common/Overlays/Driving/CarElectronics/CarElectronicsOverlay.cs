@@ -17,9 +17,8 @@ namespace RaceElement.HUD.Common.Overlays.Driving.CarElectronics;
     Game = Game.Automobilista2,
     Authors = ["Connor Molz"]
 )]
-public class CarElectronicsOverlay: CommonAbstractOverlay
+public sealed class CarElectronicsOverlay: CommonAbstractOverlay
 {
-    // Configuration
     private readonly CarElectronicsConfig _config = new();
 
     private sealed class CarElectronicsConfig : OverlayConfiguration
@@ -29,11 +28,11 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
 
         public sealed class InfoPanelGrouping
         {
-            [ToolTip("Dispose ABS if it is off.")]
-            public bool ShowAbsIfOff { get; init; } = true;
+            [ToolTip("Toggle ABS in overlay")]
+            public bool ShowAbs { get; init; } = true;
             
-            [ToolTip("Dispose Traction Control if it is off.")]
-            public bool ShowTcIfOff { get; init; } = true;
+            [ToolTip("Toggle TC in overlay")]
+            public bool ShowTc { get; init; } = true;
             
             [ToolTip("Refresh rate in Hz of the HUD.")]
             [IntRange(1, 10, 2)]
@@ -108,50 +107,44 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
         _bbValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
         valueRect.Offset(0, lineHeight);
-        
-        _absHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-        _absValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-        headerRect.Offset(0, lineHeight);
-        valueRect.Offset(0, lineHeight);
-        
-        _tcHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
-        _tcValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
-        headerRect.Offset(0, lineHeight);
-        valueRect.Offset(0, lineHeight);
-        
+
+        if (_config.InfoPanel.ShowTc)
+        {
+            _absHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+            _absValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
+            headerRect.Offset(0, lineHeight);
+            valueRect.Offset(0, lineHeight);
+        }
+
+        if (_config.InfoPanel.ShowTc)
+        {
+            _tcHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+            _tcValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
+            headerRect.Offset(0, lineHeight);
+            valueRect.Offset(0, lineHeight);
+        }
     }
 
     public override void Render(Graphics g)
     {
-        string abs = SimDataProvider.LocalCar.Electronics.AbsLevel.ToString();
-        string tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel.ToString();
+        int abs = SimDataProvider.LocalCar.Electronics.AbsLevel;
+        int tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel;
         string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F2");
-        
-        // AMS2 is reporting -1 for ABS and TC when they are not existing in the current car
-        if (abs == "-1")
-        {
-            abs = "0";
-        }
-        
-        if (tc == "-1")
-        {
-            tc = "0";
-        }
         
         // Drawing the UI
         _bbHeader.Draw(g, "BB", this.Scale);
         _bbValue.Draw(g, bb, this.Scale);
         
-        if (abs != "0" || _config.InfoPanel.ShowAbsIfOff)
+        if (_config.InfoPanel.ShowAbs)
         {
             _absHeader.Draw(g, "ABS", this.Scale);
-            _absValue.Draw(g, abs, this.Scale);
+            _absValue.Draw(g, abs.ToString(), this.Scale);
         }
 
-        if (tc != "0" || _config.InfoPanel.ShowTcIfOff)
+        if ( _config.InfoPanel.ShowTc)
         {
             _tcHeader.Draw(g, "TC", this.Scale);
-            _tcValue.Draw(g, tc, this.Scale);
+            _tcValue.Draw(g, tc.ToString(), this.Scale);
         }
         
         
@@ -159,12 +152,19 @@ public class CarElectronicsOverlay: CommonAbstractOverlay
     
     public override void BeforeStop()
     {
-        _font.Dispose();
-        _absHeader.Dispose();
-        _absValue.Dispose();
-        _tcHeader.Dispose();
-        _tcValue.Dispose();
+        _font?.Dispose();
         _bbHeader.Dispose();
         _bbValue.Dispose();
+        if (_config.InfoPanel.ShowAbs)
+        {
+            _absHeader.Dispose();
+            _absValue.Dispose();
+        }
+        
+        if (_config.InfoPanel.ShowTc)
+        {
+            _tcHeader.Dispose();
+            _tcValue.Dispose();
+        }
     }
 }
