@@ -99,7 +99,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
     }
 
     private void OnNewApiObject(object sender, ApiObject apiObject) => _apiObject = apiObject;
-    private void OnNewSplitInfo(object sender, List<SplitEntry> entries) => _elo = new(entries);
+    private void OnNewSplitInfo(object sender, RaceInfo raceInfo) => _elo = new(raceInfo);
 
     public sealed override void BeforeStop()
     {

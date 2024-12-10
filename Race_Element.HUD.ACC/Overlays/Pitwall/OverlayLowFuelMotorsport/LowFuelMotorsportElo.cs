@@ -8,30 +8,29 @@ public class LowFuelMotorsportElo
     static readonly float LN2 = 0.69314718056f;
     static readonly float E   = 2.71828182845f;
 
-    private List<SplitEntry> _entries;
-    private SplitEntry _player;
+    private RaceInfo _raceInfo;
     private float _magic;
 
-    public LowFuelMotorsportElo(List<SplitEntry> entries)
+    public LowFuelMotorsportElo(RaceInfo raceInfo)
     {
-        _entries = entries;
-        _magic = ComputeMagic(_entries);
+        _raceInfo = raceInfo;
+        _magic = ComputeMagic(_raceInfo.entries);
     }
 
     public int GetPositionThreshold()
     {
-        return (int)Math.Floor(_entries.Count - _magic);
+        return (int)Math.Floor(_raceInfo.entries.Count - _magic);
     }
 
     public int GetElo(int position)
     {
-        float elo = (_entries.Count - position - _magic - ((_entries.Count / 2.0f) - position) / 100.0f) * 200.0f / _entries.Count * 0.8f;
+        float elo = (_raceInfo.entries.Count - position - _magic - ((_raceInfo.entries.Count / 2.0f) - position) / 100.0f) * 200.0f / _raceInfo.entries.Count * _raceInfo.kFactor;
         return (int)Math.Round(elo);
     }
 
     public int GetCarNumber()
     {
-        SplitEntry player = _entries.Find(x => x.IsPlayer);
+        SplitEntry player = _raceInfo.entries.Find(x => x.IsPlayer);
         return player.RaceNumber;
     }
 

@@ -14,7 +14,7 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
     public static readonly string RACE_API_URL = "https://api3.lowfuelmotorsport.com/api/race/{0}";
 
     public EventHandler<ApiObject> OnNewApiObject;
-    public EventHandler<List<SplitEntry>> OnNewSplitObject;
+    public EventHandler<RaceInfo> OnNewSplitObject;
 
     public override void RunAction()
     {
@@ -59,7 +59,10 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
     {
         var json = JObject.Parse(GetContents(string.Format(RACE_API_URL, race)));
         var entries = json["splits"]["participants"][(split - 1)]["entries"];
-        var list = new List<SplitEntry>();
+
+        var raceInfo = new RaceInfo();
+        raceInfo.entries = new List<SplitEntry>();
+        raceInfo.kFactor = json["event"]["k_factor"].ToObject<float>();
 
         foreach (var e in entries)
         {
@@ -69,10 +72,9 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
             entry.RaceNumber = (int)e["raceNumber"];
             entry.Elo = (int)e["elo"];
 
-
-            list.Add(entry);
+            raceInfo.entries.Add(entry);
         }
 
-        OnNewSplitObject?.Invoke(null, list);
+        OnNewSplitObject?.Invoke(null, raceInfo);
     }
 }

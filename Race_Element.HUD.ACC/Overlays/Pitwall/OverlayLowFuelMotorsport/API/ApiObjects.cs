@@ -84,6 +84,18 @@ public struct SplitEntry
     /// <summary>Current driver ELO.</summary>
     public int Elo;
 
-    /// <summary>This entry is the player itself? Based on steam id.</summary>
+    /// <summary>Is this entry the player? Based on steam id.</summary>
     public bool IsPlayer;
+}
+
+/// <summary>
+/// Information about the race. ELO multiplayer and split entry list.
+/// </summary>
+public struct RaceInfo
+{
+    /// <summary>ELO multiplayer.</summary>
+    public float kFactor;
+
+    /// <summary>Player split entry list.</summary>
+    public List<SplitEntry> entries;
 }
