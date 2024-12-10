@@ -117,6 +117,7 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
 
         // Init ABS, TC and BB headers and values
         _bbHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+        _bbHeader.Render("BB");
         _bbValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
         headerRect.Offset(0, lineHeight);
         valueRect.Offset(0, lineHeight);
@@ -124,6 +125,7 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         if (_config.InfoPanel.ShowAbs)
         {
             _absHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+            _absHeader.Render("ABS");
             _absValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
@@ -132,6 +134,7 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         if (_config.InfoPanel.ShowTc)
         {
             _tcHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
+            _tcHeader.Render("TC");
             _tcValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
@@ -174,18 +177,18 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
 
     public sealed override void Render(Graphics g)
     {
-        _bbHeader.Draw(g, "BB", this.Scale);
+        _bbHeader.Draw(g, this.Scale);
         _bbValue.Draw(g, $"{_model.BrakeBias:F2}", this.Scale);
 
         if (_config.InfoPanel.ShowAbs)
         {
-            _absHeader.Draw(g, "ABS", this.Scale);
+            _absHeader.Draw(g, this.Scale);
             _absValue.Draw(g, $"{_model.AbsLevel}", this.Scale);
         }
 
         if (_config.InfoPanel.ShowTc)
         {
-            _tcHeader.Draw(g, "TC", this.Scale);
+            _tcHeader.Draw(g, this.Scale);
             _tcValue.Draw(g, $"{_model.TcLevel}", this.Scale);
         }
     }
