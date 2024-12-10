@@ -39,7 +39,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
         this.RefreshRateHz = 2f;
     }
 
-    public override void SetupPreviewData()
+    public sealed override void SetupPreviewData()
     {
         _apiObject = new()
         {
@@ -68,7 +68,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
         };
     }
 
-    public override void BeforeStart()
+    public sealed override void BeforeStart()
     {
         _fontFamily = _config.Font.FontFamily switch
         {
@@ -120,7 +120,7 @@ internal sealed class LowFuelMotorsportOverlay : AbstractOverlay
         return _config.Others.ShowAlways || base.ShouldRender();
     }
 
-    public override void Render(Graphics g)
+    public sealed override void Render(Graphics g)
     {
         string licenseText = GenerateLicense();
 
