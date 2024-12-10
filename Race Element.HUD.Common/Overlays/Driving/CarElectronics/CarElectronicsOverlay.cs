@@ -145,7 +145,6 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
             _dataCollector = new() { IntervalMillis = (int)(1000f / 30) };
             _dataCollector.OnCollected += OnNewData;
             _dataCollector.Run();
-            RequestRedraw();
         }
     }
 
