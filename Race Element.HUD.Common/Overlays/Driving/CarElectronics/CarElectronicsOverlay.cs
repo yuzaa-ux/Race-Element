@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Race_Element.Core.Jobs.Loop;
 using RaceElement.Data.Common;
 using RaceElement.Data.Games;
 using RaceElement.HUD.Overlay.Configuration;
@@ -10,12 +11,11 @@ using RaceElement.HUD.Overlay.Util;
 
 namespace RaceElement.HUD.Common.Overlays.Driving.CarElectronics;
 
-
 [Overlay(
     Name = "Car Electronics",
-    Description = "Shows current Brake Bias, ABS and TC settings.",
+    Description = "Shows the Brake Bias, optionally ABS and TC.",
     Game = Game.Automobilista2,
-    Authors = ["Connor Molz"]
+    Authors = ["Connor Molz, Reinier Klarenberg"]
 )]
 public sealed class CarElectronicsOverlay : CommonAbstractOverlay
 {
@@ -33,10 +33,6 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
 
             [ToolTip("Toggle TC in overlay")]
             public bool ShowTc { get; init; } = true;
-
-            [ToolTip("Refresh rate in Hz of the HUD.")]
-            [IntRange(1, 10, 2)]
-            public int RefreshRate { get; init; } = 10;
         }
 
         public CarElectronicsConfig()
@@ -45,9 +41,17 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         }
     }
 
-    public CarElectronicsOverlay(Rectangle rectangle) : base(rectangle, "Car Electronics")
+    private DataCollector? _dataCollector;
+    private DataModel _model = new();
+    private readonly record struct DataModel(float BrakeBias, int AbsLevel, int TcLevel);
+    private sealed class DataCollector : AbstractCollectionJob<DataModel>
     {
-        RefreshRateHz = _config.InfoPanel.RefreshRate;
+        public sealed override DataModel Collect => new()
+        {
+            BrakeBias = SimDataProvider.LocalCar.Electronics.BrakeBias,
+            TcLevel = SimDataProvider.LocalCar.Electronics.TractionControlLevel,
+            AbsLevel = SimDataProvider.LocalCar.Electronics.AbsLevel,
+        };
     }
 
     // Window Components
@@ -59,6 +63,15 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
     private PanelText _tcValue;
     private PanelText _bbHeader;
     private PanelText _bbValue;
+
+    public CarElectronicsOverlay(Rectangle rectangle) : base(rectangle, "Car Electronics") => RequestsDrawItself = true;
+
+    public sealed override void SetupPreviewData() => _model = new()
+    {
+        BrakeBias = 48.3f,
+        AbsLevel = 3,
+        TcLevel = 2
+    };
 
     // Before render function to setup the window and size
     public sealed override void BeforeStart()
@@ -123,35 +136,70 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
             headerRect.Offset(0, lineHeight);
             valueRect.Offset(0, lineHeight);
         }
+
+        this.Width = unscaledHeaderWidth + unscaledValueWidth;
+        this.Height = (int)(headerRect.Top / this.Scale);
+
+        if (!IsPreviewing)
+        {
+            _dataCollector = new() { IntervalMillis = (int)(1000f / 30) };
+            _dataCollector.OnCollected += OnNewData;
+            _dataCollector.Run();
+            RequestRedraw();
+        }
+    }
+
+    private long lastRedraw = TimeProvider.System.GetTimestamp();
+    private void OnNewData(object? sender, DataModel newDataModel)
+    {
+        // update the data model if it doesn't match the new one.
+        if (_model != newDataModel)
+        {
+            _model = newDataModel;
+
+            if (ShouldRender())
+                RequestRedraw();
+
+            lastRedraw = TimeProvider.System.GetTimestamp();
+        }
+
+        // render at least once a second.
+        if (TimeProvider.System.GetElapsedTime(lastRedraw) > TimeSpan.FromSeconds(1))
+        {
+            if (ShouldRender())
+                RequestRedraw();
+
+            lastRedraw = TimeProvider.System.GetTimestamp();
+        }
     }
 
     public sealed override void Render(Graphics g)
     {
-        int abs = SimDataProvider.LocalCar.Electronics.AbsLevel;
-        int tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel;
-        string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F2");
-
-        // Drawing the UI
         _bbHeader.Draw(g, "BB", this.Scale);
-        _bbValue.Draw(g, bb, this.Scale);
+        _bbValue.Draw(g, $"{_model.BrakeBias:F2}", this.Scale);
 
         if (_config.InfoPanel.ShowAbs)
         {
             _absHeader.Draw(g, "ABS", this.Scale);
-            _absValue.Draw(g, abs.ToString(), this.Scale);
+            _absValue.Draw(g, $"{_model.AbsLevel}", this.Scale);
         }
 
         if (_config.InfoPanel.ShowTc)
         {
             _tcHeader.Draw(g, "TC", this.Scale);
-            _tcValue.Draw(g, tc.ToString(), this.Scale);
+            _tcValue.Draw(g, $"{_model.TcLevel}", this.Scale);
         }
     }
 
     public sealed override void BeforeStop()
     {
-        _font?.Dispose();
+        if (!IsPreviewing && _dataCollector != null)
+        {
+            _dataCollector.OnCollected -= OnNewData;
+            _dataCollector.CancelJoin();
+        }
 
+        _font?.Dispose();
         _bbHeader?.Dispose();
         _bbValue?.Dispose();
         _absHeader?.Dispose();
@@ -159,4 +207,5 @@ public sealed class CarElectronicsOverlay : CommonAbstractOverlay
         _tcHeader?.Dispose();
         _tcValue?.Dispose();
     }
+
 }
