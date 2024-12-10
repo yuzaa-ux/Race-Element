@@ -17,7 +17,7 @@ namespace RaceElement.HUD.Common.Overlays.Driving.CarElectronics;
     Game = Game.Automobilista2,
     Authors = ["Connor Molz"]
 )]
-public sealed class CarElectronicsOverlay: CommonAbstractOverlay
+public sealed class CarElectronicsOverlay : CommonAbstractOverlay
 {
     private readonly CarElectronicsConfig _config = new();
 
@@ -30,21 +30,21 @@ public sealed class CarElectronicsOverlay: CommonAbstractOverlay
         {
             [ToolTip("Toggle ABS in overlay")]
             public bool ShowAbs { get; init; } = true;
-            
+
             [ToolTip("Toggle TC in overlay")]
             public bool ShowTc { get; init; } = true;
-            
+
             [ToolTip("Refresh rate in Hz of the HUD.")]
             [IntRange(1, 10, 2)]
             public int RefreshRate { get; init; } = 10;
         }
-        
+
         public CarElectronicsConfig()
         {
             this.GenericConfiguration.AllowRescale = true;
         }
     }
-    
+
     public CarElectronicsOverlay(Rectangle rectangle) : base(rectangle, "Car Electronics")
     {
         RefreshRateHz = _config.InfoPanel.RefreshRate;
@@ -52,14 +52,14 @@ public sealed class CarElectronicsOverlay: CommonAbstractOverlay
 
     // Window Components
     private Font _font;
-    
+
     private PanelText _absHeader;
     private PanelText _absValue;
     private PanelText _tcHeader;
     private PanelText _tcValue;
     private PanelText _bbHeader;
     private PanelText _bbValue;
-    
+
     // Before render function to setup the window and size
     public sealed override void BeforeStart()
     {
@@ -101,7 +101,7 @@ public sealed class CarElectronicsOverlay: CommonAbstractOverlay
             using Pen underlinePen = new(accentColor);
             g.DrawLine(underlinePen, 0, lineHeight - 1, valueWidth, lineHeight - 1);
         });
-        
+
         // Init ABS, TC and BB headers and values
         _bbHeader = new PanelText(_font, headerBackground, headerRect) { StringFormat = headerFormat };
         _bbValue = new PanelText(_font, valueBackground, valueRect) { StringFormat = valueFormat };
@@ -125,46 +125,38 @@ public sealed class CarElectronicsOverlay: CommonAbstractOverlay
         }
     }
 
-    public override void Render(Graphics g)
+    public sealed override void Render(Graphics g)
     {
         int abs = SimDataProvider.LocalCar.Electronics.AbsLevel;
         int tc = SimDataProvider.LocalCar.Electronics.TractionControlLevel;
         string bb = SimDataProvider.LocalCar.Electronics.BrakeBias.ToString("F2");
-        
+
         // Drawing the UI
         _bbHeader.Draw(g, "BB", this.Scale);
         _bbValue.Draw(g, bb, this.Scale);
-        
+
         if (_config.InfoPanel.ShowAbs)
         {
             _absHeader.Draw(g, "ABS", this.Scale);
             _absValue.Draw(g, abs.ToString(), this.Scale);
         }
 
-        if ( _config.InfoPanel.ShowTc)
+        if (_config.InfoPanel.ShowTc)
         {
             _tcHeader.Draw(g, "TC", this.Scale);
             _tcValue.Draw(g, tc.ToString(), this.Scale);
         }
-        
-        
     }
-    
-    public override void BeforeStop()
+
+    public sealed override void BeforeStop()
     {
         _font?.Dispose();
-        _bbHeader.Dispose();
-        _bbValue.Dispose();
-        if (_config.InfoPanel.ShowAbs)
-        {
-            _absHeader.Dispose();
-            _absValue.Dispose();
-        }
-        
-        if (_config.InfoPanel.ShowTc)
-        {
-            _tcHeader.Dispose();
-            _tcValue.Dispose();
-        }
+
+        _bbHeader?.Dispose();
+        _bbValue?.Dispose();
+        _absHeader?.Dispose();
+        _absValue?.Dispose();
+        _tcHeader?.Dispose();
+        _tcValue?.Dispose();
     }
 }
