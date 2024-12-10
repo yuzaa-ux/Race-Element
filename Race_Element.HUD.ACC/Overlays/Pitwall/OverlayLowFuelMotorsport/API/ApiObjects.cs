@@ -82,11 +82,4 @@ public readonly record struct SplitEntry(int RaceNumber, int Elo, bool IsPlayer)
 /// Information about the race.
 /// ELO multiplier and split entry list.
 /// </summary>
-public struct RaceInfo
-{
-    /// <summary>ELO multiplayer.</summary>
-    public float kFactor;
-
-    /// <summary>Player split entry list.</summary>
-    public List<SplitEntry> entries;
-}
+public readonly record struct RaceInfo(float KFactor, List<SplitEntry> Entries);

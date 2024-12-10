@@ -60,9 +60,8 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
         var json = JObject.Parse(GetContents(string.Format(RACE_API_URL, race)));
         var entries = json["splits"]["participants"][(split - 1)]["entries"];
 
-        var raceInfo = new RaceInfo();
-        raceInfo.entries = new List<SplitEntry>();
-        raceInfo.kFactor = json["event"]["k_factor"].ToObject<float>();
+        var list = new List<SplitEntry>();
+        float kFactor = json["event"]["k_factor"].ToObject<float>();
 
         foreach (var e in entries)
         {
@@ -73,9 +72,9 @@ internal sealed class LowFuelMotorsportJob(string userId) : AbstractLoopJob
                 Elo = (int)e["elo"]
             };
 
-            raceInfo.entries.Add(entry);
+            list.Add(entry);
         }
 
-        OnNewSplitObject?.Invoke(null, raceInfo);
+        OnNewSplitObject?.Invoke(null, new RaceInfo(kFactor, list));
     }
 }
