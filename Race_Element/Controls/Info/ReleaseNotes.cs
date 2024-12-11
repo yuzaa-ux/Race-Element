@@ -10,9 +10,9 @@ public static class ReleaseNotes
                     "\n- When started, automatically scans for any running simulator and switches automatically to that simulator."+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Tyre Info HUD: Pressure loss is now hidden during hotlap mode."+
+                    "\n- Low Fuel Motorsported HUD: Added ELO gain or loss."+
                     "\n\nAutomobilista 2:"+
-                    "\n- Added Car Electronics HUD (By ConnorMolz)."+
-                    "\n- Low Fuel Motorsported HUD: Added ELO gain or loss."
+                    "\n- Added Car Electronics HUD (By ConnorMolz)."
                     },
         {"2.2.2.2", "Multi-Sim:"+
                     "\n- Shift RPM HUD: amount of visible digits can now be adjusted."+
