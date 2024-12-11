@@ -11,7 +11,8 @@ public static class ReleaseNotes
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Tyre Info HUD: Pressure loss is now hidden during hotlap mode."+
                     "\n\nAutomobilista 2:"+
-                    "\n- Added Car Electronics HUD (By ConnorMolz)."
+                    "\n- Added Car Electronics HUD (By ConnorMolz)."+
+                    "\n- Low Fuel Motorsported HUD: Added ELO gain or loss."
                     },
         {"2.2.2.2", "Multi-Sim:"+
                     "\n- Shift RPM HUD: amount of visible digits can now be adjusted."+
