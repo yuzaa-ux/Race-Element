@@ -5,17 +5,8 @@ using RaceElement.Core.Jobs.Timer;
 
 namespace RaceElement.HUD.ACC.Overlays.Pitwall.LowFuelMotorsport;
 
-internal class LowFuelMotorsportSpeechSynthesizer : IJob
+internal sealed class LowFuelMotorsportSpeechSynthesizer(DateTime RaceStartTimeUtc, LowFuelMotorsportOverlay LfmOverlay) : IJob
 {
-    private readonly DateTime _raceStartTimeUtc;
-    private readonly LowFuelMotorsportOverlay _lfmOverlay;
-
-    public LowFuelMotorsportSpeechSynthesizer(DateTime raceStartTimeUtc, LowFuelMotorsportOverlay lfmOverlay)
-    {
-        _raceStartTimeUtc = raceStartTimeUtc;
-        _lfmOverlay = lfmOverlay;
-    }
-
     public bool IsRunning { get; private set; } = false;
 
     private readonly Guid _id = Guid.NewGuid();
@@ -25,7 +16,7 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
 
     public void Run()
     {
-        var timeDiff = (_raceStartTimeUtc - DateTime.UtcNow);
+        var timeDiff = (RaceStartTimeUtc - DateTime.UtcNow);
         string message = $"{timeDiff.Minutes} minutes until race starts";
         int minTimeRaceStartSec = 5;
 
@@ -50,23 +41,16 @@ internal class LowFuelMotorsportSpeechSynthesizer : IJob
 
     private void NextMessage(int remainingTimeSeconds)
     {
-        DateTime time = _raceStartTimeUtc;
+        DateTime time = remainingTimeSeconds switch
+        {
+            > (5 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(5)),
+            > (3 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(3)),
+            > (1 * 60) => RaceStartTimeUtc.Subtract(TimeSpan.FromMinutes(1)),
+            _ => RaceStartTimeUtc,
+        };
 
-        if (remainingTimeSeconds > (5 * 60))
-        {
-            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 5, 0));
-        }
-        else if (remainingTimeSeconds > (3 * 60))
-        {
-            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 3, 0));
-        }
-        else if (remainingTimeSeconds > 60)
-        {
-            time = _raceStartTimeUtc.Subtract(new TimeSpan(0, 0, 1, 0));
-        }
-
-        LowFuelMotorsportSpeechSynthesizer speech = new(_raceStartTimeUtc, _lfmOverlay);
+        LowFuelMotorsportSpeechSynthesizer speech = new(RaceStartTimeUtc, LfmOverlay);
         if (JobTimerExecutor.Instance().Add(speech, time, out Guid jobId))
-            _lfmOverlay._speechJobIds.Add(jobId);
+            LfmOverlay._speechJobIds.Add(jobId);
     }
 }

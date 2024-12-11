@@ -70,3 +70,16 @@ internal readonly record struct User
     [JsonProperty("fav_sim")] public int FavSim { get; init; }
     [JsonProperty("sr_license")] public string SrLicense { get; init; }
 }
+
+/// <summary>
+/// LFM entry for the entry list. This is just the basic
+/// information used for compute the ELO and the position
+/// threshold where the player wins/losses ELO.
+/// </summary>
+public readonly record struct SplitEntry(int RaceNumber, int Elo, bool IsPlayer);
+
+/// <summary>
+/// Information about the race.
+/// ELO multiplier and split entry list.
+/// </summary>
+public readonly record struct RaceInfo(float KFactor, List<SplitEntry> Entries);
