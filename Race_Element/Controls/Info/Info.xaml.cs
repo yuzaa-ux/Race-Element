@@ -46,7 +46,7 @@ public partial class Info : UserControl
         buttonDonate.Click += (sender, e) => Process.Start(new ProcessStartInfo()
         {
             FileName = "cmd",
-            Arguments = $"/c start https://paypal.me/CompetizioneManager",
+            Arguments = $"/c start https://race.elementfuture.com/guide/sponsor",
             WindowStyle = ProcessWindowStyle.Hidden,
         });
         ToolTipService.SetInitialShowDelay(buttonWebsite, 1);
