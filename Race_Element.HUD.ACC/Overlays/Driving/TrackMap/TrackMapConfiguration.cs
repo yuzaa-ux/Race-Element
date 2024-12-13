@@ -110,7 +110,7 @@ public sealed class TrackMapConfiguration : OverlayConfiguration
         [ToolTip("Filled background color")]
         public Color Background { get; init; } = Color.FromArgb(255, 0, 0, 0);
 
-        [IntRange(70, 255, 1)]
+        [IntRange(0, 255, 1)]
         public int BackgroundOpacity { get; init; } = 170;
 
         [ToolTip("Sector 1 color")]
