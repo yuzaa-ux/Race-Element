@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace RaceElement.HUD.ACC.Overlays.Pitwall.OverlayTwitchChatBot;
 
 [Overlay(Name = "Twitch Chat Bot",
-Description = "(type +commands in chat for all available ones)\nTo allow Race Element to connect to the twitch api create the O Auth token at twitchapps.com/tmi",
+Description = "(type +commands in chat for all available ones)\nTo allow Race Element to connect to the twitch api create the O Auth access token at twitchtokengenerator.com",
 OverlayType = OverlayType.Pitwall,
 Authors = ["Reinier Klarenberg"])]
 internal sealed class TwitchChatBotOverlay : AbstractOverlay

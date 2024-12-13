@@ -26,16 +26,16 @@ internal sealed class TwitchChatConfiguration : OverlayConfiguration
         [ToolTip("Your channel name")]
         public string TwitchUser { get; init; } = "";
 
-        [ToolTip("Create an O Auth token at twitchapps.com/tmi, click connect and connect and copy -> paste the entire result in here." +
+        [ToolTip("Create an O Auth token at https://twitchtokengenerator.com/, click Bot Chat Token and connect and copy the generated ACCESS TOKEN." +
             "\n(This is required for Race Element to connect to your chat using the twitch api, " +
-            "this token can expire for security reasons).")]
+            "this Access token can expire for security reasons).")]
         [StringOptions(isPassword: true)]
         public string OAuthToken { get; init; } = "";
 
 
-        [ToolTip("Opens the website to generate an O Auth token.")]
-        [LinkText("Generate O Auth token at https://twitchapps.com/tmi")]
-        public LinkOption GetToken { get; init; } = new() { Link = "https://twitchapps.com/tmi" };
+        [ToolTip("Opens the website to generate an Access token.")]
+        [LinkText("Generate Access token at https://twitchtokengenerator.com/")]
+        public LinkOption GetToken { get; init; } = new("https://twitchtokengenerator.com/");
     }
 
     [ConfigGrouping("Shape", "Adjust the size of the twitch chat box")]
