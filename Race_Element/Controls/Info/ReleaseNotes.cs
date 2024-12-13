@@ -6,6 +6,9 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
+        {"2.2.2.6", "Assetto Corsa Competizione:"+
+                    "\n- Track Map HUD: Added filled background with color and opacity option."
+                    },
         {"2.2.2.4", "Race Element:"+
                     "\n- When started, automatically scans for any running simulator and switches automatically to that simulator."+
                     "\n\nAssetto Corsa Competizione:"+
