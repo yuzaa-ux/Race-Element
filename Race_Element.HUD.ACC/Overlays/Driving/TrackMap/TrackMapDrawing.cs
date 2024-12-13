@@ -11,6 +11,7 @@ using RaceElement.Broadcast;
 
 using static RaceElement.Data.SetupConverter;
 using static RaceElement.HUD.ACC.Overlays.Driving.TrackMap.TrackMapConfiguration;
+using System.Linq;
 
 namespace RaceElement.HUD.ACC.Overlays.Driving.TrackMap;
 
@@ -62,9 +63,18 @@ public static class TrackMapDrawer
         return bitmap;
     }
 
-    public static Bitmap MixImages(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3, int w, int h)
+    public static Bitmap FillBackground(Color color, float margin, List<TrackPoint> points, BoundingBox boundaries)
     {
-        var bitmap = new Bitmap(w, h, PixelFormat.Format32bppPArgb);
+        double w = Math.Sqrt(Math.Pow(boundaries.Right - boundaries.Left, 2)) + margin + 1.5;
+        double h = Math.Sqrt(Math.Pow(boundaries.Bottom - boundaries.Top, 2)) + margin + 1.5;
+
+        var ps = points.DistinctBy(x => x.Spline).Take(points.Count - 2);
+        ps = ps.Where(x => x.Spline > 0 && x.Spline < 1);
+
+        List<Point> drawingPoints = [];
+        foreach (var it in ps) drawingPoints.Add(new Point((int)Math.Ceiling(it.X), (int)Math.Ceiling(it.Y)));
+
+        var bitmap = new Bitmap((int)w, (int)h, PixelFormat.Format32bppPArgb);
         bitmap.MakeTransparent();
 
         using var g = Graphics.FromImage(bitmap);
@@ -73,9 +83,27 @@ public static class TrackMapDrawer
         g.TextRenderingHint = TextRenderingHint.AntiAlias;
         g.CompositingQuality = CompositingQuality.HighQuality;
 
-        g.DrawImage(bmp1, Point.Empty);
-        g.DrawImage(bmp2, Point.Empty);
-        g.DrawImage(bmp3, Point.Empty);
+        using SolidBrush brush = new(color);
+        using GraphicsPath path = new();
+        path.AddLines(drawingPoints.ToArray());
+        g.FillPath(brush, path);
+
+        return bitmap;
+    }
+
+    public static Bitmap MixImages(int width, int height, params Bitmap[] bitmaps)
+    {
+        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
+        bitmap.MakeTransparent();
+
+        using var g = Graphics.FromImage(bitmap);
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.CompositingMode = CompositingMode.SourceOver;
+        g.TextRenderingHint = TextRenderingHint.AntiAlias;
+        g.CompositingQuality = CompositingQuality.HighQuality;
+
+        for (int i = 0; i < bitmaps.Length; i++)
+            g.DrawImage(bitmaps[i], Point.Empty);
 
         return bitmap;
     }
@@ -137,7 +165,7 @@ public static class TrackMapDrawer
             CarClasses.CUP => conf.CarColors.CUP,
             CarClasses.TCX => conf.CarColors.TCX,
             CarClasses.CHL => conf.CarColors.CHL,
-            CarClasses.ST  => conf.CarColors.ST,
+            CarClasses.ST => conf.CarColors.ST,
             _ => conf.MapColors.Default
         };
     }
@@ -163,14 +191,16 @@ public static class TrackMapDrawer
         switch (conf.General.CarLabel)
         {
             case TrackMapLabelText.CarNumber:
-            {
-                label = car.RaceNumber;
-            } break;
+                {
+                    label = car.RaceNumber;
+                }
+                break;
 
             case TrackMapLabelText.Position:
-            {
-                label = car.RacePosition;
-            } break;
+                {
+                    label = car.RacePosition;
+                }
+                break;
         }
 
         if (label == string.Empty)
@@ -300,4 +330,5 @@ public static class TrackMapDrawer
 
         return Color.Black;
     }
+
 }
