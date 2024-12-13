@@ -12,7 +12,7 @@ internal class LinkValueControl : IValueControl<LinkOption>, IControl
 {
     private readonly Grid _grid;
     private readonly LinkOption _link;
-    public LinkOption Value { get => new(); set => _ = value; }
+    public LinkOption Value { get => new(string.Empty); set => _ = value; }
 
     public FrameworkElement Control => _grid;
 
@@ -60,6 +60,7 @@ internal class LinkValueControl : IValueControl<LinkOption>, IControl
             FileName = "cmd",
             Arguments = $"/c start {_link.Link}",
             WindowStyle = ProcessWindowStyle.Hidden,
+            UseShellExecute = true,
         });
     }
 

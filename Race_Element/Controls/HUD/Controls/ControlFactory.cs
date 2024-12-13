@@ -177,7 +177,14 @@ internal class ControlFactory
                         if (customAttribute is LinkTextAttribute linkTextAttribute)
                             linkText = linkTextAttribute.LinkText;
 
-                    contentControl = new LinkValueControl(new LinkOption() { Link = configField.Value.ToString() }, linkText);
+                    string configFieldValue = configField.Value.ToString();
+                    try
+                    {
+                        configFieldValue = configFieldValue.Replace("{\r\n  \"Link\": \"", "");
+                        configFieldValue = configFieldValue.Replace("\"\r\n}", "");
+                        contentControl = new LinkValueControl(new LinkOption(configFieldValue), linkText);
+                    }
+                    catch (Exception) { }
                     break;
                 }
 
