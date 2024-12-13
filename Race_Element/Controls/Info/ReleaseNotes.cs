@@ -6,7 +6,9 @@ public static class ReleaseNotes
 {
     internal static readonly Dictionary<string, string> Notes = new()
     {
-        {"2.2.2.6", "Assetto Corsa Competizione:"+
+        {"2.2.2.6", "Race Element:"+
+                    "\n- HUD Tab: Fixed link buttons and updated all links regarding twitch chat access tokens, the old one is discontinued."+
+                    "\n\nAssetto Corsa Competizione:"+
                     "\n- Track Map HUD: Added filled background with color and opacity option."
                     },
         {"2.2.2.4", "Race Element:"+
