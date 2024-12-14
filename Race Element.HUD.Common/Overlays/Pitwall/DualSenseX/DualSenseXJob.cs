@@ -1,4 +1,5 @@
 ﻿using RaceElement.Core.Jobs.Loop;
+using RaceElement.Data.Common;
 using System;
 using static RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX.DualSenseXResources;
 
@@ -24,7 +25,7 @@ internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
             }
         }
 
-        Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config.ThrottleHaptics);
+        Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config.ThrottleHaptics, overlay.GameWhenStarted);
         if (tcPacket != null)
         {
             overlay.Send(tcPacket);
