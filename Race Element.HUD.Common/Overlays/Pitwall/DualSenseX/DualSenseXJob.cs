@@ -25,7 +25,7 @@ internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
             }
         }
 
-        Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config.ThrottleHaptics, overlay.GameWhenStarted);
+        Packet tcPacket = TriggerHaptics.HandleAcceleration(overlay._config, overlay.GameWhenStarted);
         if (tcPacket != null)
         {
             overlay.Send(tcPacket);
@@ -33,7 +33,7 @@ internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
             //HandleResponse(response);
         }
 
-        Packet absPacket = TriggerHaptics.HandleBraking(overlay._config.BrakeHaptics, overlay.GameWhenStarted);
+        Packet absPacket = TriggerHaptics.HandleBraking(overlay._config, overlay.GameWhenStarted);
         if (absPacket != null)
         {
             overlay.Send(absPacket);
