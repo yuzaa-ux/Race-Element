@@ -33,7 +33,7 @@ internal sealed class DualSenseXJob(DualSenseXOverlay overlay) : AbstractLoopJob
             //HandleResponse(response);
         }
 
-        Packet absPacket = TriggerHaptics.HandleBraking(overlay._config.BrakeHaptics);
+        Packet absPacket = TriggerHaptics.HandleBraking(overlay._config.BrakeHaptics, overlay.GameWhenStarted);
         if (absPacket != null)
         {
             overlay.Send(absPacket);
