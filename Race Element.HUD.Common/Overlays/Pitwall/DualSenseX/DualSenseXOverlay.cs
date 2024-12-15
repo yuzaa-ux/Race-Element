@@ -38,7 +38,7 @@ internal sealed class DualSenseXOverlay : CommonAbstractOverlay
     {
         if (IsPreviewing) return;
 
-        _dsxJob = new DualSenseXJob(this) { IntervalMillis = 1000 / 100 };
+        _dsxJob = new DualSenseXJob(this) { IntervalMillis = 1000 / 200 };
         _dsxJob.Run();
     }
     public override void BeforeStop()
