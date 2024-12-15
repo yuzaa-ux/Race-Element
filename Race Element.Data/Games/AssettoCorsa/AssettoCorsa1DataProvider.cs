@@ -19,7 +19,7 @@ internal sealed class AssettoCorsa1DataProvider : AbstractSimDataProvider
     static string dummyCarClass = "Race";
     List<string> classes = [dummyCarClass];
 
-    internal override int PollingRate() => 100;
+    internal override int PollingRate() => 200;
 
     private static string GameName { get => Game.AssettoCorsa1.ToShortName(); }
 
