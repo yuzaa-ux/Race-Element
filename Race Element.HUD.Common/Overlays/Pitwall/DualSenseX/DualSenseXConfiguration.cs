@@ -68,7 +68,7 @@ internal sealed class DualSenseXConfiguration : OverlayConfiguration
         public float RearSlipTreshold { get; init; } = 0.6f;
     }
 
-    [ConfigGrouping("Throttle Slip", "Adjust the slip effect whilst applying the throttle.")]
+    [ConfigGrouping("Throttle Slip", "Adjust the slip effect whilst applying the throttle.\nModify the threshold to increase or decrease sensitivity in different situations.")]
     [HideForGame(Game.RaceRoom)]
     public ThrottleSlipHaptics ThrottleSlip { get; init; } = new();
     public sealed class ThrottleSlipHaptics
@@ -85,9 +85,11 @@ internal sealed class DualSenseXConfiguration : OverlayConfiguration
         [IntRange(10, 150, 1)]
         public int Frequency { get; init; } = 85;
 
+        [ToolTip("Decrease this treshold to increase the sensitivity when the front wheels slip (understeer).\n")]
         [FloatRange(0.05f, 6f, 0.01f, 2)]
         public float FrontSlipTreshold { get; init; } = 0.6f;
 
+        [ToolTip("Decrease this treshold to increase the sensitivity when the rear wheels slip (oversteer).")]
         [FloatRange(0.05f, 6f, 0.01f, 2)]
         public float RearSlipTreshold { get; init; } = 0.5f;
     }
