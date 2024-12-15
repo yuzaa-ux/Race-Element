@@ -58,7 +58,7 @@ internal sealed class AssettoCorsa1DataProvider : AbstractSimDataProvider
 
     private void MapEntryList(PageFileCrewChief crewChiefPage, PageFileGraphics graphicsPage)
     {
-        for (int i = 0; i < crewChiefPage.NumVehicles; i++)
+        for (int i = 0; i < crewChiefPage.Vehicle.Length; i++)
         {
             AcsVehicleInfo vehicle = crewChiefPage.Vehicle[i];
             CarInfo carInfo = new CarInfo(i);
