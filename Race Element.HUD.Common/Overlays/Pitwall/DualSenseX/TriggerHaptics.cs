@@ -1,23 +1,12 @@
 ﻿using RaceElement.Data.Common;
 using RaceElement.Data.Games;
 using RaceElement.Util.SystemExtensions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using static RaceElement.ACCSharedMemory;
-using static RaceElement.Data.SetupConverter;
-using static RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX.DualSenseXConfiguration;
 using static RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX.DualSenseXResources;
 
 namespace RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX;
 
 internal static class TriggerHaptics
 {
-    public static Packet HandleBrakePressure(SPageFilePhysics pagePhysics)
-    {
-        return null;
-    }
-
     public static Packet HandleBraking(DualSenseXConfiguration config, Game gameWhenStarted)
     {
         Packet p = new();
