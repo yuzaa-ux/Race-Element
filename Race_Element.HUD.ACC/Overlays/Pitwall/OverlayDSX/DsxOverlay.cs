@@ -6,25 +6,25 @@ using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using static RaceElement.HUD.ACC.Overlays.Pitwall.OverlayDualSenseX.DualSenseXResources;
+using static RaceElement.HUD.ACC.Overlays.Pitwall.Dsx.DsxResources;
 
-namespace RaceElement.HUD.ACC.Overlays.Pitwall.OverlayDualSenseX;
+namespace RaceElement.HUD.ACC.Overlays.Pitwall.Dsx;
 
-[Overlay(Name = "DualSense X",
+[Overlay(Name = "DSX",
     Description = "Adds active triggers for the DualSense 5 controller using DSX on steam.\n See Guide in the Discord of Race Element for instructions.",
     OverlayCategory = OverlayCategory.Inputs,
     OverlayType = OverlayType.Pitwall,
 Authors = ["Reinier Klarenberg"])]
-internal sealed class DualSenseXOverlay : AbstractOverlay
+internal sealed class DsxOverlay : AbstractOverlay
 {
-    internal readonly DualSenseXConfiguration _config = new();
-    private DualSenseXJob _dsxJob;
+    internal readonly DsxConfiguration _config = new();
+    private DsxJob _dsxJob;
 
     internal UdpClient _client;
     internal IPEndPoint _endPoint;
     private DateTime _timeSent;
 
-    public DualSenseXOverlay(Rectangle rectangle) : base(rectangle, "DualSense X")
+    public DsxOverlay(Rectangle rectangle) : base(rectangle, "DSX")
     {
         this.Width = 1; this.Height = 1;
         RefreshRateHz = 1;
@@ -35,7 +35,7 @@ internal sealed class DualSenseXOverlay : AbstractOverlay
     {
         if (IsPreviewing) return;
 
-        _dsxJob = new DualSenseXJob(this) { IntervalMillis = 1000 / 100 };
+        _dsxJob = new DsxJob(this) { IntervalMillis = 1000 / 100 };
         _dsxJob.Run();
     }
     public override void BeforeStop()

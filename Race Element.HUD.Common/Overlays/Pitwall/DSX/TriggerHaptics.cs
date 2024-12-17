@@ -1,13 +1,13 @@
 ﻿using RaceElement.Data.Common;
 using RaceElement.Data.Games;
 using RaceElement.Util.SystemExtensions;
-using static RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX.DualSenseXResources;
+using static RaceElement.HUD.Common.Overlays.Pitwall.DSX.DsxResources;
 
-namespace RaceElement.HUD.Common.Overlays.Pitwall.DualSenseX;
+namespace RaceElement.HUD.Common.Overlays.Pitwall.DSX;
 
 internal static class TriggerHaptics
 {
-    public static Packet HandleBraking(DualSenseXConfiguration config, Game gameWhenStarted)
+    public static Packet HandleBraking(DsxConfiguration config, Game gameWhenStarted)
     {
         Packet p = new();
         List<Instruction> instructions = [];
@@ -71,7 +71,7 @@ internal static class TriggerHaptics
         return p;
     }
 
-    public static Packet HandleAcceleration(DualSenseXConfiguration config, Game gameWhenStarted)
+    public static Packet HandleAcceleration(DsxConfiguration config, Game gameWhenStarted)
     {
         Packet p = new();
         List<Instruction> instructions = [];
@@ -122,7 +122,6 @@ internal static class TriggerHaptics
 
                 if (slipRatioFront > config.ThrottleSlip.FrontSlipTreshold || slipRatioRear > config.ThrottleSlip.RearSlipTreshold)
                 {
-
                     float frontslipCoefecient = slipRatioFront * 4;
                     frontslipCoefecient.ClipMax(20);
 

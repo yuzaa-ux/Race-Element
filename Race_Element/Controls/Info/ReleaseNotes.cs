@@ -8,6 +8,9 @@ public static class ReleaseNotes
     {
         {"2.2.2.6", "Race Element:"+
                     "\n- HUD Tab: Fixed link buttons and updated all links regarding twitch chat access tokens, the old one is discontinued."+
+                    "\n- DualSenseX HUDs are renamed to DSX."+
+                    "\n\nAssetto Corsa:"+
+                    "\n - DSX HUD: Added customizable trigger FFB based on wheel slip."+
                     "\n\nAssetto Corsa Competizione:"+
                     "\n- Track Map HUD: Added filled background with color and opacity option."
                     },

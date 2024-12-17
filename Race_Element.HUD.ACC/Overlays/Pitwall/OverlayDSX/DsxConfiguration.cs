@@ -1,10 +1,10 @@
 ﻿using RaceElement.HUD.Overlay.Configuration;
 
-namespace RaceElement.HUD.ACC.Overlays.Pitwall.OverlayDualSenseX;
+namespace RaceElement.HUD.ACC.Overlays.Pitwall.Dsx;
 
-internal sealed class DualSenseXConfiguration : OverlayConfiguration
+internal sealed class DsxConfiguration : OverlayConfiguration
 {
-    public DualSenseXConfiguration()
+    public DsxConfiguration()
     {
         this.GenericConfiguration.AlwaysOnTop = false;
         this.GenericConfiguration.Window = false;

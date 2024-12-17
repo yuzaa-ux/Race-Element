@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
 
-namespace RaceElement.HUD.ACC.Overlays.Pitwall.OverlayDualSenseX;
+namespace RaceElement.HUD.Common.Overlays.Pitwall.DSX;
 
-internal class DualSenseXResources
+internal sealed class DsxResources
 {
     public static class Triggers
     {
@@ -11,7 +11,7 @@ internal class DualSenseXResources
 
         public static string PacketToJson(Packet packet)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(packet);
+            return JsonConvert.SerializeObject(packet);
         }
 
         public static Packet JsonToPacket(string json)
@@ -105,7 +105,7 @@ internal class DualSenseXResources
         public object[] parameters;
     }
 
-    public class Packet
+    public sealed class Packet
     {
         public Instruction[] instructions;
     }
